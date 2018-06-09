@@ -1,4 +1,6 @@
 white = '#%02x%02x%02x' % (255, 255, 255)
+black = '#%02x%02x%02x' % (0, 0, 0)
+
 
 colliers_dark_blue = '#%02x%02x%02x' % (0, 70, 127)
 colliers_dark_blue_40 = '#%02x%02x%02x' % (152, 170, 195)

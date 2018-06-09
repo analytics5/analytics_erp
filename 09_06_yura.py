@@ -3565,7 +3565,7 @@ def update_graph_horizontal(Year, Country, Agency, City, Property_Name, Class, S
                         name='Colliers',
                         marker=dict(
                             color=color.colliers_dark_blue),
-                        width=0.4,
+                        width=0.45,
                         orientation='h',
                         text=list(((pv[("SQM", 'Colliers')] / 1000).round()).apply(np.int64)),
                         textposition='auto',
@@ -3576,7 +3576,7 @@ def update_graph_horizontal(Year, Country, Agency, City, Property_Name, Class, S
                         name='SAR',
                         marker=dict(
                             color=color.colliers_light_blue),
-                        width=0.4,
+                        width=0.45,
                         orientation='h',
                         text=list(((pv[("SQM", 'SAR')] / 1000).round()).apply(np.int64)),
                         textposition='auto',
@@ -3587,7 +3587,7 @@ def update_graph_horizontal(Year, Country, Agency, City, Property_Name, Class, S
                         name='CW',
                         marker=dict(
                             color=color.colliers_extra_light_blue),
-                        width=0.4, orientation='h',
+                        width=0.45, orientation='h',
                         text=list(((pv[("SQM", 'CW')] / 1000).round()).apply(np.int64)),
                         textposition='auto',
                         textfont=dict(
@@ -3597,7 +3597,7 @@ def update_graph_horizontal(Year, Country, Agency, City, Property_Name, Class, S
                         name='CBRE',
                         marker=dict(
                             color=color.colliers_grey_40),
-                        width=0.4,
+                        width=0.45,
                         orientation='h',
                         text=list(((pv[("SQM", 'CBRE')] / 1000).round()).apply(np.int64)),
                         textposition='auto',
@@ -3608,7 +3608,7 @@ def update_graph_horizontal(Year, Country, Agency, City, Property_Name, Class, S
                         name='JLL',
                         marker=dict(
                             color=color.colliers_yellow),
-                        width=0.4,
+                        width=0.45,
                         orientation='h',
                         text=list(((pv[("SQM", 'JLL')] / 1000).round()).apply(np.int64)),
                         textposition='auto',
@@ -3619,7 +3619,7 @@ def update_graph_horizontal(Year, Country, Agency, City, Property_Name, Class, S
                         name='KF',
                         marker=dict(
                             color=color.colliers_red),
-                        width=0.4,
+                        width=0.45,
                         orientation='h',
                         text=list(((pv[("SQM", 'KF')] / 1000).round()).apply(np.int64)),
                         textposition='auto',
@@ -4117,6 +4117,14 @@ def update_graph_percent(Year, Country, Agency, City, Property_Name, Class, SQM,
         format_data = ', '.join(str(e) for e in list_of_values_copy_chain)
         format_year = ', '.join(Year)
 
+
+
+    annotations = []
+
+
+
+
+
     return {
         'data': [trace1, trace2, trace3, trace4, trace5, trace6],
         'layout':
@@ -4240,30 +4248,31 @@ def update_graph_horizontal_total(Year, Country, Agency, City, Property_Name, Cl
         aggfunc=sum,
         fill_value=0)
 
+    print(pv['SQM'].sum())
     pv_sorted = pv.sort_values(by='SQM', ascending=True)
+    print((list(map(lambda x: x, list((pv_sorted[("SQM")] / 1000).apply(np.int64))))))
+    trace2 = go.Bar(x=pv_sorted["SQM"] / 100000,
+                    y=pv_sorted.index,
+                    marker=dict(
+                        color=[color.sar_color, color.colliers_color, color.kf_color, color.cw_color, color.cbre_color,
+                               color.jll_color]),
+                    width=0.45,
+                    orientation='h',
+                    text=(list(map(lambda x: x, list((pv_sorted[("SQM")] / 1000).apply(np.int64))))),
+                    textposition='none',
+                    textfont=dict(
+                        color=[color.white, color.white, color.white, color.white, color.white, color.colliers_grey_80],
+                        size=12))
 
     trace1 = go.Bar(x=pv_sorted["SQM"] / 1000,
                     y=pv_sorted.index,
                     marker=dict(
                         color=[color.sar_color, color.colliers_color, color.kf_color, color.cw_color, color.cbre_color,
                                color.jll_color]),
-                    width=0.50,
+                    width=0.45,
                     orientation='h',
                     text=(list(map(lambda x: x, list((pv_sorted[("SQM")] / 1000).apply(np.int64))))),
-                    textposition='auto',
-                    textfont=dict(
-                        color=[color.white, color.white, color.white, color.white, color.white, color.colliers_grey_80],
-                        size=12))
-
-    trace2 = go.Bar(x=pv_sorted["SQM"] / 1000,
-                    y=pv_sorted.index,
-                    marker=dict(
-                        color=[color.sar_color, color.colliers_color, color.kf_color, color.cw_color, color.cbre_color,
-                               color.jll_color]),
-                    width=0.50,
-                    orientation='h',
-                    text=(list(map(lambda x: x, list((pv_sorted[("SQM")] / 1000).apply(np.int64))))),
-                    textposition='auto',
+                    textposition='none',
                     textfont=dict(
                         color=[color.white, color.white, color.white, color.white, color.white, color.colliers_grey_80],
                         size=12))
@@ -4288,6 +4297,51 @@ def update_graph_horizontal_total(Year, Country, Agency, City, Property_Name, Cl
             list_of_values_copy_chain.remove('{}'.format(i))
         format_data = ', '.join(str(e) for e in list_of_values_copy_chain)
         format_year = ', '.join(Year)
+
+    annotations = []
+
+    for agency, value in zip(pv_sorted.index, pv_sorted["SQM"] / 1000):
+        print('value=',value)
+        print('PV SQM SUM', pv['SQM'].sum() /1000)
+        print(str(((value / pv['SQM'].sum())) * 100) + '%'),
+        annotations.append(dict(
+                        x=value + 100,
+                        y=agency,
+                        #xref='x',
+                        #yref='y',
+                        text='<b>'+ str(int(round(((value / (pv['SQM'].sum() / 1000))*100)))) + '%'+'</b>',
+                        showarrow=False,
+                        font=dict(family='Arial',
+                                  size=12,
+                                  color=color.colliers_color),
+                    )
+        )
+
+    annotations.append(dict(
+                        x=1100,
+                        y=0.01,
+                        xref='x',
+                        yref='paper',
+                        text='тыс. м²',
+                        showarrow=False,
+                        font=dict(family='Arial',
+                                  size=14,
+                                  color=color.black),
+                    ))
+
+    for agency, value, text,color_1 in zip(pv_sorted.index, pv_sorted["SQM"] / 1000, list(map(lambda x: x, list((pv_sorted[("SQM")] / 1000).apply(np.int64)))),[color.white, color.white, color.white, color.white, color.white, color.colliers_grey_80]):
+        annotations.append(dict(
+                        x=0.015,
+                        y=agency,
+                        xref='paper',
+                        #yref='y',
+                        text= text,
+                        showarrow=False,
+                        font=dict(family='Arial',
+                                  size=12,
+                                  color=color_1),
+                    )
+        )
 
     return {
         'data': [trace1],
@@ -4328,7 +4382,7 @@ def update_graph_horizontal_total(Year, Country, Agency, City, Property_Name, Cl
                            showticklabels=True,
                            ),
                 legend=dict(orientation="h",
-                            traceorder='normal')
+                            traceorder='normal'),
                 # legend=dict(
                 #     x=100,
                 #     y=1,
@@ -4336,7 +4390,10 @@ def update_graph_horizontal_total(Year, Country, Agency, City, Property_Name, Cl
                 #         size=10,
                 #     )
                 # ),
-                #showlegend=True
+                #showlegend=False,
+                barmode='stack',
+                annotations=annotations,
+
             )
     }
 
