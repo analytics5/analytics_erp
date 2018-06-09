@@ -38,5 +38,15 @@ colliers_dark_red_50 = '#%02x%02x%02x' % (215, 151, 136)
 colliers_dark_red_30 = '#%02x%02x%02x' % (233, 192, 181)
 
 
+colliers_color = colliers_dark_blue
+sar_color = colliers_light_blue
+cw_color = colliers_extra_light_blue
+cbre_color = colliers_grey_40
+jll_color = colliers_yellow
+kf_color = colliers_red
+
+
+
+
 
 bootstrap_grey_28 = '#%02x%02x%02x' % (28, 28, 28)

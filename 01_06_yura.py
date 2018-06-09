@@ -22,6 +22,12 @@ import plotly
 import plotly.plotly as py
 import plotly.graph_objs as go
 
+#import matplotlib.pyplot as plt
+
+# plt.plot(([1,2,3],[5,8,10]))
+# plt.show()
+
+
 py.sign_in('Wittgensteen', 'bl8Z5NQ1cMli9YmLhViF')  # вход в аккаунт на plotly
 
 dbname = 'postgres'  # название базы данных
@@ -52,7 +58,7 @@ list_of_columns = [
     "Property_Name", "Address", "Submarket_Large", "Owner",
     "Date_of_acquiring", "Class", "Class_Colliers", "Floor",
     "SQM", "Deal_Size", "Company", "Business_Sector", "Sublease_Agent",
-    "Type_of_deal", "Type_of_Consultancy", "LLR_TR", "LLR_Only",
+    "Type_of_Deal", "Type_of_Consultancy", "LLR_TR", "LLR_Only",
     "E_TR_Only", "LLR/E_TR", "Month", "Year", "Quarter"]
 
 list_of_columns_suspicious = [
@@ -62,7 +68,7 @@ list_of_columns_suspicious = [
 
 list_of_columns_for_gui = [
     "Include in market share", "Agency", "Country", "City",      # список чеклиста для выбора столбцов таблицы из дерева
-    "Property name", "Address", "Submarket_Large", "Owner",
+    "Property name", "Address", "Submarket large", "Owner",
     "Date of acquiring", "Class", "Class Colliers", "Floor",
     "SQM", "Size of deal", "Company", "Business sector", "Sublease agent",
     "Type of deal", "Type of consultancy", "LLR/TR", "LLR only",
@@ -519,7 +525,7 @@ page_4_layout = html.Div(
                             values=['Agency', 'Country', 'City', 'Property_Name',
                                     # значения по умолчанию при первй загрузке страницы
                                     'Class', 'SQM', "Company", "Business_Sector",
-                                    'Type_of_deal', 'Type_of_Consultancy', 'LLR_TR', 'Year', 'Quarter'],
+                                    'Type_of_Deal', 'Type_of_Consultancy', 'LLR_TR', 'Year', 'Quarter'],
                             labelStyle={
                                 'display': 'none',
                                 'padding-left:': '90px'
@@ -637,6 +643,13 @@ page_4_layout = html.Div(
                             [
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Агентство'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Agency",
                                             # value='All agency',
@@ -661,6 +674,13 @@ page_4_layout = html.Div(
                                 ),
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Страна'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Country",
                                             # value='All countries',
@@ -685,6 +705,13 @@ page_4_layout = html.Div(
                                 ),
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Город'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="City",
                                             # value='All agency',
@@ -709,6 +736,13 @@ page_4_layout = html.Div(
                                 ),
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Объект'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Property_name",
                                             # value='All agency',
@@ -734,6 +768,13 @@ page_4_layout = html.Div(
                                 ),
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Класс'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Class",
                                             # value='All agency',
@@ -759,6 +800,13 @@ page_4_layout = html.Div(
                                 ),
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Площадь'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="SQM",
                                             # value='All agency',
@@ -783,6 +831,13 @@ page_4_layout = html.Div(
                                 ),
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Компания'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Company",
                                             # value='All agency',
@@ -808,6 +863,13 @@ page_4_layout = html.Div(
                                 ),
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Сектор'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Business_Sector",
                                             # value='',
@@ -833,6 +895,13 @@ page_4_layout = html.Div(
 
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Тип сделки'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Type_of_Deal",
                                             # value='All agency',
@@ -842,7 +911,7 @@ page_4_layout = html.Div(
                                                 'label': i,
                                                 'value': i
                                             }
-                                                for i in all_deals_query_df["Type_of_deal"].unique()
+                                                for i in all_deals_query_df["Type_of_Deal"].unique()
                                             ],
 
                                         )],
@@ -858,6 +927,13 @@ page_4_layout = html.Div(
 
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Тип услуг'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Type_of_Consultancy",
                                             # value='All agency',
@@ -882,6 +958,13 @@ page_4_layout = html.Div(
                                 ),
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['LLR/TR'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="LLR/TR",
                                             # value='All agency',
@@ -907,6 +990,13 @@ page_4_layout = html.Div(
 
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Год'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Year",
                                             multi=True,
@@ -932,6 +1022,13 @@ page_4_layout = html.Div(
                                 ),
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Квартал'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Quarter",
                                             # value='All agency',
@@ -958,8 +1055,15 @@ page_4_layout = html.Div(
 
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['В Market Share'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
-                                            id="Include_in_M_S",
+                                            id="Include_in_Market_Share",
                                             # value='All agency',
                                             placeholder="В Market Share",
                                             multi=True,
@@ -972,7 +1076,7 @@ page_4_layout = html.Div(
                                             ],
                                         )
                                     ],
-                                    id='Include_in_M_S_Div',
+                                    id='Include_in_Market_Share_Div',
                                     style={
                                         'width': '7.69%',
                                         # 'padding-left': '10',
@@ -984,6 +1088,13 @@ page_4_layout = html.Div(
 
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Адрес'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Address",
                                             # value='All agency',
@@ -1010,6 +1121,13 @@ page_4_layout = html.Div(
 
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Субрынок'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Submarket_Large",
                                             # value='All agency',
@@ -1036,6 +1154,13 @@ page_4_layout = html.Div(
 
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Собственник'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Owner",
                                             # value='All agency',
@@ -1061,10 +1186,17 @@ page_4_layout = html.Div(
                                 ),
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Дата приобретения'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Date_of_acquiring",
                                             # value='All agency',
-                                            placeholder="Субрынок",
+                                            placeholder="Дата приобретения",
                                             multi=True,
                                             options=[{
                                                 'label': i,
@@ -1087,6 +1219,13 @@ page_4_layout = html.Div(
 
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Класс Colliers'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Class_Colliers",
                                             # value='All agency',
@@ -1113,6 +1252,14 @@ page_4_layout = html.Div(
 
                                 html.Div(
                                     [
+
+                                        html.Div(
+                                            ['Этаж'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Floor",
                                             # value='All agency',
@@ -1139,6 +1286,13 @@ page_4_layout = html.Div(
 
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Размер сделки'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
                                         dcc.Dropdown(
                                             id="Deal_Size",
                                             # value='All agency',
@@ -1165,10 +1319,18 @@ page_4_layout = html.Div(
 
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Sublease Agent'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
+
                                         dcc.Dropdown(
                                             id="Sublease_Agent",
                                             # value='All agency',
-                                            placeholder="Sublease_Agent",  # ИЗМЕНИТЬ
+                                            placeholder="Sublease Agent",  # ИЗМЕНИТЬ
                                             multi=True,
                                             options=[{
                                                 'label': i,
@@ -1191,6 +1353,14 @@ page_4_layout = html.Div(
 
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['LLR'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
+
                                         dcc.Dropdown(
                                             id="LLR_Only",
                                             # value='All agency',
@@ -1216,6 +1386,14 @@ page_4_layout = html.Div(
                                 ),
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['(E)TR'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
+
                                         dcc.Dropdown(
                                             id="E_TR_Only",
                                             # value='All agency',
@@ -1241,6 +1419,14 @@ page_4_layout = html.Div(
                                 ),
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['LLR/(E)TR'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
+
                                         dcc.Dropdown(
                                             id="LLR/E_TR",
                                             # value='All agency',
@@ -1267,6 +1453,14 @@ page_4_layout = html.Div(
 
                                 html.Div(
                                     [
+                                        html.Div(
+                                            ['Месяц'],
+                                            style={'color': color.colliers_grey_10,
+                                                   'textAlign': 'center',
+                                                   'fontSize': 14,
+                                                   'backgroundColor': color.colliers_dark_blue}
+                                        ),
+
                                         dcc.Dropdown(
                                             id="Month",
                                             # value='All agency',
@@ -1418,7 +1612,7 @@ def show_tree(val):
                dash.dependencies.Input('LLR/TR', 'value'),
                dash.dependencies.Input('Quarter', 'value'),
                dash.dependencies.Input('Company', 'value'),
-               dash.dependencies.Input('Include_in_M_S', 'value'),
+               dash.dependencies.Input('Include_in_Market_Share', 'value'),
                dash.dependencies.Input('Address', 'value'),
                dash.dependencies.Input('Submarket_Large', 'value'),
                dash.dependencies.Input('Owner', 'value'),
@@ -1434,21 +1628,21 @@ def show_tree(val):
                dash.dependencies.Input('interface', 'values')         # значение чеклиста из дерева с выбором столбцов
                ])
 def update_datatable(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                      Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only, LLR_E_TR,
                      Month, col):
     cond = dict(Year=[Year], Country=[Country], Agency=[Agency],                  # создание словаря с ключом - названием столбца, значением - выбранным параметрам
                 City=[City], Property_Name=[Property_Name], Class=[Class],
                 SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
                 Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
-                Quarter=[Quarter], Include_in_M_S=[Include_in_M_S], Address=[Address],
+                Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
                 Submarket_Large=[Submarket_Large],
                 Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers], Floor=[Floor],
                 Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
                 LLR_E_TR=[LLR_E_TR], Month=[Month])
 
     list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                      Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only, LLR_E_TR,
                      Month)
     cond_1 = cond.copy()  # копия словаря
@@ -1473,7 +1667,7 @@ def update_datatable(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
 
 
 def select_drop_from_check():
-    @app.callback(dash.dependencies.Output('Include_in_M_S_Div', 'style'),
+    @app.callback(dash.dependencies.Output('Include_in_Market_Share_Div', 'style'),
                   # проверка checklist со значениями выбранных столбов в таблице
                   [dash.dependencies.Input('interface', 'values')  # при выборе столбца добавляется выпадающий список
                    ])
@@ -1668,12 +1862,12 @@ def select_drop_from_check():
                    ])
     def update_drop_Type_of_Deal(val):
         try:
-            if 'Type_of_deal' in val:
+            if 'Type_of_Deal' in val:
                 style_Type_of_Deal = {'display': 'inline-block',
                                       'width': '7.69%'
                                       }
 
-            if 'Type_of_deal' not in val:
+            if 'Type_of_Deal' not in val:
                 style_Type_of_Deal = {'display': 'none',
                                       'width': '7.69%'
                                       }
@@ -2041,7 +2235,7 @@ select_drop_from_check()     # вызов функции с отображени
                dash.dependencies.Input('LLR/TR', 'value'),
                dash.dependencies.Input('Quarter', 'value'),
                dash.dependencies.Input('Company', 'value'),
-               dash.dependencies.Input('Include_in_M_S', 'value'),
+               dash.dependencies.Input('Include_in_Market_Share', 'value'),
                dash.dependencies.Input('Address', 'value'),
                dash.dependencies.Input('Submarket_Large', 'value'),
                dash.dependencies.Input('Owner', 'value'),
@@ -2057,20 +2251,20 @@ select_drop_from_check()     # вызов функции с отображени
                dash.dependencies.Input('interface', 'values')         # значение чеклиста из дерева с выбором столбцов
                ])
 def update_sum(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                      Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only, LLR_E_TR,
                      Month, col):
     cond = dict(Year=[Year], Country=[Country], Agency=[Agency],                  # создание словаря с ключом - названием столбца, значением - выбранным параметрам
                 City=[City], Property_Name=[Property_Name], Class=[Class],
                 SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
                 Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
-                Quarter=[Quarter], Include_in_M_S=[Include_in_M_S], Address=[Address],
+                Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
                 Submarket_Large=[Submarket_Large],
                 Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers], Floor=[Floor],
                 Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
                 LLR_E_TR=[LLR_E_TR], Month=[Month])
     list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                       Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
                       LLR_E_TR,
                       Month)
@@ -2141,7 +2335,7 @@ def update_download_all_link(Year, Country, Agency, City, Property_name, Class, 
      dash.dependencies.Input('LLR/TR', 'value'),
      dash.dependencies.Input('Quarter', 'value'),
      dash.dependencies.Input('Company', 'value'),
-     dash.dependencies.Input('Include_in_M_S', 'value'),
+     dash.dependencies.Input('Include_in_Market_Share', 'value'),
      dash.dependencies.Input('Address', 'value'),
      dash.dependencies.Input('Submarket_Large', 'value'),
      dash.dependencies.Input('Owner', 'value'),
@@ -2157,21 +2351,21 @@ def update_download_all_link(Year, Country, Agency, City, Property_name, Class, 
      dash.dependencies.Input('interface', 'values')  # значение чеклиста из дерева с выбором столбцов
      ])
 def update_download_link(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                      Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only, LLR_E_TR,
                      Month, col):
     cond = dict(Year=[Year], Country=[Country], Agency=[Agency],                  # создание словаря с ключом - названием столбца, значением - выбранным параметрам
                 City=[City], Property_Name=[Property_Name], Class=[Class],
                 SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
                 Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
-                Quarter=[Quarter], Include_in_M_S=[Include_in_M_S], Address=[Address],
+                Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
                 Submarket_Large=[Submarket_Large],
                 Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers], Floor=[Floor],
                 Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
                 LLR_E_TR=[LLR_E_TR], Month=[Month])
 
     list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                       Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
                       LLR_E_TR,
                       Month)
@@ -2218,7 +2412,7 @@ def update_download_link(Year, Country, Agency, City, Property_Name, Class, SQM,
      dash.dependencies.Input('LLR/TR', 'value'),
      dash.dependencies.Input('Quarter', 'value'),
      dash.dependencies.Input('Company', 'value'),
-     dash.dependencies.Input('Include_in_M_S', 'value'),
+     dash.dependencies.Input('Include_in_Market_Share', 'value'),
      dash.dependencies.Input('Address', 'value'),
      dash.dependencies.Input('Submarket_Large', 'value'),
      dash.dependencies.Input('Owner', 'value'),
@@ -2234,21 +2428,21 @@ def update_download_link(Year, Country, Agency, City, Property_Name, Class, SQM,
      dash.dependencies.Input('interface', 'values')  # значение чеклиста из дерева с выбором столбцов
      ])
 def update_graph_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                      Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only, LLR_E_TR,
                      Month, col):
     cond = dict(Year=[Year], Country=[Country], Agency=[Agency],                  # создание словаря с ключом - названием столбца, значением - выбранным параметрам
                 City=[City], Property_Name=[Property_Name], Class=[Class],
                 SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
                 Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
-                Quarter=[Quarter], Include_in_M_S=[Include_in_M_S], Address=[Address],
+                Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
                 Submarket_Large=[Submarket_Large],
                 Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers], Floor=[Floor],
                 Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
                 LLR_E_TR=[LLR_E_TR], Month=[Month])
 
     list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                       Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
                       LLR_E_TR,
                       Month)
@@ -2258,8 +2452,6 @@ def update_graph_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
     try:
         if len(list_of_values_copy) == 0:
             df_plot = all_deals_query_df.copy()
-            format_data = 'all deals'
-            format_year = 'all years'
     except TypeError:
         df_plot = all_deals_query_df.copy()
     except IndexError:
@@ -2337,24 +2529,40 @@ def update_graph_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
                 color=color.colliers_red), width=0.2)
             data.append(trace6)
 
-    if len(list_of_values_copy) > 0 and Year not in list_of_values_copy:       # перепчать этот код!
-        format_data = str(list_of_values_copy[0])
-        format_year = 'all years'
-    elif len(list_of_values_copy) > 0 and Year in list_of_values_copy:
-#        del list_of_values_copy[Year]
-        format_data = str(list_of_values_copy[0])
 
-    if Year is not None:
-        format_year = Year
-    elif Year not in list_of_values_copy:
+    print(len(list_of_values_copy))
+    print(list_of_values_copy)
+    list_of_ind =[]
+    for i in range(len(list_of_values_copy)):
+        ind = get_key(cond_1, [list_of_values_copy[i]])
+        list_of_ind.append(ind)
+        print(list_of_ind)
+
+    if len(list_of_values_copy) == 0:
+        format_data = 'All deals'
+        format_year = 'All years'
+        title = '{}<br>' \
+                'in {}'.format(format_data, format_year),
+    elif len(list_of_values_copy) > 0 and Year not in list_of_ind:       # перепчать этот код!
+        format_data = str(list_of_values_copy[0][0])
         format_year = 'all years'
+        title = '{}<br>in {}'.format(format_data, format_year),
+    elif len(list_of_values_copy) > 0 and Year in list_of_ind:
+        #del list_of_values_copy[Year]
+        format_data = str(list_of_values_copy[0][0])
+        format_year = Year
+        title = '{}<br>in {}'.format(format_data, format_year),
+    # if Year is not None:
+    #     for i in range(len(Year)):
+    #         format_year = Year[i]
+    # elif Year not in list_of_values_copy:
+    #     format_year = 'all years'
 
     return {
         'data': data,
         'layout':
             go.Layout(
-                title='Deals sorted by {}<br>'
-                      'in {}'.format(format_data, format_year),
+                title=str(title[0]),
                 autosize=False,
                 bargap=0.3,
                 bargroupgap=0,
@@ -2400,7 +2608,7 @@ def update_graph_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
      dash.dependencies.Input('LLR/TR', 'value'),
      dash.dependencies.Input('Quarter', 'value'),
      dash.dependencies.Input('Company', 'value'),
-     dash.dependencies.Input('Include_in_M_S', 'value'),
+     dash.dependencies.Input('Include_in_Market_Share', 'value'),
      dash.dependencies.Input('Address', 'value'),
      dash.dependencies.Input('Submarket_Large', 'value'),
      dash.dependencies.Input('Owner', 'value'),
@@ -2416,7 +2624,7 @@ def update_graph_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
      dash.dependencies.Input('interface', 'values')  # значение чеклиста из дерева с выбором столбцов
      ])
 def update_graph_tab_none_stack(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                      Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only, LLR_E_TR,
                      Month, col):
     cond = dict(Year=[Year], Country=[Country], Agency=[Agency],
@@ -2426,7 +2634,7 @@ def update_graph_tab_none_stack(Year, Country, Agency, City, Property_Name, Clas
                 Quarter=[Quarter])
 
     list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                       Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
                       LLR_E_TR,
                       Month)
@@ -2580,7 +2788,7 @@ def update_graph_tab_none_stack(Year, Country, Agency, City, Property_Name, Clas
      dash.dependencies.Input('LLR/TR', 'value'),
      dash.dependencies.Input('Quarter', 'value'),
      dash.dependencies.Input('Company', 'value'),
-     dash.dependencies.Input('Include_in_M_S', 'value'),
+     dash.dependencies.Input('Include_in_Market_Share', 'value'),
      dash.dependencies.Input('Address', 'value'),
      dash.dependencies.Input('Submarket_Large', 'value'),
      dash.dependencies.Input('Owner', 'value'),
@@ -2596,7 +2804,7 @@ def update_graph_tab_none_stack(Year, Country, Agency, City, Property_Name, Clas
      dash.dependencies.Input('interface', 'values')  # значение чеклиста из дерева с выбором столбцов
      ])
 def update_graph_horizontal(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                      Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only, LLR_E_TR,
                      Month, col):
 
@@ -2604,14 +2812,14 @@ def update_graph_horizontal(Year, Country, Agency, City, Property_Name, Class, S
                 City=[City], Property_Name=[Property_Name], Class=[Class],
                 SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
                 Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
-                Quarter=[Quarter], Include_in_M_S=[Include_in_M_S], Address=[Address],
+                Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
                 Submarket_Large=[Submarket_Large],
                 Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers], Floor=[Floor],
                 Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
                 LLR_E_TR=[LLR_E_TR], Month=[Month])
 
     list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                       Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
                       LLR_E_TR,
                       Month)
@@ -2780,7 +2988,7 @@ def update_graph_horizontal(Year, Country, Agency, City, Property_Name, Class, S
      dash.dependencies.Input('LLR/TR', 'value'),
      dash.dependencies.Input('Quarter', 'value'),
      dash.dependencies.Input('Company', 'value'),
-     dash.dependencies.Input('Include_in_M_S', 'value'),
+     dash.dependencies.Input('Include_in_Market_Share', 'value'),
      dash.dependencies.Input('Address', 'value'),
      dash.dependencies.Input('Submarket_Large', 'value'),
      dash.dependencies.Input('Owner', 'value'),
@@ -2796,7 +3004,7 @@ def update_graph_horizontal(Year, Country, Agency, City, Property_Name, Class, S
      dash.dependencies.Input('interface', 'values')  # значение чеклиста из дерева с выбором столбцов
      ])
 def update_pie_graph(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                      Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only, LLR_E_TR,
                      Month, col):
     cond = dict(Year=[Year], Country=[Country], Agency=[Agency],
@@ -2804,14 +3012,14 @@ def update_pie_graph(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
                 City=[City], Property_Name=[Property_Name], Class=[Class],
                 SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
                 Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
-                Quarter=[Quarter], Include_in_M_S=[Include_in_M_S], Address=[Address],
+                Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
                 Submarket_Large=[Submarket_Large],
                 Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers], Floor=[Floor],
                 Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
                 LLR_E_TR=[LLR_E_TR], Month=[Month])
 
     list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                       Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
                       LLR_E_TR,
                       Month)
@@ -2902,7 +3110,7 @@ def update_pie_graph(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
      dash.dependencies.Input('LLR/TR', 'value'),
      dash.dependencies.Input('Quarter', 'value'),
      dash.dependencies.Input('Company', 'value'),
-     dash.dependencies.Input('Include_in_M_S', 'value'),
+     dash.dependencies.Input('Include_in_Market_Share', 'value'),
      dash.dependencies.Input('Address', 'value'),
      dash.dependencies.Input('Submarket_Large', 'value'),
      dash.dependencies.Input('Owner', 'value'),
@@ -2918,7 +3126,7 @@ def update_pie_graph(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
      dash.dependencies.Input('interface', 'values')  # значение чеклиста из дерева с выбором столбцов
      ])
 def update_graph_percent(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                      Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only, LLR_E_TR,
                      Month, col):
     cond = dict(Year=[Year], Country=[Country], Agency=[Agency],
@@ -2926,14 +3134,14 @@ def update_graph_percent(Year, Country, Agency, City, Property_Name, Class, SQM,
                 City=[City], Property_Name=[Property_Name], Class=[Class],
                 SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
                 Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
-                Quarter=[Quarter], Include_in_M_S=[Include_in_M_S], Address=[Address],
+                Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
                 Submarket_Large=[Submarket_Large],
                 Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers], Floor=[Floor],
                 Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
                 LLR_E_TR=[LLR_E_TR], Month=[Month])
 
     list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                       Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
                       LLR_E_TR,
                       Month)
@@ -3051,7 +3259,7 @@ def update_graph_percent(Year, Country, Agency, City, Property_Name, Class, SQM,
      dash.dependencies.Input('LLR/TR', 'value'),
      dash.dependencies.Input('Quarter', 'value'),
      dash.dependencies.Input('Company', 'value'),
-     dash.dependencies.Input('Include_in_M_S', 'value'),
+     dash.dependencies.Input('Include_in_Market_Share', 'value'),
      dash.dependencies.Input('Address', 'value'),
      dash.dependencies.Input('Submarket_Large', 'value'),
      dash.dependencies.Input('Owner', 'value'),
@@ -3067,7 +3275,7 @@ def update_graph_percent(Year, Country, Agency, City, Property_Name, Class, SQM,
      dash.dependencies.Input('interface', 'values')  # значение чеклиста из дерева с выбором столбцов
      ])
 def update_graph_horizontal_total(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                      Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only, LLR_E_TR,
                      Month, col):
     cond = dict(Year=[Year], Country=[Country], Agency=[Agency],
@@ -3075,14 +3283,14 @@ def update_graph_horizontal_total(Year, Country, Agency, City, Property_Name, Cl
                 City=[City], Property_Name=[Property_Name], Class=[Class],
                 SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
                 Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
-                Quarter=[Quarter], Include_in_M_S=[Include_in_M_S], Address=[Address],
+                Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
                 Submarket_Large=[Submarket_Large],
                 Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers], Floor=[Floor],
                 Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
                 LLR_E_TR=[LLR_E_TR], Month=[Month])
 
     list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                       Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
                       LLR_E_TR,
                       Month)
@@ -3208,7 +3416,7 @@ suspicious_deals_layout = html.Div(
                             values=['Agency', 'Country', 'City', 'Property_Name',
                                     # значения по умолчанию при первй загрузке страницы
                                     'Class', 'SQM', "Company", "Business_Sector",
-                                    'Type_of_deal', 'Type_of_Consultancy', 'LLR_TR', 'Year', 'Quarter'],
+                                    'Type_of_Deal', 'Type_of_Consultancy', 'LLR_TR', 'Year', 'Quarter'],
                             labelStyle={
                                 'display': 'none',
                                 'padding-left:': '90px'
@@ -3531,7 +3739,7 @@ suspicious_deals_layout = html.Div(
                                                 'label': i,
                                                 'value': i
                                             }
-                                                for i in all_deals_query_df["Type_of_deal"].unique()
+                                                for i in all_deals_query_df["Type_of_Deal"].unique()
                                             ],
 
                                         )],
@@ -3648,7 +3856,7 @@ suspicious_deals_layout = html.Div(
                                 html.Div(
                                     [
                                         dcc.Dropdown(
-                                            id="Include_in_M_S_susp",
+                                            id="Include_in_Market_Share_susp",
                                             # value='All agency',
                                             placeholder="В Market Share",
                                             multi=True,
@@ -3661,7 +3869,7 @@ suspicious_deals_layout = html.Div(
                                             ],
                                         )
                                     ],
-                                    id='Include_in_M_S_Div_susp',
+                                    id='Include_in_Market_Share_Div_susp',
                                     style={
                                         'width': '7.69%',
                                         # 'padding-left': '10',
@@ -4056,7 +4264,7 @@ def show_tree(val):
 
 
 def select_drop_from_check_susp():
-    @app.callback(dash.dependencies.Output('Include_in_M_S_Div_susp', 'style'),
+    @app.callback(dash.dependencies.Output('Include_in_Market_Share_Div_susp', 'style'),
                   # проверка checklist со значениями выбранных столбов в таблице
                   [dash.dependencies.Input('interface_susp', 'values')  # при выборе столбца добавляется выпадающий список
                    ])
@@ -4251,12 +4459,12 @@ def select_drop_from_check_susp():
                    ])
     def update_drop_Type_of_Deal(val):
         try:
-            if 'Type_of_deal' in val:
+            if 'Type_of_Deal' in val:
                 style_Type_of_Deal = {'display': 'inline-block',
                                       'width': '7.69%'
                                       }
 
-            if 'Type_of_deal' not in val:
+            if 'Type_of_Deal' not in val:
                 style_Type_of_Deal = {'display': 'none',
                                       'width': '7.69%'
                                       }
@@ -4620,7 +4828,7 @@ select_drop_from_check_susp()     # вызов функции с отображ�
                dash.dependencies.Input('LLR/TR_susp', 'value'),
                dash.dependencies.Input('Quarter_susp', 'value'),
                dash.dependencies.Input('Company_susp', 'value'),
-               dash.dependencies.Input('Include_in_M_S_susp', 'value'),
+               dash.dependencies.Input('Include_in_Market_Share_susp', 'value'),
                dash.dependencies.Input('Address_susp', 'value'),
                dash.dependencies.Input('Submarket_Large_susp', 'value'),
                dash.dependencies.Input('Owner_susp', 'value'),
@@ -4636,21 +4844,21 @@ select_drop_from_check_susp()     # вызов функции с отображ�
                dash.dependencies.Input('interface_susp', 'values')  # значение чеклиста из дерева с выбором столбцов
                ])
 def update_datatable_susp(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                     Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                      Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only, LLR_E_TR,
                      Month, col):
     cond = dict(Year=[Year], Country=[Country], Agency=[Agency],  # создание словаря с ключом - названием столбца, значением - выбранным параметрам
                 City=[City], Property_Name=[Property_Name], Class=[Class],
                 SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
                 Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
-                Quarter=[Quarter], Include_in_M_S=[Include_in_M_S], Address=[Address],
+                Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
                 Submarket_Large=[Submarket_Large],
                 Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers], Floor=[Floor],
                 Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
                 LLR_E_TR=[LLR_E_TR], Month=[Month])
 
     list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_M_S, Address, Submarket_Large, Owner,
+                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                       Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
                       LLR_E_TR,
                       Month)

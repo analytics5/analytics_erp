@@ -21,6 +21,9 @@ import Passwords_and_Usernames as users
 import plotly
 import plotly.plotly as py
 import plotly.graph_objs as go
+import sys
+import base64
+
 
 py.sign_in('Wittgensteen', 'bl8Z5NQ1cMli9YmLhViF')  # Replace the username, and API key with your credentials.
 
@@ -1195,17 +1198,37 @@ def img_show(Year, Size):
                 barmode='stack')
     }, format='png')
 
+    print('img')
     print(img)
     print(type(img))
+
+    print('строка')
     print(str(img))
     print(type(str(img)))
+
+    # print('размер байтов')
+    # print(sys.getsizeof(img))
     # print(help(plotly.offline.plot))
 
-    stringpic = "data:image/png;base64," + urllib.parse.quote_from_bytes(img)
+    print('urllib.parse.quote_from_bytes(img)=')
+    print(urllib.parse.quote_from_bytes(img))
+
+    print('base64.b64encode(img)')
+    print(base64.b64encode(img))
+
+    plot_bytes_encode = str(base64.b64encode(img))
+    plot_bytes_encode = plot_bytes_encode[0:-1]
+    plot_bytes_encode_fin = plot_bytes_encode[2:]
+
+    stringpic = "data:image/png;base64," + plot_bytes_encode_fin
+    print('stringpic')
     print(stringpic)
 
+    # test = base64.standard_b64encode(img)
+    # print('test')
+    # print(test)
+
     # data = pd.DataFrame.from_records([list_of_columns])
-    #
     # #print(data)
     # csv_string = data.to_csv(header=False,index=False, encoding='utf-8', sep=',')
     # csv_string = "data:text/csv;charset=utf-8," + urllib.parse.quote(csv_string)
@@ -1214,120 +1237,120 @@ def img_show(Year, Size):
     return stringpic
 
 
-@app.callback(
-    dash.dependencies.Output('download-pic-button', 'href'),
-    [dash.dependencies.Input('download-pic-button', 'n_clicks'),
-     dash.dependencies.Input('Year', 'value'),
-     dash.dependencies.Input('Size', 'value')]
-)
-def pic_button(n_clicks, Year, Size):
-    if n_clicks > 0:
-        if Year == "All years" or len(Year) == 0:
-            df_plot = deals_df.copy()
-        else:
-            df_plot = deals_df[deals_df['Year'].isin(Year)]
-
-        if Size == "Default size" or Size is None:
-            width = 650
-            height = 450
-
-        if Size == "50%":
-            width = 740
-            height = 360
-
-        if Size == "33%":
-            width = 426
-            height = 240
-
-        # if Size == "1/4":
-        #     width = 370
-        #     height = 180
-
-        pv = pd.pivot_table(
-            df_plot,
-            index=["Year"],
-            columns=["Agency"],
-            values=["SQM"],
-            aggfunc=sum,
-            fill_value=0)
-
-        print(pv[("SQM", 'Colliers')])
-
-        def turn_to_text(sqm):
-            data_sum = round(sqm)
-            print(data_sum)
-            sqm_sum = '{0:,}'.format(data_sum).replace(',', ' ')
-            return sqm_sum
-
-        trace1 = go.Bar(x=pv.index, y=pv[("SQM", 'Colliers')], name='Colliers', marker=dict(
-            color=color.colliers_dark_blue), width=0.2, text='sq.m')
-        trace2 = go.Bar(x=pv.index, y=pv[("SQM", 'SAR')], name='SAR', marker=dict(
-            color=color.colliers_light_blue), width=0.2, text='sq.m')
-        trace3 = go.Bar(x=pv.index, y=pv[("SQM", 'CW')], name='CW', marker=dict(
-            color=color.colliers_extra_light_blue), width=0.2, text='sq.m')
-        trace4 = go.Bar(x=pv.index, y=pv[("SQM", 'CBRE')], name='CBRE', marker=dict(
-            color=color.colliers_grey_40), width=0.2, text='sq.m')
-        trace5 = go.Bar(x=pv.index, y=pv[("SQM", 'JLL')], name='JLL', marker=dict(
-            color=color.colliers_yellow), width=0.2, text='sq.m')
-        trace6 = go.Bar(x=pv.index, y=pv[("SQM", 'KF')], name='KF', marker=dict(
-            color=color.colliers_red), width=0.2, text='sq.m')
-
-        if Year == 'All years' or len(Year) == 0:
-            format_data = 'All years'
-        else:
-            format_data = ', '.join(Year)
-
-        img = {
-            'data': [trace1, trace2, trace3, trace4, trace5, trace6],
-            'layout':
-                go.Layout(
-                    title='Deals in {}<br>'
-                          'Deals in Russia'.format(format_data),
-                    autosize=False,
-                    bargap=0.3,
-                    bargroupgap=0,
-                    font=dict(
-                        color=color.colliers_grey_80,
-                        family='Arial',
-                        size=12),
-                    width=500,
-                    height=500,
-                    margin=dict(pad=0),
-                    titlefont=dict(
-                        color=color.colliers_grey_80,
-                        family='Arial',
-                        size=18),
-                    xaxis=dict(
-                        exponentformat=False,
-                        autorange=True,
-                        showgrid=True,
-                        zeroline=True,
-                        showline=True,
-                        autotick=False,
-                        ticks='',
-                        showticklabels=True,
-                        title='Years'
-                    ),
-                    yaxis={'title': 'Area in sq.m'},
-                    barmode='stack')
-        }
-
-        print(img)
-        print(type(img))
-        print(str(img))
-        print(type(str(img)))
-        print(help(plotly.offline.plot))
-
-        # stringpic = "data:image/png;base64," + urllib.parse.quote(str(img))
-
-        # data = pd.DataFrame.from_records([list_of_columns])
-        #
-        # #print(data)
-        # csv_string = data.to_csv(header=False,index=False, encoding='utf-8', sep=',')
-        # csv_string = "data:text/csv;charset=utf-8," + urllib.parse.quote(csv_string)
-        print(type(plotly.offline.plot(img, output_type='file', auto_open=False, image_filename='Graph', image='png')))
-        # plotly.offline.plot(img, output_type='file', auto_open=True, image_filename='Graph', image='png')
-        return plotly.offline.plot(img, output_type='file', auto_open=True, image_filename='Graph', image='png')
+# @app.callback(
+#     dash.dependencies.Output('download-pic-button', 'href'),
+#     [dash.dependencies.Input('download-pic-button', 'n_clicks'),
+#      dash.dependencies.Input('Year', 'value'),
+#      dash.dependencies.Input('Size', 'value')]
+# )
+# def pic_button(n_clicks, Year, Size):
+#     if n_clicks > 0:
+#         if Year == "All years" or len(Year) == 0:
+#             df_plot = deals_df.copy()
+#         else:
+#             df_plot = deals_df[deals_df['Year'].isin(Year)]
+#
+#         if Size == "Default size" or Size is None:
+#             width = 650
+#             height = 450
+#
+#         if Size == "50%":
+#             width = 740
+#             height = 360
+#
+#         if Size == "33%":
+#             width = 426
+#             height = 240
+#
+#         # if Size == "1/4":
+#         #     width = 370
+#         #     height = 180
+#
+#         pv = pd.pivot_table(
+#             df_plot,
+#             index=["Year"],
+#             columns=["Agency"],
+#             values=["SQM"],
+#             aggfunc=sum,
+#             fill_value=0)
+#
+#         print(pv[("SQM", 'Colliers')])
+#
+#         def turn_to_text(sqm):
+#             data_sum = round(sqm)
+#             print(data_sum)
+#             sqm_sum = '{0:,}'.format(data_sum).replace(',', ' ')
+#             return sqm_sum
+#
+#         trace1 = go.Bar(x=pv.index, y=pv[("SQM", 'Colliers')], name='Colliers', marker=dict(
+#             color=color.colliers_dark_blue), width=0.2, text='sq.m')
+#         trace2 = go.Bar(x=pv.index, y=pv[("SQM", 'SAR')], name='SAR', marker=dict(
+#             color=color.colliers_light_blue), width=0.2, text='sq.m')
+#         trace3 = go.Bar(x=pv.index, y=pv[("SQM", 'CW')], name='CW', marker=dict(
+#             color=color.colliers_extra_light_blue), width=0.2, text='sq.m')
+#         trace4 = go.Bar(x=pv.index, y=pv[("SQM", 'CBRE')], name='CBRE', marker=dict(
+#             color=color.colliers_grey_40), width=0.2, text='sq.m')
+#         trace5 = go.Bar(x=pv.index, y=pv[("SQM", 'JLL')], name='JLL', marker=dict(
+#             color=color.colliers_yellow), width=0.2, text='sq.m')
+#         trace6 = go.Bar(x=pv.index, y=pv[("SQM", 'KF')], name='KF', marker=dict(
+#             color=color.colliers_red), width=0.2, text='sq.m')
+#
+#         if Year == 'All years' or len(Year) == 0:
+#             format_data = 'All years'
+#         else:
+#             format_data = ', '.join(Year)
+#
+#         img = {
+#             'data': [trace1, trace2, trace3, trace4, trace5, trace6],
+#             'layout':
+#                 go.Layout(
+#                     title='Deals in {}<br>'
+#                           'Deals in Russia'.format(format_data),
+#                     autosize=False,
+#                     bargap=0.3,
+#                     bargroupgap=0,
+#                     font=dict(
+#                         color=color.colliers_grey_80,
+#                         family='Arial',
+#                         size=12),
+#                     width=500,
+#                     height=500,
+#                     margin=dict(pad=0),
+#                     titlefont=dict(
+#                         color=color.colliers_grey_80,
+#                         family='Arial',
+#                         size=18),
+#                     xaxis=dict(
+#                         exponentformat=False,
+#                         autorange=True,
+#                         showgrid=True,
+#                         zeroline=True,
+#                         showline=True,
+#                         autotick=False,
+#                         ticks='',
+#                         showticklabels=True,
+#                         title='Years'
+#                     ),
+#                     yaxis={'title': 'Area in sq.m'},
+#                     barmode='stack')
+#         }
+#
+#         print(img)
+#         print(type(img))
+#         print(str(img))
+#         print(type(str(img)))
+#         print(help(plotly.offline.plot))
+#
+#         stringpic = "data:image/png;base64," + urllib.parse.quote(str(img))
+#
+#         # data = pd.DataFrame.from_records([list_of_columns])
+#         #
+#         # #print(data)
+#         # csv_string = data.to_csv(header=False,index=False, encoding='utf-8', sep=',')
+#         # csv_string = "data:text/csv;charset=utf-8," + urllib.parse.quote(csv_string)
+#         #print(type(plotly.offline.plot(img, output_type='file', auto_open=False, image_filename='Graph', image='png')))
+#         # plotly.offline.plot(img, output_type='file', auto_open=True, image_filename='Graph', image='png')
+#         return plotly.offline.plot(img, output_type='file', auto_open=True, image_filename='Graph', image='png')
 
 
 @app.callback(
