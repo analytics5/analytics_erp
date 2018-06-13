@@ -48,7 +48,4 @@ jll_color = colliers_yellow
 kf_color = colliers_red
 
 
-
-
-
 bootstrap_grey_28 = '#%02x%02x%02x' % (28, 28, 28)
