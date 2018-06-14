@@ -32,6 +32,11 @@ list_of_columns_for_gui = [
     "Type of deal", "Type of consultancy", "LLR/TR", "LLR only",
     "(E)TR only", "LLR/(E)TR", "Month", "Year", "Quarter"]
 
+list_of_graphics_for_gui = ["Bar-stacked", "Bar-stacked-horizontal", "Bar-unstacked",
+                            # список чеклиста для выбора графика из дерева
+                            "Pie-chart", "Bar-stacked-percent", "Bar-horizontal",
+                            "llr-etr-pie-2017", 'llr-etr-pie-1q-2018', "llr-etr-pie-five-years"]
+
 dbname = 'postgres'  # название базы данных
 host = 'localhost'  # IP адрес хоста, если сервер локальный, "localhost"
 user = 'postgres'  # имя учетной записи в БД
