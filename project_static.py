@@ -16,8 +16,24 @@ list_of_columns = [
     "Property_Name", "Address", "Submarket_Large", "Owner",
     "Date_of_acquiring", "Class", "Class_Colliers", "Floor",
     "SQM", "Deal_Size", "Company", "Business_Sector", "Sublease_Agent",
-    "Type_of_Deal", "Type_of_Consultancy", "LLR_TR", "LLR_Only",
-    "E_TR_Only", "LLR/E_TR", "Month", "Year", "Quarter"]
+    "Type_of_Deal", "Type_of_Consultancy",
+    # "LLR_TR",
+    # "LLR_Only",
+    # "E_TR_Only",
+    # "LLR/E_TR",
+    "Month", "Year", "Quarter"]
+
+list_of_columns_dataframe = [
+    "Include_in_Market_Share", "Agency", "Country", "City",  # список заголовков таблицы по всем сделкам
+    "Property_Name", "Address", "Submarket_Large", "Owner",
+    "Date_of_acquiring", "Class", "Class_Colliers", "Floor",
+    "SQM", "Deal_Size", "Company", "Business_Sector", "Sublease_Agent",
+    "Type_of_Deal", "Type_of_Consultancy",
+    "LLR_TR",
+    "LLR_Only",
+    "E_TR_Only",
+    "LLR/E_TR",
+    "Month", "Year", "Quarter"]
 
 list_of_columns_suspicious = [
     'Agency', 'Country', 'City', 'Property Name',  # список заголовков таблицы по сомнительным сделкам
@@ -29,13 +45,22 @@ list_of_columns_for_gui = [
     "Property name", "Address", "Submarket large", "Owner",
     "Date of acquiring", "Class", "Class Colliers", "Floor",
     "SQM", "Size of deal", "Company", "Business sector", "Sublease agent",
-    "Type of deal", "Type of consultancy", "LLR/TR", "LLR only",
-    "(E)TR only", "LLR/(E)TR", "Month", "Year", "Quarter"]
+    "Type of deal", "Type of consultancy",
+    # "LLR/TR",
+    # "LLR only",
+    # "(E)TR only",
+    # "LLR/(E)TR",
+    "Month", "Year", "Quarter"]
 
-list_of_graphics_for_gui = ["Bar-stacked", "Bar-stacked-horizontal", "Bar-unstacked",
-                            # список чеклиста для выбора графика из дерева
+list_of_graphics_for_gui = ["Bar-stacked", "Bar-stacked-horizontal", "Bar-unstacked",  # список чеклиста для выбора графика из дерева
                             "Pie-chart", "Bar-stacked-percent", "Bar-horizontal",
-                            "llr-etr-pie-2017", 'llr-etr-pie-1q-2018', "llr-etr-pie-five-years"]
+                            "LLR,(E)TR, LLR/(E)TR-pie-2017-total", 'LLR,(E)TR, LLR/(E)TR-pie-1Q2018-total',
+                            "LLR,(E)TR, LLR/(E)TR-pie-five-years-total", "LLR,(E)TR, LLR/(E)TR-pie-2017-RU",
+                            'LLR,(E)TR, LLR/(E)TR-pie-1Q2018-RU', "LLR,(E)TR, LLR/(E)TR-pie-five-years-RU",
+                            "LLR,(E)TR, LLR/(E)TR-pie-2017-MOS", 'LLR,(E)TR, LLR/(E)TR-pie-1Q2018-MOS',
+                            "LLR,(E)TR, LLR/(E)TR-pie-five-years-MOS"]
+
+list_of_deals_type = ["All deals", "LLR only", "(E)TR only", "LLR/(E)TR only"]  # список чеклиста для сортировки сделок из дерева
 
 dbname = 'postgres'  # название базы данных
 host = 'localhost'  # IP адрес хоста, если сервер локальный, "localhost"
@@ -58,7 +83,7 @@ with conn:
     cur.execute(all_deals_query)  # исполнение SQL команды по дампу всей базы
     all_deals_query_data = cur.fetchall()  # запись данных во временную переменную
     all_deals_query_df = pd.DataFrame(all_deals_query_data)  # запись данных в pandas data frame
-    all_deals_query_df.columns = list_of_columns  # имена столбцов датафрейма по сделкам
+    all_deals_query_df.columns = list_of_columns_dataframe  # имена столбцов датафрейма по сделкам
     all_deals_query_df["LLR_Only"] = all_deals_query_df["LLR_Only"].replace(
         {True: 'Yes', False: 'No'})  # замена булевых значений на yes и no
     all_deals_query_df["E_TR_Only"] = all_deals_query_df["E_TR_Only"].replace(
