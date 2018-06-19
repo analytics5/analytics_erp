@@ -1,7 +1,6 @@
 white = '#%02x%02x%02x' % (255, 255, 255)
 black = '#%02x%02x%02x' % (0, 0, 0)
 
-
 colliers_dark_blue = '#%02x%02x%02x' % (0, 70, 127)
 colliers_dark_blue_40 = '#%02x%02x%02x' % (152, 170, 195)
 colliers_dark_blue_20 = '#%02x%02x%02x' % (204, 211, 224)
@@ -39,7 +38,6 @@ colliers_dark_red_70 = '#%02x%02x%02x' % (195, 112, 94)
 colliers_dark_red_50 = '#%02x%02x%02x' % (215, 151, 136)
 colliers_dark_red_30 = '#%02x%02x%02x' % (233, 192, 181)
 
-
 colliers_color = colliers_dark_blue
 sar_color = colliers_light_blue
 cw_color = colliers_extra_light_blue
@@ -47,5 +45,13 @@ cbre_color = colliers_grey_40
 jll_color = colliers_yellow
 kf_color = colliers_red
 
+dict_colors_of_companies = {
+    'Colliers': colliers_dark_blue,
+    'CW': colliers_extra_light_blue,
+    'CBRE': colliers_grey_40,
+    'JLL': colliers_yellow,
+    'KF': colliers_red,
+    'SAR': colliers_light_blue,
+}
 
 bootstrap_grey_28 = '#%02x%02x%02x' % (28, 28, 28)

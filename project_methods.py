@@ -1,8 +1,54 @@
+import dash_html_components as html
+import colors_and_fonts as color
+
+
 def get_key(d, value):
     """ФУНКЦИЯ ВОЗВРАЩЕНИЯ ИМЕНИ КЛЮЧА В СЛОВАРЕ ПО ЗНАЧЕНИЮ"""
     for k, v in d.items():
         if v == value:
             return k
+
+
+def generate_table_top_deals(dataframe, max_rows=10):
+    """ФУНКЦИЯ ОТРИСОВКИ ТАБЛИЦЫ ЧЕРЕЗ  HTML, ДЛЯ НАСТРОЙКИ СТИЛЯ ИСПОЛЬЗУЕТСЯ CSS РАЗМЕТКА"""
+    return html.Table(
+        [
+            html.Tr(    # HEADER
+                [
+                    html.Th(col,
+                            style={
+                                'text-align': 'center',
+                                'width': wid,
+                                'height': '20px'
+                            })
+                    for col, wid in zip(["Agency", "Property Name", "Office area", "Company", "Business Sector", "Type of Deal"],
+                                     ['70px', '175px', '105px', '171px', '229px', '102px'])
+                ],
+                style={  # CSS разметка
+                     'background-color': color.colliers_light_blue,
+                     'color': color.white
+                }
+            )
+        ]
+        +
+        [
+            html.Tr(            # BODY
+                [
+                    html.Td(dataframe.iloc[i][col],
+                            style={
+                                'text-align': 'center',
+                                'width': wid,
+                                'height': '20px'
+
+                            })
+                    for col, wid in zip(dataframe.columns, ['70px', '175px', '105px', '171px', '229px', '102px'])
+                ],
+                style={  # CSS разметка
+                      'background-color': color.colliers_pale_blue,
+                }
+            ) for i in range(min(len(dataframe), max_rows))]
+    )
+
 
 def replace_index(list_of_ind):
     """ФУНКЦИЯ УБИРАЕТ НИЖНИЕ ПОДЧЕРКИВАНИЯ В НАЗВАНИИ ИНДЕКСОВ ДЛЯ ВЫВОДА НА ЭКРАН"""
@@ -22,6 +68,3 @@ def replace_index(list_of_ind):
     list_of_ind = [w.replace('LLR_E_TR', 'LLR/(E)TR') for w in list_of_ind]
     print(list_of_ind)
     return list_of_ind
-
-
-
