@@ -13,38 +13,43 @@ def generate_table_top_deals(dataframe, max_rows=10):
     """ФУНКЦИЯ ОТРИСОВКИ ТАБЛИЦЫ ЧЕРЕЗ  HTML, ДЛЯ НАСТРОЙКИ СТИЛЯ ИСПОЛЬЗУЕТСЯ CSS РАЗМЕТКА"""
     return html.Table(
         [
-            html.Tr(    # HEADER
+            html.Tr(  # HEADER
                 [
                     html.Th(col,
                             style={
                                 'text-align': 'center',
                                 'width': wid,
-                                'height': '20px'
+                                'height': hei
                             })
-                    for col, wid in zip(["Agency", "Property Name", "Office area", "Company", "Business Sector", "Type of Deal"],
-                                     ['70px', '175px', '105px', '171px', '229px', '102px'])
+                    for col, wid, hei in zip(["Agency", "Property Name", "Office area", "Company",
+                                              "Business Sector", "Type of Deal"],
+                                             ['70px', '175px', '105px', '171px', '229px', '102px'],
+                                             ['15px', '15px', '15px', '15px', '15px', '15px'])
                 ],
                 style={  # CSS разметка
-                     'background-color': color.colliers_light_blue,
-                     'color': color.white
+                    'background-color': color.colliers_light_blue,
+                    'color': color.white,
+
                 }
             )
         ]
         +
         [
-            html.Tr(            # BODY
+            html.Tr(  # BODY
                 [
                     html.Td(dataframe.iloc[i][col],
                             style={
                                 'text-align': 'center',
                                 'width': wid,
-                                'height': '20px'
+                                'height': hei
 
                             })
-                    for col, wid in zip(dataframe.columns, ['70px', '175px', '105px', '171px', '229px', '102px'])
+                    for col, wid, hei in zip(dataframe.columns,
+                                             ['70px', '175px', '105px', '171px', '229px', '102px'],
+                                             ['15px', '15px', '15px', '15px', '15px', '15px'])
                 ],
                 style={  # CSS разметка
-                      'background-color': color.colliers_pale_blue,
+                    'background-color': color.colliers_pale_blue,
                 }
             ) for i in range(min(len(dataframe), max_rows))]
     )

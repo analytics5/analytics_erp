@@ -483,11 +483,11 @@ def deals_page():
 
                     html.Div(
                         [
-                            dcc.Checklist(  # чеклист для выбора типов сделок
+                            dcc.RadioItems(  # чеклист для выбора типов сделок
                                 id='interface-data',
                                 options=[{'label': i, 'value': i} for i in  # все возможные значения из списка типов сделок
                                          static.list_of_deals_type],
-                                values=["All deals"],
+                                value="All deals",
                                 labelStyle={
                                     'display': 'none',
                                     'padding-left:': '90px'
@@ -1515,11 +1515,11 @@ def deals_page():
                                     'width': '100wh'
                                 },
                             ),
-                            html.Div(id='sum',
+                            html.Div(id='sum-string',
                                      style={'color': color.colliers_grey_10,
                                             'background-color': color.colliers_dark_blue,
                                             'fontSize': 14,
-                                            'border': 'solid 1px black',
+                                            #'border': 'solid 1px black',
                                             }
                                      ),
                             html.Div([
@@ -1533,6 +1533,7 @@ def deals_page():
                             ],
                                 style={'background-color': color.colliers_dark_blue}
                             ),
+
                             html.Div([
                                 html.A(
                                     'Download Selected Data',
@@ -1696,7 +1697,7 @@ def deals_page():
                             ),
 
 
-# _______________________________________________________________________________________________________________#
+#  _______________________________________________________________________________________________________________#
 
                             html.Div(
                                 [

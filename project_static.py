@@ -59,7 +59,7 @@ list_of_graphics_for_gui = ["Bar-stacked", "Bar-stacked-horizontal", "Bar-unstac
                             "LLR,(E)TR, LLR/(E)TR-pie-2017-MOS", 'LLR,(E)TR, LLR/(E)TR-pie-1Q2018-MOS',
                             "LLR,(E)TR, LLR/(E)TR-pie-five-years-MOS", 'biggest-deal-tab-2017']
 
-list_of_deals_type = ["All deals", "LLR only", "(E)TR only", "LLR/(E)TR only"]  # список чеклиста для сортировки сделок из дерева
+list_of_deals_type = ["All deals", "LLR only", "(E)TR only", "LLR_(E)TR only", "All LLR", "All (E)TR"]  # список чеклиста для сортировки сделок из дерева
 
 dbname = 'postgres'  # название базы данных
 host = 'localhost'  # IP адрес хоста, если сервер локальный, "localhost"
@@ -83,6 +83,7 @@ with conn:
     all_deals_query_data = cur.fetchall()  # запись данных во временную переменную
     all_deals_query_df = pd.DataFrame(all_deals_query_data)  # запись данных в pandas data frame
     all_deals_query_df.columns = list_of_columns_dataframe  # имена столбцов датафрейма по сделкам
+    all_deals_query_df = all_deals_query_df.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
     all_deals_query_df["LLR_Only"] = all_deals_query_df["LLR_Only"].replace(
         {True: 'Yes', False: 'No'})  # замена булевых значений на yes и no
     all_deals_query_df["E_TR_Only"] = all_deals_query_df["E_TR_Only"].replace(
