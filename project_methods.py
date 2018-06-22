@@ -1,6 +1,7 @@
 import dash_html_components as html
-import colors_and_fonts as color
-
+import project_colors_and_fonts as color
+import project_static as static
+import pandas as pd
 
 def get_key(d, value):
     """ФУНКЦИЯ ВОЗВРАЩЕНИЯ ИМЕНИ КЛЮЧА В СЛОВАРЕ ПО ЗНАЧЕНИЮ"""
@@ -73,3 +74,50 @@ def replace_index(list_of_ind):
     list_of_ind = [w.replace('LLR_E_TR', 'LLR/(E)TR') for w in list_of_ind]
     print(list_of_ind)
     return list_of_ind
+
+
+def data_to_table_preparation(data_in, list_of_values_copy, cond_1):
+
+    if 'All deals' in data_in:
+        data_to_table = static.all_deals_query_df
+        if len(list_of_values_copy) != 0:
+            for i in range(len(list_of_values_copy)):
+                ind = get_key(cond_1, [list_of_values_copy[i]])
+                data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
+    if 'LLR' in data_in:
+        data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
+        if len(list_of_values_copy) != 0:
+            for i in range(len(list_of_values_copy)):
+                ind = get_key(cond_1, [list_of_values_copy[i]])
+                data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
+    if '(E)TR' in data_in:
+        data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
+        if len(list_of_values_copy) != 0:
+            for i in range(len(list_of_values_copy)):
+                ind = get_key(cond_1, [list_of_values_copy[i]])
+                data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
+    if 'LLR/(E)TR' in data_in:
+        data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
+        if len(list_of_values_copy) != 0:
+            for i in range(len(list_of_values_copy)):
+                ind = get_key(cond_1, [list_of_values_copy[i]])
+                data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
+    if 'All LLR (include double)' in data_in:
+        data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
+        data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
+        data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
+        if len(list_of_values_copy) != 0:
+            for i in range(len(list_of_values_copy)):
+                ind = get_key(cond_1, [list_of_values_copy[i]])
+                data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
+    if 'All (E)TR (include double)' in data_in:
+        data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
+        data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
+        data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
+        if len(list_of_values_copy) != 0:
+            for i in range(len(list_of_values_copy)):
+                ind = get_key(cond_1, [list_of_values_copy[i]])
+                data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
+    return data_to_table
+
+

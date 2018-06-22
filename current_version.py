@@ -12,8 +12,8 @@ import plotly.graph_objs as go
 import pandas as pd
 import psycopg2 as pg
 import numpy as np
-import colors_and_fonts as color
-import App_sql_queries as sql
+import project_colors_and_fonts as color
+import project_sql as sql
 # import Passwords_and_Usernames as users
 import plotly
 import plotly.plotly as py
@@ -25,6 +25,8 @@ import project_pages_layout as pages
 import project_methods as my_method
 import project_deals_graphics
 
+#print(help(dt.DataTable))
+
 ''' НАЧАЛО ОСНОВНОГО БЛОКА ПРИЛОЖЕНИЯ '''
 
 app = dash.Dash(__name__)
@@ -33,8 +35,8 @@ app.config.suppress_callback_exceptions = True
 ''' Мой файл с гитхаба на rawgit с измененной css разметкой'''
 app.css.append_css({'external_url': 'https://rawgit.com/Wittgensteen/work_stuff/master/new_buttons.css'})
 
-py.sign_in('Wittgensteen', 'D9dEx9VG7SfqBlkoDvRl')  # вход в аккаунт на plotly Юра
-# py.sign_in('Barbrady', 'V11sgDqsmE4XpTsVGoFJ')  # вход в аккаунт на plotly Дима
+#py.sign_in('Wittgensteen', 'D9dEx9VG7SfqBlkoDvRl')  # вход в аккаунт на plotly Юра
+py.sign_in('Barbrady', 'V11sgDqsmE4XpTsVGoFJ')  # вход в аккаунт на plotly Дима
 
 app.layout = pages.serve_layout()  # ОСНОВНАЯ СТРАНИЦА ПРИЛОЖЕНИЯ
 
@@ -43,8 +45,9 @@ app.layout = pages.serve_layout()  # ОСНОВНАЯ СТРАНИЦА ПРИЛ�
 index_page = pages.index_page()  # РАЗМЕТКА СТРАНИЦЫ 'MAIN'
 page_help_layout = pages.help_page()  # РАЗМЕТКА СТРАНИЦЫ 'HELP'
 page_about_layout = pages.about_page()  # РАЗМЕТКА СТРАНИЦЫ 'ABOUT PROJECT'
-page_4_layout = pages.deals_page()  # РАЗМЕТКА СТРАНИЦЫ 'БАЗА ПО СДЕЛКАМ'
-page_5_layout = pages.update_database()  # РАЗМЕТКА СТРАНИЦЫ 'ОБНОВИТЬ БАЗУ'
+page_deals_layout = pages.deals_page()  # РАЗМЕТКА СТРАНИЦЫ 'БАЗА ПО СДЕЛКАМ'
+page_update_database_layout = pages.update_database()  # РАЗМЕТКА СТРАНИЦЫ 'ОБНОВИТЬ БАЗУ'
+page_default_graphs_and_tabs = pages.default_graphics_and_tables_page()
 suspicious_deals_layout = pages.suspicious_deals_page()  # РАЗМЕТКА СТРАНИЦЫ 'БАЗА ПО СОМНИТЕЛЬНЫМ СДЕЛКАМ'
 
 '''Функция кнопки скрытия элементов интерфейса'''
@@ -71,7 +74,7 @@ def interface_button():
                 'display': 'block',
             }
         if n_clicks is not None and n_clicks % 2 != 0:
-            # print(n_clicks)
+            # ##print(n_clicks)
             style = {
                 'transition': 'left 0.1s',
                 '-webkit-transition': 'left 0.1s',
@@ -200,6 +203,743 @@ def interface_button():
 
 interface_button()
 
+
+# БЛОК КОДА ПО ДЕФОЛТНЫМ ГРАФИКАМ
+
+'''
+Отображение tree-like блока со списком дефолтных графиков
+'''
+
+
+@app.callback(dash.dependencies.Output('interface-default-graphics', 'labelStyle'),
+              # на вход принимается значение чеклиста 'colums'
+              [dash.dependencies.Input('tree-checklist-default-graphics', 'values')   # 'tree-checklist-default-graphics'
+               # если значение выбрано, то отрисовывается новый блок со списком, как в дереве
+               ])
+def show_default_graphics_tree(val):
+    if 'Show' in val:
+        children = {'display': 'block',
+                    'width': '192px',
+                    'margin': '0 0 0 10px',
+                    }
+    else:
+        children = {'display': 'none'
+                    }
+    return children
+
+
+'''
+Функция отображения дефолтных графиков по значению checklist`а
+Эта функция введена искуственно для возможности скрыть блок кода
+'''
+
+
+def select_default_graph_from_check_graphics():
+    @app.callback(dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-2017-RU', 'style'),
+                  [dash.dependencies.Input('interface-default-graphics', 'values')
+                   ])
+    def update_llr_etr_pie_2017_graph_ru(val):
+        try:
+            if 'LLR, (E)TR, LLR/(E)TR-pie-2017-RU' in val:
+                show_graph = {'display': 'inline-block',
+                              'padding': '100px 0px 0px 50px'
+                              }
+
+            if 'LLR, (E)TR, LLR/(E)TR-pie-2017-RU' not in val:
+                show_graph = {'display': 'none',
+                              }
+        except Exception as e:
+            return html.Div([
+                'There was an error'
+            ])
+        return show_graph
+
+    @app.callback(dash.dependencies.Output('pie-4-text', 'style'),
+                  [dash.dependencies.Input('interface-graphics', 'values')
+                   ])
+    def update_llr_etr_pie_2017_text_ru(val):
+        try:
+            if 'LLR, (E)TR, LLR/(E)TR-pie-2017-RU' in val:
+                show_text = {'display': 'inline-block',
+                             'padding-left': '150px'
+                             }
+
+            if 'LLR, (E)TR, LLR/(E)TR-pie-2017-RU' not in val:
+                show_text = {'display': 'none',
+                             }
+        except Exception as e:
+            return html.Div([
+                'There was an error'
+            ])
+        return show_text
+
+    @app.callback(dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU', 'style'),
+                  [dash.dependencies.Input('interface-graphics', 'values')
+                   ])
+    def update_llr_etr_pie_1q_2018_graph_ru(val):
+        try:
+            if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU' in val:
+                show_graph = {'display': 'inline-block',
+                              'padding': '100px 0px 0px 50px'
+                              }
+
+            if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU' not in val:
+                show_graph = {'display': 'none'
+                              }
+        except Exception as e:
+            return html.Div([
+                'There was an error'
+            ])
+        return show_graph
+
+    @app.callback(dash.dependencies.Output('pie-5-text', 'style'),
+                  [dash.dependencies.Input('interface-graphics', 'values')
+                   ])
+    def update_llr_etr_pie_2017_text_ru(val):
+        try:
+            if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU' in val:
+                show_text = {'display': 'inline-block',
+                             'padding-left': '150px'
+                             }
+
+            if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU' not in val:
+                show_text = {'display': 'none',
+                             }
+        except Exception as e:
+            return html.Div([
+                'There was an error'
+            ])
+        return show_text
+
+    @app.callback(dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-five-years-RU', 'style'),
+                  [dash.dependencies.Input('interface-graphics', 'values')
+                   ])
+    def update_llr_etr_pie_five_years_graph_ru(val):
+        try:
+            if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-RU' in val:
+                show_graph = {'display': 'inline-block',
+                              'padding': '100px 0px 0px 50px'
+                              }
+
+            if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-RU' not in val:
+                show_graph = {'display': 'none',
+                              }
+        except Exception as e:
+            return html.Div([
+                'There was an error'
+            ])
+        return show_graph
+
+    @app.callback(dash.dependencies.Output('pie-6-text', 'style'),
+                  [dash.dependencies.Input('interface-graphics', 'values')
+                   ])
+    def update_llr_etr_pie_2017_text_ru(val):
+        try:
+            if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-RU' in val:
+                show_text = {'display': 'inline-block',
+                             'padding-left': '90px'
+                             }
+
+            if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-RU' not in val:
+                show_text = {'display': 'none',
+                             }
+        except Exception as e:
+            return html.Div([
+                'There was an error'
+            ])
+        return show_text
+
+    @app.callback(dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-2017-MOS', 'style'),
+                  [dash.dependencies.Input('interface-graphics', 'values')
+                   ])
+    def update_llr_etr_pie_2017_graph_mos(val):
+        try:
+            if 'LLR, (E)TR, LLR/(E)TR-pie-2017-MOS' in val:
+                show_graph = {'display': 'inline-block',
+                              }
+
+            if 'LLR, (E)TR, LLR/(E)TR-pie-2017-MOS' not in val:
+                show_graph = {'display': 'none',
+                              }
+        except Exception as e:
+            return html.Div([
+                'There was an error'
+            ])
+        return show_graph
+
+    @app.callback(dash.dependencies.Output('pie-7-text', 'style'),
+                  [dash.dependencies.Input('interface-graphics', 'values')
+                   ])
+    def update_llr_etr_pie_2017_text_mos(val):
+        try:
+            if 'LLR, (E)TR, LLR/(E)TR-pie-2017-MOS' in val:
+                show_text = {'display': 'inline-block',
+                             'padding-left': '50px'
+                             }
+
+            if 'LLR, (E)TR, LLR/(E)TR-pie-2017-MOS' not in val:
+                show_text = {'display': 'none',
+                             }
+        except Exception as e:
+            return html.Div([
+                'There was an error'
+            ])
+        return show_text
+
+    @app.callback(dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS', 'style'),
+                  [dash.dependencies.Input('interface-graphics', 'values')
+                   ])
+    def update_llr_etr_pie_1q_2018_graph_mos(val):
+        try:
+            if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS' in val:
+                show_graph = {'display': 'inline-block',
+                              }
+
+            if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS' not in val:
+                show_graph = {'display': 'none',
+                              }
+        except Exception as e:
+            return html.Div([
+                'There was an error'
+            ])
+        return show_graph
+
+    @app.callback(dash.dependencies.Output('pie-8-text', 'style'),
+                  [dash.dependencies.Input('interface-graphics', 'values')
+                   ])
+    def update_llr_etr_pie_2017_text_mos(val):
+        try:
+            if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS' in val:
+                show_text = {'display': 'inline-block',
+                             'padding-left': '50px'
+                             }
+
+            if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS' not in val:
+                show_text = {'display': 'none',
+                             }
+        except Exception as e:
+            return html.Div([
+                'There was an error'
+            ])
+        return show_text
+
+    @app.callback(dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS', 'style'),
+                  [dash.dependencies.Input('interface-graphics', 'values')
+                   ])
+    def update_llr_etr_pie_five_years_graph_mos(val):
+        try:
+            if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS' in val:
+                show_graph = {'display': 'inline-block',
+                              }
+
+            if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS' not in val:
+                show_graph = {'display': 'none',
+                              }
+        except Exception as e:
+            return html.Div([
+                'There was an error'
+            ])
+        return show_graph
+
+    @app.callback(dash.dependencies.Output('pie-9-text', 'style'),
+                  [dash.dependencies.Input('interface-graphics', 'values')
+                   ])
+    def update_llr_etr_pie_2017_text_mos(val):
+        try:
+            if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS' in val:
+                show_text = {'display': 'inline-block',
+                             'padding-left': '50px'
+                             }
+
+            if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS' not in val:
+                show_text = {'display': 'none',
+                             }
+        except Exception as e:
+            return html.Div([
+                'There was an error'
+            ])
+        return show_text
+
+    @app.callback(dash.dependencies.Output('html-tab-RU-2017-div', 'style'),
+                  [dash.dependencies.Input('interface-graphics', 'values')
+                   ])
+    def update_bigest_deal_table_2017(val):
+        try:
+            if 'biggest-deal-tab-2017' in val:
+                show_tab = {'display': 'inline',
+                            }
+
+            if 'biggest-deal-tab-2017' not in val:
+                show_tab = {'display': 'none',
+                            }
+        except Exception as e:
+            return html.Div([
+                'There was an error'
+            ])
+        return show_tab
+
+    @app.callback(dash.dependencies.Output('html-tab-RU-1q2018-div', 'style'),
+                  [dash.dependencies.Input('interface-graphics', 'values')
+                   ])
+    def update_bigest_deal_table_1q2018(val):
+        try:
+            if 'biggest-deal-tab-1q2018' in val:
+                show_tab = {'display': 'inline',
+                            }
+
+            if 'biggest-deal-tab-1q2018' not in val:
+                show_tab = {'display': 'none',
+                            }
+        except Exception as e:
+            return html.Div([
+                'There was an error'
+            ])
+        return show_tab
+
+    @app.callback(dash.dependencies.Output('html-tab-RU-five-years-div', 'style'),
+                  [dash.dependencies.Input('interface-graphics', 'values')
+                   ])
+    def update_bigest_deal_table_2013_2018(val):
+        try:
+            if 'biggest-deal-tab-2013-2018' in val:
+                show_tab = {'display': 'inline',
+                            }
+
+            if 'biggest-deal-tab-2013-2018' not in val:
+                show_tab = {'display': 'none',
+                            }
+        except Exception as e:
+            return html.Div([
+                'There was an error'
+            ])
+        return show_tab
+
+
+select_default_graph_from_check_graphics()  # вызов функции с отображением дефолтных графиков и подписей к ним
+
+
+'''Функция по отрисовке дефолтных графиков'''
+
+
+def default_graphics():
+    @app.callback(
+        dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-2017-RU', 'figure'),
+        [dash.dependencies.Input('interface-default-graphics', 'values')
+         ]
+    )
+    def update_pie_graph_4(values):
+
+        df_plot = static.all_deals_query_df.copy()
+        data = df_plot[(df_plot['Year'].isin(['2017'])) & (df_plot['Country'].isin(['RU']))]
+        data_llr_only = data[(data['LLR_Only'].isin(['Yes']))]
+        data_e_tr_only = data[(data['E_TR_Only'].isin(['Yes']))]
+        data_llr_e_tr_only = data[(data['LLR/E_TR'].isin(['Yes']))]
+        # ##print('data_llr_only_sum', data_llr_only["SQM"].sum())
+        # ##print('data_e_tr_only', data_e_tr_only["SQM"].sum())
+        # ##print('data_llr_e_tr_only', data_llr_e_tr_only["SQM"].sum())
+        d = {'Type': ['LLR', '(E)TR', 'LLR/(E)TR'],
+             'SQM': [data_llr_only["SQM"].sum(), data_e_tr_only["SQM"].sum(), data_llr_e_tr_only["SQM"].sum()]}
+        df_graph = pd.DataFrame(data=d)
+
+        width = 600
+        height = 450
+
+        pv = pd.pivot_table(
+            df_graph,
+            index=["Type"],
+            values=["SQM"],
+            aggfunc=sum,
+            fill_value=0)
+        colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_light_blue]
+        pie1 = go.Pie(values=pv["SQM"],
+                      labels=['LLR', '(E)TR', 'LLR/(E)TR'],
+                      hoverinfo='label+value+percent',
+                      textinfo='label+percent',
+                      textposition='outside',
+                      textfont=dict(
+                          color=colors_pie,
+                          size=12),
+                      marker=dict(colors=colors_pie,
+                                  line=dict(
+                                      color=color.white,
+                                      width=1
+                                  )
+                                  )
+                      )
+        return {
+            'data': [pie1],
+            'layout': go.Layout(
+                title='2017',
+                width=width,
+                height=height,
+                legend=dict(orientation="h",
+                            traceorder="normal"),
+            )
+        }
+
+    @app.callback(
+        dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU', 'figure'),
+        [dash.dependencies.Input('interface-default-graphics', 'values')
+         ])
+    def update_pie_graph_5(values):
+
+        df_plot = static.all_deals_query_df.copy()
+        data = df_plot[
+            (df_plot['Year'].isin(['2018'])) & (df_plot['Country'].isin(['RU'])) & (df_plot['Quarter'].isin(['1']))]
+        data_llr_only = data[(data['LLR_Only'].isin(['Yes']))]
+        data_e_tr_only = data[(data['E_TR_Only'].isin(['Yes']))]
+        data_llr_e_tr_only = data[(data['LLR/E_TR'].isin(['Yes']))]
+        # ##print('data_llr_only_sum', data_llr_only["SQM"].sum())
+        # ##print('data_e_tr_only', data_e_tr_only["SQM"].sum())
+        # ##print('data_llr_e_tr_only', data_llr_e_tr_only["SQM"].sum())
+        d = {'Type': ['LLR', '(E)TR', 'LLR/(E)TR'],
+             'SQM': [data_llr_only["SQM"].sum(), data_e_tr_only["SQM"].sum(), data_llr_e_tr_only["SQM"].sum()]}
+        df_graph = pd.DataFrame(data=d)
+
+        width = 600
+        height = 450
+
+        pv = pd.pivot_table(
+            df_graph,
+            index=["Type"],
+            values=["SQM"],
+            aggfunc=sum,
+            fill_value=0)
+        colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_light_blue]
+        pie1 = go.Pie(values=pv["SQM"],
+                      labels=['LLR', '(E)TR', 'LLR/(E)TR'],
+                      hoverinfo='label+value+percent',
+                      textinfo='label+percent',
+                      textposition='outside',
+                      textfont=dict(
+                          color=colors_pie,
+                          size=12),
+                      marker=dict(colors=colors_pie,
+                                  line=dict(
+                                      color=color.white,
+                                      width=1
+                                  )
+                                  )
+                      )
+        return {
+            'data': [pie1],
+            'layout': go.Layout(
+                title='1q 2018',
+                width=width,
+                height=height,
+                legend=dict(orientation="h",
+                            traceorder="normal"),
+            )
+        }
+
+    @app.callback(
+        dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-five-years-RU', 'figure'),
+        [dash.dependencies.Input('interface-default-graphics', 'values')
+         ])
+    def update_pie_graph_6(values):
+
+        df_plot = static.all_deals_query_df.copy()
+        data = df_plot[(df_plot['Country'].isin(['RU']))]
+        data_llr_only = data[(data['LLR_Only'].isin(['Yes'])) & (df_plot['Country'].isin(['RU']))]
+        data_e_tr_only = data[(data['E_TR_Only'].isin(['Yes']))]
+        data_llr_e_tr_only = data[(data['LLR/E_TR'].isin(['Yes']))]
+        # ##print('data_llr_only_sum', data_llr_only["SQM"].sum())
+        # ##print('data_e_tr_only', data_e_tr_only["SQM"].sum())
+        # ##print('data_llr_e_tr_only', data_llr_e_tr_only["SQM"].sum())
+        d = {'Type': ['LLR', '(E)TR', 'LLR/(E)TR'],
+             'SQM': [data_llr_only["SQM"].sum(), data_e_tr_only["SQM"].sum(), data_llr_e_tr_only["SQM"].sum()]}
+        df_graph = pd.DataFrame(data=d)
+
+        width = 600
+        height = 450
+
+        pv = pd.pivot_table(
+            df_graph,
+            index=["Type"],
+            values=["SQM"],
+            aggfunc=sum,
+            fill_value=0)
+        colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_light_blue]
+        pie1 = go.Pie(values=pv["SQM"],
+                      labels=['LLR', '(E)TR', 'LLR/(E)TR'],
+                      hoverinfo='label+value+percent',
+                      textinfo='label+percent',
+                      textposition='outside',
+                      textfont=dict(
+                          color=colors_pie,
+                          size=12),
+                      marker=dict(colors=colors_pie,
+                                  line=dict(
+                                      color=color.white,
+                                      width=1
+                                  )
+                                  )
+                      )
+        return {
+            'data': [pie1],
+            'layout': go.Layout(
+                title='2013-2018',
+                width=width,
+                height=height,
+                legend=dict(orientation="h",
+                            traceorder="normal"),
+            )
+        }
+
+    @app.callback(
+        dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-2017-MOS', 'figure'),
+        [dash.dependencies.Input('interface-default-graphics', 'values')
+         ])
+    def update_pie_graph_7(values):
+
+        df_plot = static.all_deals_query_df.copy()
+        data = df_plot[(df_plot['Year'].isin(['2017'])) & (df_plot['City'].isin(['Moscow']))]
+        data_llr_only = data[(data['LLR_Only'].isin(['Yes']))]
+        data_e_tr_only = data[(data['E_TR_Only'].isin(['Yes']))]
+        data_llr_e_tr_only = data[(data['LLR/E_TR'].isin(['Yes']))]
+        # ##print('data_llr_only_sum', data_llr_only["SQM"].sum())
+        # ##print('data_e_tr_only', data_e_tr_only["SQM"].sum())
+        # ##print('data_llr_e_tr_only', data_llr_e_tr_only["SQM"].sum())
+        d = {'Type': ['LLR', '(E)TR', 'LLR/(E)TR'],
+             'SQM': [data_llr_only["SQM"].sum(), data_e_tr_only["SQM"].sum(), data_llr_e_tr_only["SQM"].sum()]}
+        df_graph = pd.DataFrame(data=d)
+
+        width = 600
+        height = 450
+
+        pv = pd.pivot_table(
+            df_graph,
+            index=["Type"],
+            values=["SQM"],
+            aggfunc=sum,
+            fill_value=0)
+        colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_light_blue]
+        pie1 = go.Pie(values=pv["SQM"],
+                      labels=['LLR', '(E)TR', 'LLR/(E)TR'],
+                      hoverinfo='label+value+percent',
+                      textinfo='label+percent',
+                      textposition='outside',
+                      textfont=dict(
+                          color=colors_pie,
+                          size=12),
+                      marker=dict(colors=colors_pie,
+                                  line=dict(
+                                      color=color.white,
+                                      width=1
+                                  )
+                                  )
+                      )
+        return {
+            'data': [pie1],
+            'layout': go.Layout(
+                title='2017',
+                width=width,
+                height=height,
+                legend=dict(orientation="h",
+                            traceorder="normal"),
+            )
+        }
+
+    @app.callback(
+        dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS', 'figure'),
+        [dash.dependencies.Input('interface-default-graphics', 'values')
+         ])
+    def update_pie_graph_8(values):
+
+        df_plot = static.all_deals_query_df.copy()
+        data = df_plot[
+            (df_plot['Year'].isin(['2018'])) & (df_plot['City'].isin(['Moscow'])) & (df_plot['Quarter'].isin(['1']))]
+        data_llr_only = data[(data['LLR_Only'].isin(['Yes']))]
+        data_e_tr_only = data[(data['E_TR_Only'].isin(['Yes']))]
+        data_llr_e_tr_only = data[(data['LLR/E_TR'].isin(['Yes']))]
+        # ##print('data_llr_only_sum', data_llr_only["SQM"].sum())
+        # ##print('data_e_tr_only', data_e_tr_only["SQM"].sum())
+        # ##print('data_llr_e_tr_only', data_llr_e_tr_only["SQM"].sum())
+        d = {'Type': ['LLR', '(E)TR', 'LLR/(E)TR'],
+             'SQM': [data_llr_only["SQM"].sum(), data_e_tr_only["SQM"].sum(), data_llr_e_tr_only["SQM"].sum()]}
+        df_graph = pd.DataFrame(data=d)
+
+        width = 600
+        height = 450
+
+        pv = pd.pivot_table(
+            df_graph,
+            index=["Type"],
+            values=["SQM"],
+            aggfunc=sum,
+            fill_value=0)
+        colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_light_blue]
+        pie1 = go.Pie(values=pv["SQM"],
+                      labels=['LLR', '(E)TR', 'LLR/(E)TR'],
+                      hoverinfo='label+value+percent',
+                      textinfo='label+percent',
+                      textposition='outside',
+                      textfont=dict(
+                          color=colors_pie,
+                          size=12),
+                      marker=dict(colors=colors_pie,
+                                  line=dict(
+                                      color=color.white,
+                                      width=1
+                                  )
+                                  )
+                      )
+        return {
+            'data': [pie1],
+            'layout': go.Layout(
+                title='1q 2018',
+                width=width,
+                height=height,
+                legend=dict(orientation="h",
+                            traceorder="normal"),
+            )
+        }
+
+    @app.callback(
+        dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS', 'figure'),
+        [dash.dependencies.Input('interface-default-graphics', 'values')
+         ])
+    def update_pie_graph_9(values):
+
+        df_plot = static.all_deals_query_df.copy()
+        data = df_plot[(df_plot['City'].isin(['Moscow']))]
+        data_llr_only = data[(data['LLR_Only'].isin(['Yes']))]
+        data_e_tr_only = data[(data['E_TR_Only'].isin(['Yes']))]
+        data_llr_e_tr_only = data[(data['LLR/E_TR'].isin(['Yes']))]
+        # ##print('data_llr_only_sum', data_llr_only["SQM"].sum())
+        # ##print('data_e_tr_only', data_e_tr_only["SQM"].sum())
+        # ##print('data_llr_e_tr_only', data_llr_e_tr_only["SQM"].sum())
+        d = {'Type': ['LLR', '(E)TR', 'LLR/(E)TR'],
+             'SQM': [data_llr_only["SQM"].sum(), data_e_tr_only["SQM"].sum(), data_llr_e_tr_only["SQM"].sum()]}
+        df_graph = pd.DataFrame(data=d)
+
+        width = 600
+        height = 450
+
+        pv = pd.pivot_table(
+            df_graph,
+            index=["Type"],
+            values=["SQM"],
+            aggfunc=sum,
+            fill_value=0)
+        colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_light_blue]
+        pie1 = go.Pie(values=pv["SQM"],
+                      labels=['LLR', '(E)TR', 'LLR/(E)TR'],
+                      hoverinfo='label+value+percent',
+                      textinfo='label+percent',
+                      textposition='outside',
+                      textfont=dict(
+                          color=colors_pie,
+                          size=12),
+                      marker=dict(colors=colors_pie,
+                                  line=dict(
+                                      color=color.white,
+                                      width=1
+                                  )
+                                  )
+                      )
+        return {
+            'data': [pie1],
+            'layout': go.Layout(
+                title='2013-2018',
+                width=width,
+                height=height,
+                legend=dict(orientation="h",
+                            traceorder="normal"),
+            )
+        }
+
+
+default_graphics()  # вызов функции с отображением базовых pie графиков
+
+
+'''Функция по отрисовке дефолтных таблиц по крупнейшим этим сделкам за этот период'''
+
+
+def default_tables():
+    @app.callback(
+        dash.dependencies.Output('biggest-deal-tab-test', 'figure'),
+        [dash.dependencies.Input('interface-default-graphics', 'values')
+         ])
+    def update_biggest_deals_tab(values):
+        all_deals_2017 = static.all_deals_query_df[static.all_deals_query_df['Year'].isin(['2017'])]
+        all_deals_2017 = all_deals_2017.sort_values('SQM', ascending=False)
+
+        all_deals_2017_selected = all_deals_2017[['Agency', 'Property_Name', 'SQM',
+                                                  'Company', 'Business_Sector', 'Type_of_Deal']].head(10)
+        # ##print(all_deals_2017_selected.Property_Name.tolist())
+
+        trace = go.Table(
+            columnwidth=[80, 200, 100, 150, 200, 100],
+
+            header=dict(values=["Agency", "Property Name", "Office area", "Company", "Business Sector", "Type of Deal"],
+                        line=dict(color=color.white),
+                        fill=dict(color=color.sar_color),
+                        align=['left'] * 6,
+                        font=dict(color='white', size=12), ),
+
+            cells=dict(values=[all_deals_2017_selected.Agency.tolist(),
+                               all_deals_2017_selected.Property_Name.tolist(),
+                               all_deals_2017_selected.SQM,
+                               all_deals_2017_selected.Company,
+                               all_deals_2017_selected.Business_Sector,
+                               all_deals_2017_selected.Type_of_Deal
+
+                               ],
+                       line=dict(color=color.white),
+                       fill=dict(color='#EDFAFF'),
+                       align=['left'] * 6))
+
+        layout = dict(width=830, height=330)
+        data = [trace]
+        fig = dict(data=data, layout=layout)
+        return fig
+
+    @app.callback(
+        dash.dependencies.Output('html-tab-RU-2017', 'children'),
+        [dash.dependencies.Input('interface-default-graphics', 'values')
+         ])
+    def update_html_tab(values):
+        all_deals_2017 = static.all_deals_query_df[static.all_deals_query_df['Year'].isin(['2017'])]
+        all_deals_2017 = all_deals_2017.sort_values('SQM', ascending=False)
+        all_deals_2017['SQM'] = all_deals_2017['SQM'].round()
+        all_deals_2017_selected = all_deals_2017[['Agency', 'Property_Name', 'SQM',
+                                                  'Company', 'Business_Sector', 'Type_of_Deal']].head(10)
+        return my_method.generate_table_top_deals(all_deals_2017_selected)
+
+    @app.callback(
+        dash.dependencies.Output('html-tab-RU-1q2018', 'children'),
+        [dash.dependencies.Input('interface-default-graphics', 'values')
+         ])
+    def update_html_tab(values):
+        all_deals_2018 = static.all_deals_query_df[
+            static.all_deals_query_df['Year'].isin(['2018']) & static.all_deals_query_df['Quarter'].isin(['1'])]
+        all_deals_2018 = all_deals_2018.sort_values('SQM', ascending=False)
+        all_deals_2018['SQM'] = all_deals_2018['SQM'].round()
+        all_deals_2018_selected = all_deals_2018[['Agency', 'Property_Name', 'SQM',
+                                                  'Company', 'Business_Sector', 'Type_of_Deal']].head(10)
+        return my_method.generate_table_top_deals(all_deals_2018_selected)
+
+    @app.callback(
+        dash.dependencies.Output('html-tab-RU-five-years', 'children'),
+        [dash.dependencies.Input('interface-default-graphics', 'values')
+         ])
+    def update_html_tab(values):
+        all_deals_2018 = static.all_deals_query_df
+        all_deals_2018 = all_deals_2018.sort_values('SQM', ascending=False)
+        all_deals_2018['SQM'] = all_deals_2018['SQM'].round()
+        all_deals_2018_selected = all_deals_2018[['Agency', 'Property_Name', 'SQM',
+                                                  'Company', 'Business_Sector', 'Type_of_Deal']].head(10)
+        return my_method.generate_table_top_deals(all_deals_2018_selected)
+
+
+default_tables()  # вызов функции с отображением базовых таблиц
+
+''' Начало блока по отрисовке статических изображений. Код закомментирован до обсуждения  '''
+
+
+# БЛОК КОДА ПО СТРАНИЦЕ СО СДЕЛКАМИ И ГРАФИКАМ К НИМ
+
 '''
 Отображение tree-like блока со списком
 На вход принимается значение чеклиста 'select columns'
@@ -240,12 +980,12 @@ def select_drop_from_check_columns():
         try:
             if 'Include_in_Market_Share' in val:
                 style_include = {'display': 'inline-block',
-                                 'width': '7.69%'
+                                 'width': '150px',
                                  }
 
             if 'Include_in_Market_Share' not in val:
                 style_include = {'display': 'none',
-                                 'width': '7.69%'
+                                 'width': '80px',
                                  }
         except Exception as e:
             return html.Div([
@@ -260,12 +1000,12 @@ def select_drop_from_check_columns():
         try:
             if 'Agency' in val:
                 style_agency = {'display': 'inline-block',
-                                'width': '7.69%'
+                                'width': '110px',
                                 }
 
             if 'Agency' not in val:
                 style_agency = {'display': 'none',
-                                'width': '7.69%'
+                                'width': '80px',
                                 }
         except Exception as e:
             return html.Div([
@@ -280,12 +1020,12 @@ def select_drop_from_check_columns():
         try:
             if 'Country' in val:
                 style_country = {'display': 'inline-block',
-                                 'width': '7.69%'
+                                 'width': '86px',
                                  }
 
             if 'Country' not in val:
                 style_country = {'display': 'none',
-                                 'width': '7.69%'
+                                 'width': '80px',
                                  }
         except Exception as e:
             return html.Div([
@@ -300,12 +1040,12 @@ def select_drop_from_check_columns():
         try:
             if 'City' in val:
                 style_city = {'display': 'inline-block',
-                              'width': '7.69%'
+                              'width': '110px',
                               }
 
             if 'City' not in val:
                 style_city = {'display': 'none',
-                              'width': '7.69%'
+                              'width': '80px',
                               }
         except Exception as e:
             return html.Div([
@@ -320,12 +1060,12 @@ def select_drop_from_check_columns():
         try:
             if 'Property_Name' in val:
                 style_property_name = {'display': 'inline-block',
-                                       'width': '7.69%'
+                                       'width': '230px',
                                        }
 
             if 'Property_Name' not in val:
                 style_property_name = {'display': 'none',
-                                       'width': '7.69%'
+                                       'width': '80px',
                                        }
         except Exception as e:
             return html.Div([
@@ -340,12 +1080,12 @@ def select_drop_from_check_columns():
         try:
             if 'Class' in val:
                 style_class = {'display': 'inline-block',
-                               'width': '7.69%'
+                               'width': '76px',
                                }
 
             if 'Class' not in val:
                 style_class = {'display': 'none',
-                               'width': '7.69%'
+                               'width': '80px',
                                }
         except Exception as e:
             return html.Div([
@@ -360,12 +1100,12 @@ def select_drop_from_check_columns():
         try:
             if 'SQM' in val:
                 style_SQM = {'display': 'inline-block',
-                             'width': '7.69%'
+                             'width': '80px',
                              }
 
             if 'SQM' not in val:
                 style_SQM = {'display': 'none',
-                             'width': '7.69%'
+                             'width': '80px',
                              }
         except Exception as e:
             return html.Div([
@@ -380,12 +1120,12 @@ def select_drop_from_check_columns():
         try:
             if 'SQM' in val:
                 style_Company = {'display': 'inline-block',
-                                 'width': '7.69%'
+                                 'width': '184px',
                                  }
 
             if 'SQM' not in val:
                 style_Company = {'display': 'none',
-                                 'width': '7.69%'
+                                 'width': '80px',
                                  }
         except Exception as e:
             return html.Div([
@@ -400,12 +1140,12 @@ def select_drop_from_check_columns():
         try:
             if 'Business_Sector' in val:
                 style_Business_Sector = {'display': 'inline-block',
-                                         'width': '7.69%'
+                                         'width': '250px',
                                          }
 
             if 'Business_Sector' not in val:
                 style_Business_Sector = {'display': 'none',
-                                         'width': '7.69%'
+                                         'width': '80px',
                                          }
         except Exception as e:
             return html.Div([
@@ -420,12 +1160,12 @@ def select_drop_from_check_columns():
         try:
             if 'Type_of_Deal' in val:
                 style_Type_of_Deal = {'display': 'inline-block',
-                                      'width': '7.69%'
+                                      'width': '130px',
                                       }
 
             if 'Type_of_Deal' not in val:
                 style_Type_of_Deal = {'display': 'none',
-                                      'width': '7.69%'
+                                      'width': '80px',
                                       }
         except Exception as e:
             return html.Div([
@@ -440,12 +1180,12 @@ def select_drop_from_check_columns():
         try:
             if 'Type_of_Consultancy' in val:
                 style_Type_of_Consultancy = {'display': 'inline-block',
-                                             'width': '7.69%'
+                                             'width': '170px',
                                              }
 
             if 'Type_of_Consultancy' not in val:
                 style_Type_of_Consultancy = {'display': 'none',
-                                             'width': '7.69%'
+                                             'width': '80px',
                                              }
         except Exception as e:
             return html.Div([
@@ -453,25 +1193,25 @@ def select_drop_from_check_columns():
             ])
         return style_Type_of_Consultancy
 
-    @app.callback(dash.dependencies.Output('LLR/TR_Div', 'style'),
-                  [dash.dependencies.Input('interface-columns', 'values')
-                   ])
-    def update_drop_Type_of_Consultancy(val):
-        try:
-            if 'LLR_TR' in val:
-                style_LLR_TR = {'display': 'inline-block',
-                                'width': '7.69%'
-                                }
-
-            if 'LLR_TR' not in val:
-                style_LLR_TR = {'display': 'none',
-                                'width': '7.69%'
-                                }
-        except Exception as e:
-            return html.Div([
-                'There was an error'
-            ])
-        return style_LLR_TR
+    # @app.callback(dash.dependencies.Output('LLR/TR_Div', 'style'),
+    #               [dash.dependencies.Input('interface-columns', 'values')
+    #                ])
+    # def update_drop_Type_of_Consultancy(val):
+    #     try:
+    #         if 'LLR_TR' in val:
+    #             style_LLR_TR = {'display': 'inline-block',
+    #                             'width': '80px',
+    #                             }
+    #
+    #         if 'LLR_TR' not in val:
+    #             style_LLR_TR = {'display': 'none',
+    #                             'width': '80px',
+    #                             }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return style_LLR_TR
 
     @app.callback(dash.dependencies.Output('Year_Div', 'style'),
                   [dash.dependencies.Input('interface-columns', 'values')
@@ -480,12 +1220,12 @@ def select_drop_from_check_columns():
         try:
             if 'Year' in val:
                 style_Year = {'display': 'inline-block',
-                              'width': '7.69%'
+                              'width': '90px',
                               }
 
             if 'Year' not in val:
                 style_Year = {'display': 'none',
-                              'width': '7.69%'
+                              'width': '80px',
                               }
         except Exception as e:
             return html.Div([
@@ -500,11 +1240,11 @@ def select_drop_from_check_columns():
         try:
             if 'Quarter' in val:
                 style_Quarter = {'display': 'inline-block',
-                                 'width': '7.69%'
+                                 'width': '90px',
                                  }
             if 'Quarter' not in val:
                 style_Quarter = {'display': 'none',
-                                 'width': '7.69%'
+                                 'width': '80px',
                                  }
         except Exception as e:
             return html.Div([
@@ -519,12 +1259,12 @@ def select_drop_from_check_columns():
         try:
             if 'Address' in val:
                 style_Addres = {'display': 'inline-block',
-                                'width': '7.69%'
+                                'width': '250px',
                                 }
 
             if 'Address' not in val:
                 style_Addres = {'display': 'none',
-                                'width': '7.69%'
+                                'width': '80px',
                                 }
         except Exception as e:
             return html.Div([
@@ -539,12 +1279,12 @@ def select_drop_from_check_columns():
         try:
             if 'Submarket_Large' in val:
                 style_Submarket_Large = {'display': 'inline-block',
-                                         'width': '7.69%'
+                                         'width': '150px',
                                          }
 
             if 'Submarket_Large' not in val:
                 style_Submarket_Large = {'display': 'none',
-                                         'width': '7.69%'
+                                         'width': '80px',
                                          }
         except Exception as e:
             return html.Div([
@@ -559,12 +1299,12 @@ def select_drop_from_check_columns():
         try:
             if 'Owner' in val:
                 style_Owner = {'display': 'inline-block',
-                               'width': '7.69%'
+                               'width': '150px',
                                }
 
             if 'Owner' not in val:
                 style_Owner = {'display': 'none',
-                               'width': '7.69%'
+                               'width': '80px',
                                }
         except Exception as e:
             return html.Div([
@@ -579,12 +1319,12 @@ def select_drop_from_check_columns():
         try:
             if 'Date_of_acquiring' in val:
                 style_Date_of_acquiring = {'display': 'inline-block',
-                                           'width': '7.69%'
+                                           'width': '150px',
                                            }
 
             if 'Date_of_acquiring' not in val:
                 style_Date_of_acquiring = {'display': 'none',
-                                           'width': '7.69%'
+                                           'width': '80px',
                                            }
         except Exception as e:
             return html.Div([
@@ -599,12 +1339,12 @@ def select_drop_from_check_columns():
         try:
             if 'Class_Colliers' in val:
                 style_Class_Colliers = {'display': 'inline-block',
-                                        'width': '7.69%'
+                                        'width': '150px',
                                         }
 
             if 'Class_Colliers' not in val:
                 style_Class_Colliers = {'display': 'none',
-                                        'width': '7.69%'
+                                        'width': '80px',
                                         }
         except Exception as e:
             return html.Div([
@@ -619,12 +1359,12 @@ def select_drop_from_check_columns():
         try:
             if 'Floor' in val:
                 style_Floor = {'display': 'inline-block',
-                               'width': '7.69%'
+                               'width': '150px',
                                }
 
             if 'Floor' not in val:
                 style_Floor = {'display': 'none',
-                               'width': '7.69%'
+                               'width': '80px',
                                }
         except Exception as e:
             return html.Div([
@@ -639,12 +1379,12 @@ def select_drop_from_check_columns():
         try:
             if 'Deal_Size' in val:
                 style_Deal_Size = {'display': 'inline-block',
-                                   'width': '7.69%'
+                                   'width': '150px',
                                    }
 
             if 'Deal_Size' not in val:
                 style_Deal_Size = {'display': 'none',
-                                   'width': '7.69%'
+                                   'width': '80px',
                                    }
         except Exception as e:
             return html.Div([
@@ -659,12 +1399,12 @@ def select_drop_from_check_columns():
         try:
             if 'Sublease_Agent' in val:
                 style_Sublease_Agent = {'display': 'inline-block',
-                                        'width': '7.69%'
+                                        'width': '150px',
                                         }
 
             if 'Sublease_Agent' not in val:
                 style_Sublease_Agent = {'display': 'none',
-                                        'width': '7.69%'
+                                        'width': '80px',
                                         }
         except Exception as e:
             return html.Div([
@@ -672,65 +1412,65 @@ def select_drop_from_check_columns():
             ])
         return style_Sublease_Agent
 
-    @app.callback(dash.dependencies.Output('LLR_Only_Div', 'style'),
-                  [dash.dependencies.Input('interface-columns', 'values')
-                   ])
-    def update_drop_LLR_Only(val):
-        try:
-            if 'LLR_Only' in val:
-                style_LLR_Only = {'display': 'inline-block',
-                                  'width': '7.69%'
-                                  }
-
-            if 'LLR_Only' not in val:
-                style_LLR_Only = {'display': 'none',
-                                  'width': '7.69%'
-                                  }
-        except Exception as e:
-            return html.Div([
-                'There was an error'
-            ])
-        return style_LLR_Only
-
-    @app.callback(dash.dependencies.Output('E_TR_Only_Div', 'style'),
-                  [dash.dependencies.Input('interface-columns', 'values')
-                   ])
-    def update_drop_E_TR_Only(val):
-        try:
-            if 'E_TR_Only' in val:
-                style_E_TR_Only = {'display': 'inline-block',
-                                   'width': '7.69%'
-                                   }
-
-            if 'E_TR_Only' not in val:
-                style_E_TR_Only = {'display': 'none',
-                                   'width': '7.69%'
-                                   }
-        except Exception as e:
-            return html.Div([
-                'There was an error'
-            ])
-        return style_E_TR_Only
-
-    @app.callback(dash.dependencies.Output('LLR/E_TR_Div', 'style'),
-                  [dash.dependencies.Input('interface-columns', 'values')
-                   ])
-    def update_drop_LLR_E_TR(val):
-        try:
-            if 'LLR/E_TR' in val:
-                style_LLR_E_TR = {'display': 'inline-block',
-                                  'width': '7.69%'
-                                  }
-
-            if 'LLR/E_TR' not in val:
-                style_LLR_E_TR = {'display': 'none',
-                                  'width': '7.69%'
-                                  }
-        except Exception as e:
-            return html.Div([
-                'There was an error'
-            ])
-        return style_LLR_E_TR
+    # @app.callback(dash.dependencies.Output('LLR_Only_Div', 'style'),
+    #               [dash.dependencies.Input('interface-columns', 'values')
+    #                ])
+    # def update_drop_LLR_Only(val):
+    #     try:
+    #         if 'LLR_Only' in val:
+    #             style_LLR_Only = {'display': 'inline-block',
+    #                               'width': '80px',
+    #                               }
+    #
+    #         if 'LLR_Only' not in val:
+    #             style_LLR_Only = {'display': 'none',
+    #                               'width': '80px',
+    #                               }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return style_LLR_Only
+    #
+    # @app.callback(dash.dependencies.Output('E_TR_Only_Div', 'style'),
+    #               [dash.dependencies.Input('interface-columns', 'values')
+    #                ])
+    # def update_drop_E_TR_Only(val):
+    #     try:
+    #         if 'E_TR_Only' in val:
+    #             style_E_TR_Only = {'display': 'inline-block',
+    #                                'width': '80px',
+    #                                }
+    #
+    #         if 'E_TR_Only' not in val:
+    #             style_E_TR_Only = {'display': 'none',
+    #                                'width': '80px',
+    #                                }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return style_E_TR_Only
+    #
+    # @app.callback(dash.dependencies.Output('LLR/E_TR_Div', 'style'),
+    #               [dash.dependencies.Input('interface-columns', 'values')
+    #                ])
+    # def update_drop_LLR_E_TR(val):
+    #     try:
+    #         if 'LLR/E_TR' in val:
+    #             style_LLR_E_TR = {'display': 'inline-block',
+    #                               'width': '80px',
+    #                               }
+    #
+    #         if 'LLR/E_TR' not in val:
+    #             style_LLR_E_TR = {'display': 'none',
+    #                               'width': '80px',
+    #                               }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return style_LLR_E_TR
 
     @app.callback(dash.dependencies.Output('Month_Div', 'style'),
                   [dash.dependencies.Input('interface-columns', 'values')
@@ -739,12 +1479,12 @@ def select_drop_from_check_columns():
         try:
             if 'Month' in val:
                 style_Month = {'display': 'inline-block',
-                               'width': '7.69%'
+                               'width': '146px',
                                }
 
             if 'Month' not in val:
                 style_Month = {'display': 'none',
-                               'width': '7.69%'
+                               'width': '80px',
                                }
         except Exception as e:
             return html.Div([
@@ -789,7 +1529,7 @@ def show_graphics_tree(val):
               [dash.dependencies.Input('tree-checklist-data', 'values')
                # если значение выбрано, то отрисовывается новый блок со списком, как в дереве
                ])
-def show_graphics_tree(val):
+def show_data_tree(val):
     if 'Show' in val:
         children = {'display': 'block',
                     'width': '192px',
@@ -799,6 +1539,29 @@ def show_graphics_tree(val):
         children = {'display': 'none'
                     }
     return children
+
+'''
+Отображение tree-like блока со списком статических картинок графиков
+На вход принимается значение чеклиста 'select data'
+'''
+
+
+@app.callback(dash.dependencies.Output('interface-graphics-image', 'labelStyle'),
+              # на вход принимается значение чеклиста 'colums'
+              [dash.dependencies.Input('tree-checklist-graphics-image', 'values')
+               # если значение выбрано, то отрисовывается новый блок со списком, как в дереве
+               ])
+def show_image_tree(val):
+    if 'Show' in val:
+        children = {'display': 'block',
+                    'width': '192px',
+                    'margin': '0 0 0 10px',
+                    }
+    else:
+        children = {'display': 'none'
+                    }
+    return children
+
 
 
 '''
@@ -918,241 +1681,241 @@ def select_graph_from_check_graphics():
             ])
         return show_graph
 
-    @app.callback(dash.dependencies.Output('LLR,(E)TR, LLR/(E)TR-pie-2017-RU', 'style'),
+    # @app.callback(dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-2017-RU', 'style'),
+    #               [dash.dependencies.Input('interface-graphics', 'values')
+    #                ])
+    # def update_llr_etr_pie_2017_graph_ru(val):
+    #     try:
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-2017-RU' in val:
+    #             show_graph = {'display': 'inline-block',
+    #                           'padding': '100px 0px 0px 50px'
+    #                           }
+    #
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-2017-RU' not in val:
+    #             show_graph = {'display': 'none',
+    #                           }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return show_graph
+    #
+    # @app.callback(dash.dependencies.Output('pie-4-text', 'style'),
+    #               [dash.dependencies.Input('interface-graphics', 'values')
+    #                ])
+    # def update_llr_etr_pie_2017_text_ru(val):
+    #     try:
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-2017-RU' in val:
+    #             show_text = {'display': 'inline-block',
+    #                          'padding-left': '150px'
+    #                          }
+    #
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-2017-RU' not in val:
+    #             show_text = {'display': 'none',
+    #                          }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return show_text
+    #
+    # @app.callback(dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU', 'style'),
+    #               [dash.dependencies.Input('interface-graphics', 'values')
+    #                ])
+    # def update_llr_etr_pie_1q_2018_graph_ru(val):
+    #     try:
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU' in val:
+    #             show_graph = {'display': 'inline-block',
+    #                           'padding': '100px 0px 0px 50px'
+    #                           }
+    #
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU' not in val:
+    #             show_graph = {'display': 'none'
+    #                           }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return show_graph
+    #
+    # @app.callback(dash.dependencies.Output('pie-5-text', 'style'),
+    #               [dash.dependencies.Input('interface-graphics', 'values')
+    #                ])
+    # def update_llr_etr_pie_2017_text_ru(val):
+    #     try:
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU' in val:
+    #             show_text = {'display': 'inline-block',
+    #                          'padding-left': '150px'
+    #                          }
+    #
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU' not in val:
+    #             show_text = {'display': 'none',
+    #                          }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return show_text
+    #
+    # @app.callback(dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-five-years-RU', 'style'),
+    #               [dash.dependencies.Input('interface-graphics', 'values')
+    #                ])
+    # def update_llr_etr_pie_five_years_graph_ru(val):
+    #     try:
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-RU' in val:
+    #             show_graph = {'display': 'inline-block',
+    #                           'padding': '100px 0px 0px 50px'
+    #                           }
+    #
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-RU' not in val:
+    #             show_graph = {'display': 'none',
+    #                           }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return show_graph
+    #
+    # @app.callback(dash.dependencies.Output('pie-6-text', 'style'),
+    #               [dash.dependencies.Input('interface-graphics', 'values')
+    #                ])
+    # def update_llr_etr_pie_2017_text_ru(val):
+    #     try:
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-RU' in val:
+    #             show_text = {'display': 'inline-block',
+    #                          'padding-left': '90px'
+    #                          }
+    #
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-RU' not in val:
+    #             show_text = {'display': 'none',
+    #                          }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return show_text
+    #
+    # @app.callback(dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-2017-MOS', 'style'),
+    #               [dash.dependencies.Input('interface-graphics', 'values')
+    #                ])
+    # def update_llr_etr_pie_2017_graph_mos(val):
+    #     try:
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-2017-MOS' in val:
+    #             show_graph = {'display': 'inline-block',
+    #                           }
+    #
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-2017-MOS' not in val:
+    #             show_graph = {'display': 'none',
+    #                           }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return show_graph
+    #
+    # @app.callback(dash.dependencies.Output('pie-7-text', 'style'),
+    #               [dash.dependencies.Input('interface-graphics', 'values')
+    #                ])
+    # def update_llr_etr_pie_2017_text_mos(val):
+    #     try:
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-2017-MOS' in val:
+    #             show_text = {'display': 'inline-block',
+    #                          'padding-left': '50px'
+    #                          }
+    #
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-2017-MOS' not in val:
+    #             show_text = {'display': 'none',
+    #                          }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return show_text
+    #
+    # @app.callback(dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS', 'style'),
+    #               [dash.dependencies.Input('interface-graphics', 'values')
+    #                ])
+    # def update_llr_etr_pie_1q_2018_graph_mos(val):
+    #     try:
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS' in val:
+    #             show_graph = {'display': 'inline-block',
+    #                           }
+    #
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS' not in val:
+    #             show_graph = {'display': 'none',
+    #                           }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return show_graph
+    #
+    # @app.callback(dash.dependencies.Output('pie-8-text', 'style'),
+    #               [dash.dependencies.Input('interface-graphics', 'values')
+    #                ])
+    # def update_llr_etr_pie_2017_text_mos(val):
+    #     try:
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS' in val:
+    #             show_text = {'display': 'inline-block',
+    #                          'padding-left': '50px'
+    #                          }
+    #
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS' not in val:
+    #             show_text = {'display': 'none',
+    #                          }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return show_text
+    #
+    # @app.callback(dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS', 'style'),
+    #               [dash.dependencies.Input('interface-graphics', 'values')
+    #                ])
+    # def update_llr_etr_pie_five_years_graph_mos(val):
+    #     try:
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS' in val:
+    #             show_graph = {'display': 'inline-block',
+    #                           }
+    #
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS' not in val:
+    #             show_graph = {'display': 'none',
+    #                           }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return show_graph
+    #
+    # @app.callback(dash.dependencies.Output('pie-9-text', 'style'),
+    #               [dash.dependencies.Input('interface-graphics', 'values')
+    #                ])
+    # def update_llr_etr_pie_2017_text_mos(val):
+    #     try:
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS' in val:
+    #             show_text = {'display': 'inline-block',
+    #                          'padding-left': '50px'
+    #                          }
+    #
+    #         if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS' not in val:
+    #             show_text = {'display': 'none',
+    #                          }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return show_text
+
+    @app.callback(dash.dependencies.Output('biggest-deal-tab-test', 'style'),
                   [dash.dependencies.Input('interface-graphics', 'values')
                    ])
-    def update_llr_etr_pie_2017_graph_ru(val):
+    def update_biigest_deal_table_test(val):
         try:
-            if 'LLR,(E)TR, LLR/(E)TR-pie-2017-RU' in val:
-                show_graph = {'display': 'inline-block',
-                              'padding': '100px 0px 0px 50px'
-                              }
-
-            if 'LLR,(E)TR, LLR/(E)TR-pie-2017-RU' not in val:
-                show_graph = {'display': 'none',
-                              }
-        except Exception as e:
-            return html.Div([
-                'There was an error'
-            ])
-        return show_graph
-
-    @app.callback(dash.dependencies.Output('pie-4-text', 'style'),
-                  [dash.dependencies.Input('interface-graphics', 'values')
-                   ])
-    def update_llr_etr_pie_2017_text_ru(val):
-        try:
-            if 'LLR,(E)TR, LLR/(E)TR-pie-2017-RU' in val:
-                show_text = {'display': 'inline-block',
-                             'padding-left': '150px'
-                             }
-
-            if 'LLR,(E)TR, LLR/(E)TR-pie-2017-RU' not in val:
-                show_text = {'display': 'none',
-                             }
-        except Exception as e:
-            return html.Div([
-                'There was an error'
-            ])
-        return show_text
-
-    @app.callback(dash.dependencies.Output('LLR,(E)TR, LLR/(E)TR-pie-1Q2018-RU', 'style'),
-                  [dash.dependencies.Input('interface-graphics', 'values')
-                   ])
-    def update_llr_etr_pie_1q_2018_graph_ru(val):
-        try:
-            if 'LLR,(E)TR, LLR/(E)TR-pie-1Q2018-RU' in val:
-                show_graph = {'display': 'inline-block',
-                              'padding': '100px 0px 0px 50px'
-                              }
-
-            if 'LLR,(E)TR, LLR/(E)TR-pie-1Q2018-RU' not in val:
-                show_graph = {'display': 'none'
-                              }
-        except Exception as e:
-            return html.Div([
-                'There was an error'
-            ])
-        return show_graph
-
-    @app.callback(dash.dependencies.Output('pie-5-text', 'style'),
-                  [dash.dependencies.Input('interface-graphics', 'values')
-                   ])
-    def update_llr_etr_pie_2017_text_ru(val):
-        try:
-            if 'LLR,(E)TR, LLR/(E)TR-pie-1Q2018-RU' in val:
-                show_text = {'display': 'inline-block',
-                             'padding-left': '150px'
-                             }
-
-            if 'LLR,(E)TR, LLR/(E)TR-pie-1Q2018-RU' not in val:
-                show_text = {'display': 'none',
-                             }
-        except Exception as e:
-            return html.Div([
-                'There was an error'
-            ])
-        return show_text
-
-    @app.callback(dash.dependencies.Output('LLR,(E)TR, LLR/(E)TR-pie-five-years-RU', 'style'),
-                  [dash.dependencies.Input('interface-graphics', 'values')
-                   ])
-    def update_llr_etr_pie_five_years_graph_ru(val):
-        try:
-            if 'LLR,(E)TR, LLR/(E)TR-pie-five-years-RU' in val:
-                show_graph = {'display': 'inline-block',
-                              'padding': '100px 0px 0px 50px'
-                              }
-
-            if 'LLR,(E)TR, LLR/(E)TR-pie-five-years-RU' not in val:
-                show_graph = {'display': 'none',
-                              }
-        except Exception as e:
-            return html.Div([
-                'There was an error'
-            ])
-        return show_graph
-
-    @app.callback(dash.dependencies.Output('pie-6-text', 'style'),
-                  [dash.dependencies.Input('interface-graphics', 'values')
-                   ])
-    def update_llr_etr_pie_2017_text_ru(val):
-        try:
-            if 'LLR,(E)TR, LLR/(E)TR-pie-five-years-RU' in val:
-                show_text = {'display': 'inline-block',
-                             'padding-left': '90px'
-                             }
-
-            if 'LLR,(E)TR, LLR/(E)TR-pie-five-years-RU' not in val:
-                show_text = {'display': 'none',
-                             }
-        except Exception as e:
-            return html.Div([
-                'There was an error'
-            ])
-        return show_text
-
-    @app.callback(dash.dependencies.Output('LLR,(E)TR, LLR/(E)TR-pie-2017-MOS', 'style'),
-                  [dash.dependencies.Input('interface-graphics', 'values')
-                   ])
-    def update_llr_etr_pie_2017_graph_mos(val):
-        try:
-            if 'LLR,(E)TR, LLR/(E)TR-pie-2017-MOS' in val:
-                show_graph = {'display': 'inline-block',
-                              }
-
-            if 'LLR,(E)TR, LLR/(E)TR-pie-2017-MOS' not in val:
-                show_graph = {'display': 'none',
-                              }
-        except Exception as e:
-            return html.Div([
-                'There was an error'
-            ])
-        return show_graph
-
-    @app.callback(dash.dependencies.Output('pie-7-text', 'style'),
-                  [dash.dependencies.Input('interface-graphics', 'values')
-                   ])
-    def update_llr_etr_pie_2017_text_mos(val):
-        try:
-            if 'LLR,(E)TR, LLR/(E)TR-pie-2017-MOS' in val:
-                show_text = {'display': 'inline-block',
-                             'padding-left': '50px'
-                             }
-
-            if 'LLR,(E)TR, LLR/(E)TR-pie-2017-MOS' not in val:
-                show_text = {'display': 'none',
-                             }
-        except Exception as e:
-            return html.Div([
-                'There was an error'
-            ])
-        return show_text
-
-    @app.callback(dash.dependencies.Output('LLR,(E)TR, LLR/(E)TR-pie-1Q2018-MOS', 'style'),
-                  [dash.dependencies.Input('interface-graphics', 'values')
-                   ])
-    def update_llr_etr_pie_1q_2018_graph_mos(val):
-        try:
-            if 'LLR,(E)TR, LLR/(E)TR-pie-1Q2018-MOS' in val:
-                show_graph = {'display': 'inline-block',
-                              }
-
-            if 'LLR,(E)TR, LLR/(E)TR-pie-1Q2018-MOS' not in val:
-                show_graph = {'display': 'none',
-                              }
-        except Exception as e:
-            return html.Div([
-                'There was an error'
-            ])
-        return show_graph
-
-    @app.callback(dash.dependencies.Output('pie-8-text', 'style'),
-                  [dash.dependencies.Input('interface-graphics', 'values')
-                   ])
-    def update_llr_etr_pie_2017_text_mos(val):
-        try:
-            if 'LLR,(E)TR, LLR/(E)TR-pie-1Q2018-MOS' in val:
-                show_text = {'display': 'inline-block',
-                             'padding-left': '50px'
-                             }
-
-            if 'LLR,(E)TR, LLR/(E)TR-pie-1Q2018-MOS' not in val:
-                show_text = {'display': 'none',
-                             }
-        except Exception as e:
-            return html.Div([
-                'There was an error'
-            ])
-        return show_text
-
-    @app.callback(dash.dependencies.Output('LLR,(E)TR, LLR/(E)TR-pie-five-years-MOS', 'style'),
-                  [dash.dependencies.Input('interface-graphics', 'values')
-                   ])
-    def update_llr_etr_pie_five_years_graph_mos(val):
-        try:
-            if 'LLR,(E)TR, LLR/(E)TR-pie-five-years-MOS' in val:
-                show_graph = {'display': 'inline-block',
-                              }
-
-            if 'LLR,(E)TR, LLR/(E)TR-pie-five-years-MOS' not in val:
-                show_graph = {'display': 'none',
-                              }
-        except Exception as e:
-            return html.Div([
-                'There was an error'
-            ])
-        return show_graph
-
-    @app.callback(dash.dependencies.Output('pie-9-text', 'style'),
-                  [dash.dependencies.Input('interface-graphics', 'values')
-                   ])
-    def update_llr_etr_pie_2017_text_mos(val):
-        try:
-            if 'LLR,(E)TR, LLR/(E)TR-pie-five-years-MOS' in val:
-                show_text = {'display': 'inline-block',
-                             'padding-left': '50px'
-                             }
-
-            if 'LLR,(E)TR, LLR/(E)TR-pie-five-years-MOS' not in val:
-                show_text = {'display': 'none',
-                             }
-        except Exception as e:
-            return html.Div([
-                'There was an error'
-            ])
-        return show_text
-
-    @app.callback(dash.dependencies.Output('biggest-deal-tab-2017', 'style'),
-                  [dash.dependencies.Input('interface-graphics', 'values')
-                   ])
-    def update_biigest_deal_table_2017(val):
-        try:
-            if 'biggest-deal-tab-2017' in val:
+            if 'biggest-deal-tab-test' in val:
                 show_tab = {'display': 'inline-block',
                             }
 
-            if 'biggest-deal-tab-2017' not in val:
+            if 'biggest-deal-tab-test' not in val:
                 show_tab = {'display': 'none',
                             }
         except Exception as e:
@@ -1161,8 +1924,63 @@ def select_graph_from_check_graphics():
             ])
         return show_tab
 
+    # @app.callback(dash.dependencies.Output('html-tab-RU-2017-div', 'style'),
+    #               [dash.dependencies.Input('interface-graphics', 'values')
+    #                ])
+    # def update_bigest_deal_table_2017(val):
+    #     try:
+    #         if 'biggest-deal-tab-2017' in val:
+    #             show_tab = {'display': 'inline',
+    #                         }
+    #
+    #         if 'biggest-deal-tab-2017' not in val:
+    #             show_tab = {'display': 'none',
+    #                         }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return show_tab
+    #
+    # @app.callback(dash.dependencies.Output('html-tab-RU-1q2018-div', 'style'),
+    #               [dash.dependencies.Input('interface-graphics', 'values')
+    #                ])
+    # def update_bigest_deal_table_1q2018(val):
+    #     try:
+    #         if 'biggest-deal-tab-1q2018' in val:
+    #             show_tab = {'display': 'inline',
+    #                         }
+    #
+    #         if 'biggest-deal-tab-1q2018' not in val:
+    #             show_tab = {'display': 'none',
+    #                         }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return show_tab
+    #
+    # @app.callback(dash.dependencies.Output('html-tab-RU-five-years-div', 'style'),
+    #               [dash.dependencies.Input('interface-graphics', 'values')
+    #                ])
+    # def update_bigest_deal_table_2013_2018(val):
+    #     try:
+    #         if 'biggest-deal-tab-2013-2018' in val:
+    #             show_tab = {'display': 'inline',
+    #                         }
+    #
+    #         if 'biggest-deal-tab-2013-2018' not in val:
+    #             show_tab = {'display': 'none',
+    #                         }
+    #     except Exception as e:
+    #         return html.Div([
+    #             'There was an error'
+    #         ])
+    #     return show_tab
+
 
 select_graph_from_check_graphics()  # вызов функции с отображением графиков и подписей к ним
+
 
 '''
 Вывод строк таблицы
@@ -1224,166 +2042,11 @@ def update_datatable(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
     cond_1 = cond.copy()  # копия словаря
     list_of_values_copy = list(filter(None,
                                       list_of_values))  # очистка кортежа от пустых элементов (при не выбранном значении value, значение по умолчанию = None
-    if 'All deals' in data_in:
-        # print('Yes, "All deals" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            return static.all_deals_query_df[col].to_dict('records')
-        # ____________________________________________________________#
+    data_to_table = my_method.data_to_table_preparation(data_in, list_of_values_copy, cond_1)
+    data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
 
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[
-                        (static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-                else:
-                    data_to_table = data_to_table[(static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-            return data_to_table[col].to_dict('records')
+    return data_to_table[col].to_dict('records')
 
-    if 'LLR only' in data_in:
-        # print('Yes, "LLR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-
-            return data_to_table[col].to_dict('records')
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-
-
-                else:
-                    data_to_table = data_to_table[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-
-            return data_to_table[col].to_dict('records')
-
-    if '(E)TR only' in data_in:
-        # print('Yes, "(E)TR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-
-            return data_to_table[col].to_dict('records')
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-
-                else:
-                    data_to_table = data_to_table[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-
-            return data_to_table[col].to_dict('records')
-
-    if 'LLR_(E)TR only' in data_in:
-        ##print('Yes, "LLR/E_TR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-
-            return data_to_table[col].to_dict('records')
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-
-                else:
-                    data_to_table = data_to_table[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-
-            return data_to_table[col].to_dict('records')
-
-    if 'All LLR' in data_in:
-        # print('Yes, "All LLR in data_in')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-            data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-
-            return data_to_table[col].to_dict('records')
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-
-                else:
-                    data_to_table_double = data_to_table[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_llr = data_to_table[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-
-            return data_to_table[col].to_dict('records')
-
-    if 'All (E)TR' in data_in:
-        # print('Yes, "All (E)TR in data_in')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-            data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-
-            return data_to_table[col].to_dict('records')
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-
-                else:
-                    data_to_table_double = data_to_table[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_etr = data_to_table[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-
-            return data_to_table[col].to_dict('records')
 
 
 '''  Подсчёт суммы по отфильтрованным данным  '''
@@ -1423,181 +2086,26 @@ def update_sum(Year, Country, Agency, City, Property_Name, Class, SQM, Business_
                Type_of_Consultancy, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
                Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent,
                Month, col, data_in):
-    cond = dict(Year=[Year], Country=[Country], Agency=[Agency],
+    cond = dict(Year=[Year], Country=[Country], Agency=[Agency], City=[City],
                 # создание словаря с ключом - названием столбца, значением - выбранным параметрам
-                City=[City], Property_Name=[Property_Name], Class=[Class],
-                SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
-                Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy],
-                Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
-                Submarket_Large=[Submarket_Large],
-                Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers], Floor=[Floor],
-                Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], Month=[Month])
+                Property_Name=[Property_Name], Class=[Class], SQM=[SQM], Company=[Company],
+                Business_Sector=[Business_Sector], Type_of_Deal=[Type_of_Deal],
+                Type_of_Consultancy=[Type_of_Consultancy], Quarter=[Quarter],
+                Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
+                Submarket_Large=[Submarket_Large], Owner=[Owner], Date_of_acquiring=[Date_of_acquiring],
+                Class_Colliers=[Class_Colliers], Floor=[Floor], Deal_Size=[Deal_Size],
+                Sublease_Agent=[Sublease_Agent], Month=[Month])
     list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
                       Type_of_Consultancy, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large,
-                      Owner,
-                      Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent,
-                      Month)
+                      Owner, Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, Month)
     cond_1 = cond.copy()
 
     list_of_values_copy = list(filter(None, list_of_values))
-    print('data_in', data_in)
 
-    if 'All deals' in data_in:
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_sum = int(round(static.all_deals_query_df["SQM"].sum()))
-            # форматирование отображения разрядов числа, на место запятой ставится пробел
-            sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                       ' ')
+    data_to_table = my_method.data_to_table_preparation(data_in, list_of_values_copy, cond_1)
 
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data = static.all_deals_query_df[(static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-                    data_sum = int(round(data["SQM"].sum()))
-                    # форматирование отображения разрядов числа, на место запятой ставится пробел
-                    sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                               ' ')
-                else:
-                    data = data[(static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-                    data_sum = int(round(data["SQM"].sum()))
-                    # форматирование отображения разрядов числа, на место запятой ставится пробел
-                    sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                               ' ')
-
-    if 'LLR only' in data_in:
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-            data_sum = int(round(data_to_table["SQM"].sum()))
-            # форматирование отображения разрядов числа, на место запятой ставится пробел
-            sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                       ' ')
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_sum = int(round(data_to_table["SQM"].sum()))
-                    # форматирование отображения разрядов числа, на место запятой ставится пробел
-                    sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                               ' ')
-                else:
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_sum = int(round(data_to_table["SQM"].sum()))
-                    # форматирование отображения разрядов числа, на место запятой ставится пробел
-                    sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                               ' ')
-
-    if '(E)TR only' in data_in:
-        print('TEST')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-            data_sum = int(round(data_to_table["SQM"].sum()))
-            # форматирование отображения разрядов числа, на место запятой ставится пробел
-            sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                       ' ')
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_sum = int(round(data_to_table["SQM"].sum()))
-                    # форматирование отображения разрядов числа, на место запятой ставится пробел
-                    sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                               ' ')
-                else:
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_sum = int(round(data_to_table["SQM"].sum()))
-                    # форматирование отображения разрядов числа, на место запятой ставится пробел
-                    sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                               ' ')
-
-    if 'LLR_(E)TR only' in data_in:
-        print('TEST 2')
-        print(static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])])
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_sum = int(round(data_to_table["SQM"].sum()))
-            # форматирование отображения разрядов числа, на место запятой ставится пробел
-            sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                       ' ')
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_sum = int(round(data_to_table["SQM"].sum()))
-                    # форматирование отображения разрядов числа, на место запятой ставится пробел
-                    sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                               ' ')
-                else:
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_sum = int(round(data_to_table["SQM"].sum()))
-                    # форматирование отображения разрядов числа, на место запятой ставится пробел
-                    sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                               ' ')
-    if 'All LLR' in data_in:
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-            data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-            data_sum = int(round(data_to_table["SQM"].sum()))
-            # форматирование отображения разрядов числа, на место запятой ставится пробел
-            sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                       ' ')
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_sum = int(round(data_to_table["SQM"].sum()))
-                    # форматирование отображения разрядов числа, на место запятой ставится пробел
-                    sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                               ' ')
-                else:
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_sum = int(round(data_to_table["SQM"].sum()))
-                    # форматирование отображения разрядов числа, на место запятой ставится пробел
-                    sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                               ' ')
-    if 'All (E)TR' in data_in:
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-            data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-            data_sum = int(round(data_to_table["SQM"].sum()))
-            # форматирование отображения разрядов числа, на место запятой ставится пробел
-            sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                       ' ')
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_sum = int(round(data_to_table["SQM"].sum()))
-                    # форматирование отображения разрядов числа, на место запятой ставится пробел
-                    sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                               ' ')
-                else:
-
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_sum = int(round(data_to_table["SQM"].sum()))
-                    # форматирование отображения разрядов числа, на место запятой ставится пробел
-                    sqm_sum = '{0:,}'.format(data_sum).replace(',',
-                                                               ' ')
+    data_sum = int(round(data_to_table["SQM"].sum()))
+    sqm_sum = '{0:,}'.format(data_sum).replace(',', ' ')
 
     sum_parameters = 'Type of deal = {0}, sorting options = '.format(str(data_in).strip("[]'"))
     if list_of_values_copy != []:
@@ -1610,6 +2118,7 @@ def update_sum(Year, Country, Agency, City, Property_Name, Class, SQM, Business_
     else:
         sum_parameters += 'default'
     return 'Суммарная площадь по сделкам составляет ', sqm_sum, ' кв.м ( ', sum_parameters, ' )'
+
 
 '''  Скачивание csv файла с дампом всей базы данных по сделкам  '''
 
@@ -1651,7 +2160,7 @@ def update_download_all_link(Year, Country, Agency, City, Property_name, Class, 
      dash.dependencies.Input('Business_Sector', 'value'),
      dash.dependencies.Input('Type_of_Deal', 'value'),
      dash.dependencies.Input('Type_of_Consultancy', 'value'),
-     dash.dependencies.Input('LLR/TR', 'value'),
+     # dash.dependencies.Input('LLR/TR', 'value'),
      dash.dependencies.Input('Quarter', 'value'),
      dash.dependencies.Input('Company', 'value'),
      dash.dependencies.Input('Include_in_Market_Share', 'value'),
@@ -1663,52 +2172,41 @@ def update_download_all_link(Year, Country, Agency, City, Property_name, Class, 
      dash.dependencies.Input('Floor', 'value'),
      dash.dependencies.Input('Deal_Size', 'value'),
      dash.dependencies.Input('Sublease_Agent', 'value'),
-     dash.dependencies.Input('LLR_Only', 'value'),
-     dash.dependencies.Input('E_TR_Only', 'value'),
-     dash.dependencies.Input('LLR/E_TR', 'value'),
+     # dash.dependencies.Input('LLR_Only', 'value'),
+     # dash.dependencies.Input('E_TR_Only', 'value'),
+     # dash.dependencies.Input('LLR/E_TR', 'value'),
      dash.dependencies.Input('Month', 'value'),
-     dash.dependencies.Input('interface-columns', 'values')  # значение чеклиста из дерева с выбором столбцов
+     dash.dependencies.Input('interface-columns', 'values'),
+     dash.dependencies.Input('interface-data', 'value')  # значение чеклиста из дерева с выбором столбцов
      ])
 def update_download_link(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                         Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                         Submarket_Large, Owner, Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent,
-                         LLR_Only, E_TR_Only, LLR_E_TR, Month, col):
+                         Type_of_Consultancy, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large,
+                         Owner,
+                         Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent,
+                         Month, col, data_in):
     cond = dict(Year=[Year], Country=[Country], Agency=[Agency],
                 # создание словаря с ключом - названием столбца, значением - выбранным параметрам
                 City=[City], Property_Name=[Property_Name], Class=[Class],
                 SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
-                Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
+                Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy],
                 Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
                 Submarket_Large=[Submarket_Large],
                 Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers], Floor=[Floor],
-                Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
-                LLR_E_TR=[LLR_E_TR], Month=[Month])
+                Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], Month=[Month])
 
     list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large,
-                      Owner,
-                      Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                      LLR_E_TR,
+                      Type_of_Consultancy, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large,
+                      Owner, Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent,
                       Month)
     cond_1 = cond.copy()
 
     list_of_values_copy = list(filter(None, list_of_values))
 
-    if len(list_of_values_copy) == 0:
-        return static.all_deals_query_df.to_dict('records')
+    data_to_table = my_method.data_to_table_preparation(data_in, list_of_values_copy, cond_1)
 
-    # ____________________________________________________________#
-
-    if len(list_of_values_copy) != 0:
-        for i in range(len(list_of_values_copy)):
-            ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-            if i == 0:
-                data = static.all_deals_query_df[(static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-            else:
-                data = data[(static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-        csv_string = data.to_csv(index=False, encoding='utf-8', sep=';')
-        csv_string = "data:text/csv;charset=utf-8," + urllib.parse.quote(csv_string)
-        return csv_string
+    csv_string = data_to_table.to_csv(index=False, encoding='utf-8', sep=';')
+    csv_string = "data:text/csv;charset=utf-8," + urllib.parse.quote(csv_string)
+    return csv_string
 
 
 '''
@@ -1767,7 +2265,6 @@ def update_graph_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
 
     width = 700
     height = 500
-    # print('WxH=', width, height)
 
     list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
                       Type_of_Consultancy, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large,
@@ -1775,165 +2272,8 @@ def update_graph_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
     cond_1 = cond.copy()
     list_of_values_copy = list(filter(None, list_of_values))
 
-    if 'All deals' in data_in:
-        # print('Yes, "All deals" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            df_plot = static.all_deals_query_df
-        # ____________________________________________________________#
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-
-                    data_to_table = static.all_deals_query_df[
-                        (static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = data_to_table[(static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-                    df_plot = data_to_table
-
-    if 'LLR only' in data_in:
-        # print('Yes, "LLR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if '(E)TR only' in data_in:
-        # print('Yes, "(E)TR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'LLR_(E)TR only' in data_in:
-        # print('Yes, "LLR/E_TR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'All LLR' in data_in:
-        # print('Yes, "All LLR in data_in')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-            data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'All (E)TR' in data_in:
-        # print('Yes, "All (E)TR in data_in')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-            data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
+    df_plot = my_method.data_to_table_preparation(data_in, list_of_values_copy, cond_1)
+    df_plot = df_plot.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
 
     pv = pd.pivot_table(  # создание сводной таблицы из текущего датафрейма
         df_plot,  # выбор текущего датафрейма
@@ -2212,12 +2552,12 @@ def update_graph_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
 
     if len(list_of_values_copy) == 0:
         format_data = 'All deals'
-        format_year = 'All years'
+        format_year = '2013-2018'
 
     if len(list_of_values_copy) > 0 and 'Year' not in list_of_ind:  # перепчать этот код!
         list_of_values_copy_chain = list(chain(*list_of_values_copy))
         format_data = ', '.join(str(e) for e in list_of_values_copy_chain)
-        format_year = 'all years'
+        format_year = '2013-2018'
 
     if len(list_of_values_copy) > 0 and 'Year' in list_of_ind:
         list_of_values_copy_chain = list(chain(*list_of_values_copy))
@@ -2279,7 +2619,7 @@ def update_graph_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
      dash.dependencies.Input('Business_Sector', 'value'),
      dash.dependencies.Input('Type_of_Deal', 'value'),
      dash.dependencies.Input('Type_of_Consultancy', 'value'),
-     dash.dependencies.Input('LLR/TR', 'value'),
+     #dash.dependencies.Input('LLR/TR', 'value'),
      dash.dependencies.Input('Quarter', 'value'),
      dash.dependencies.Input('Company', 'value'),
      dash.dependencies.Input('Include_in_Market_Share', 'value'),
@@ -2291,9 +2631,9 @@ def update_graph_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
      dash.dependencies.Input('Floor', 'value'),
      dash.dependencies.Input('Deal_Size', 'value'),
      dash.dependencies.Input('Sublease_Agent', 'value'),
-     dash.dependencies.Input('LLR_Only', 'value'),
-     dash.dependencies.Input('E_TR_Only', 'value'),
-     dash.dependencies.Input('LLR/E_TR', 'value'),
+     #dash.dependencies.Input('LLR_Only', 'value'),
+     #dash.dependencies.Input('E_TR_Only', 'value'),
+     #dash.dependencies.Input('LLR/E_TR', 'value'),
      dash.dependencies.Input('Month', 'value'),
      dash.dependencies.Input('interface-columns', 'values'),
      # значение чеклиста из дерева с выбором столбцов market-graph-tab-slider-width
@@ -2301,24 +2641,22 @@ def update_graph_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
      # dash.dependencies.Input('market-graph-tab-slider-height', 'value')
      ])
 def update_graph_tab_string(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                            Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
+                            Type_of_Consultancy, Quarter, Company, Include_in_Market_Share, Address,
                             Submarket_Large, Owner, Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent,
-                            LLR_Only, E_TR_Only, LLR_E_TR, Month, col):
+                            Month, col):
     cond = dict(Year=[Year], Country=[Country], Agency=[Agency],
                 # создание словаря с ключом - названием столбца, значением - выбранным параметрам
                 City=[City], Property_Name=[Property_Name], Class=[Class],
                 SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
-                Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
+                Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy],
                 Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
                 Submarket_Large=[Submarket_Large],
                 Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers], Floor=[Floor],
-                Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
-                LLR_E_TR=[LLR_E_TR], Month=[Month])
+                Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], Month=[Month])
 
     list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                      Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large,
-                      Owner, Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                      LLR_E_TR, Month)
+                      Type_of_Consultancy, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large,
+                      Owner, Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent,Month)
     cond_1 = cond.copy()
     list_of_values_copy = list(filter(None, list_of_values))
     list_of_ind = []
@@ -2335,8 +2673,8 @@ def update_graph_tab_string(Year, Country, Agency, City, Property_Name, Class, S
         format_year = 'All years'
 
     if len(list_of_values_copy) > 0 and 'Year' not in list_of_ind:  # перепчать этот код!
-        # print('list_of_ind BEFORE', list_of_ind)
-        # print('list_of_ind AFTER', list_of_ind)
+        # ##print('list_of_ind BEFORE', list_of_ind)
+        # ##print('list_of_ind AFTER', list_of_ind)
         list_of_values_copy_chain = list(chain(*list_of_values_copy))
         format_index = ', '.join(str(e) for e in list_of_ind)
         format_data = ', '.join(str(e) for e in list_of_values_copy_chain)
@@ -2344,7 +2682,7 @@ def update_graph_tab_string(Year, Country, Agency, City, Property_Name, Class, S
 
     if len(list_of_values_copy) > 0 and 'Year' in list_of_ind:
         my_method.replace_index(list_of_ind)
-        # print('list_of_ind', list_of_ind)
+        # ##print('list_of_ind', list_of_ind)
         list_of_values_copy_chain = list(chain(*list_of_values_copy))
         for i in Year:
             list_of_values_copy_chain.remove('{}'.format(i))
@@ -2355,869 +2693,6 @@ def update_graph_tab_string(Year, Country, Agency, City, Property_Name, Class, S
 
     return format_index + format_data
 
-
-'''Функция по отрисовке дефолтных графиков по LLR, ETR, LLT/ETR и таблицы по крупнейшим этим сделкам за этот период'''
-
-
-def default_graphics():
-    @app.callback(
-        dash.dependencies.Output('LLR,(E)TR, LLR/(E)TR-pie-2017-RU', 'figure'),
-        [dash.dependencies.Input('Year', 'value'),
-         dash.dependencies.Input('Country', 'value'),
-         dash.dependencies.Input('Agency', 'value'),
-         dash.dependencies.Input('City', 'value'),
-         dash.dependencies.Input('Property_name', 'value'),
-         dash.dependencies.Input('Class', 'value'),
-         dash.dependencies.Input('SQM', 'value'),
-         dash.dependencies.Input('Business_Sector', 'value'),
-         dash.dependencies.Input('Type_of_Deal', 'value'),
-         dash.dependencies.Input('Type_of_Consultancy', 'value'),
-         dash.dependencies.Input('LLR/TR', 'value'),
-         dash.dependencies.Input('Quarter', 'value'),
-         dash.dependencies.Input('Company', 'value'),
-         dash.dependencies.Input('Include_in_Market_Share', 'value'),
-         dash.dependencies.Input('Address', 'value'),
-         dash.dependencies.Input('Submarket_Large', 'value'),
-         dash.dependencies.Input('Owner', 'value'),
-         dash.dependencies.Input('Date_of_acquiring', 'value'),
-         dash.dependencies.Input('Class_Colliers', 'value'),
-         dash.dependencies.Input('Floor', 'value'),
-         dash.dependencies.Input('Deal_Size', 'value'),
-         dash.dependencies.Input('Sublease_Agent', 'value'),
-         dash.dependencies.Input('LLR_Only', 'value'),
-         dash.dependencies.Input('E_TR_Only', 'value'),
-         dash.dependencies.Input('LLR/E_TR', 'value'),
-         dash.dependencies.Input('Month', 'value'),
-         dash.dependencies.Input('interface-columns', 'values')  # значение чеклиста из дерева с выбором столбцов
-         ])
-    def update_pie_graph_4(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                           Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                           Submarket_Large,
-                           Owner,
-                           Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                           LLR_E_TR,
-                           Month, col):
-        cond = dict(Year=[Year], Country=[Country], Agency=[Agency],
-                    # создание словаря с ключом - названием столбца, значением - выбранным параметрам
-                    City=[City], Property_Name=[Property_Name], Class=[Class],
-                    SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
-                    Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
-                    Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
-                    Submarket_Large=[Submarket_Large],
-                    Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers],
-                    Floor=[Floor],
-                    Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
-                    LLR_E_TR=[LLR_E_TR], Month=[Month])
-
-        list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                          Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                          Submarket_Large,
-                          Owner,
-                          Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                          LLR_E_TR,
-                          Month)
-        cond_1 = cond.copy()
-        list_of_values_copy = list(filter(None, list_of_values))
-
-        df_plot = static.all_deals_query_df.copy()
-        data = df_plot[(df_plot['Year'].isin(['2017'])) & (df_plot['Country'].isin(['RU']))]
-        data_llr_only = data[(data['LLR_Only'].isin(['Yes']))]
-        data_e_tr_only = data[(data['E_TR_Only'].isin(['Yes']))]
-        data_llr_e_tr_only = data[(data['LLR/E_TR'].isin(['Yes']))]
-        # print('data_llr_only_sum', data_llr_only["SQM"].sum())
-        # print('data_e_tr_only', data_e_tr_only["SQM"].sum())
-        # print('data_llr_e_tr_only', data_llr_e_tr_only["SQM"].sum())
-        d = {'Type': ['LLR only', '(E)TR only', 'LLR/(E)TR'],
-             'SQM': [data_llr_only["SQM"].sum(), data_e_tr_only["SQM"].sum(), data_llr_e_tr_only["SQM"].sum()]}
-        df_graph = pd.DataFrame(data=d)
-
-        width = 600
-        height = 450
-
-        pv = pd.pivot_table(
-            df_graph,
-            index=["Type"],
-            values=["SQM"],
-            aggfunc=sum,
-            fill_value=0)
-        colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_light_blue]
-        pie1 = go.Pie(values=pv["SQM"],
-                      labels=['LLR', '(E)TR', 'LLR/(E)TR'],
-                      hoverinfo='label+value+percent',
-                      textinfo='label+percent',
-                      textposition='outside',
-                      textfont=dict(
-                          color=colors_pie,
-                          size=12),
-                      marker=dict(colors=colors_pie,
-                                  line=dict(
-                                      color=color.white,
-                                      width=1
-                                  )
-                                  )
-                      )
-        return {
-            'data': [pie1],
-            'layout': go.Layout(
-                title='2017',
-                width=width,
-                height=height,
-                legend=dict(orientation="h",
-                            traceorder="normal"),
-            )
-        }
-
-    @app.callback(
-        dash.dependencies.Output('LLR,(E)TR, LLR/(E)TR-pie-1Q2018-RU', 'figure'),
-        [dash.dependencies.Input('Year', 'value'),
-         dash.dependencies.Input('Country', 'value'),
-         dash.dependencies.Input('Agency', 'value'),
-         dash.dependencies.Input('City', 'value'),
-         dash.dependencies.Input('Property_name', 'value'),
-         dash.dependencies.Input('Class', 'value'),
-         dash.dependencies.Input('SQM', 'value'),
-         dash.dependencies.Input('Business_Sector', 'value'),
-         dash.dependencies.Input('Type_of_Deal', 'value'),
-         dash.dependencies.Input('Type_of_Consultancy', 'value'),
-         dash.dependencies.Input('LLR/TR', 'value'),
-         dash.dependencies.Input('Quarter', 'value'),
-         dash.dependencies.Input('Company', 'value'),
-         dash.dependencies.Input('Include_in_Market_Share', 'value'),
-         dash.dependencies.Input('Address', 'value'),
-         dash.dependencies.Input('Submarket_Large', 'value'),
-         dash.dependencies.Input('Owner', 'value'),
-         dash.dependencies.Input('Date_of_acquiring', 'value'),
-         dash.dependencies.Input('Class_Colliers', 'value'),
-         dash.dependencies.Input('Floor', 'value'),
-         dash.dependencies.Input('Deal_Size', 'value'),
-         dash.dependencies.Input('Sublease_Agent', 'value'),
-         dash.dependencies.Input('LLR_Only', 'value'),
-         dash.dependencies.Input('E_TR_Only', 'value'),
-         dash.dependencies.Input('LLR/E_TR', 'value'),
-         dash.dependencies.Input('Month', 'value'),
-         dash.dependencies.Input('interface-columns', 'values')  # значение чеклиста из дерева с выбором столбцов
-         ])
-    def update_pie_graph_5(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                           Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                           Submarket_Large,
-                           Owner,
-                           Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                           LLR_E_TR,
-                           Month, col):
-        cond = dict(Year=[Year], Country=[Country], Agency=[Agency],
-                    # создание словаря с ключом - названием столбца, значением - выбранным параметрам
-                    City=[City], Property_Name=[Property_Name], Class=[Class],
-                    SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
-                    Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
-                    Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
-                    Submarket_Large=[Submarket_Large],
-                    Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers],
-                    Floor=[Floor],
-                    Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
-                    LLR_E_TR=[LLR_E_TR], Month=[Month])
-
-        list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                          Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                          Submarket_Large,
-                          Owner,
-                          Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                          LLR_E_TR,
-                          Month)
-        cond_1 = cond.copy()
-        list_of_values_copy = list(filter(None, list_of_values))
-
-        df_plot = static.all_deals_query_df.copy()
-        data = df_plot[
-            (df_plot['Year'].isin(['2018'])) & (df_plot['Country'].isin(['RU'])) & (df_plot['Quarter'].isin(['1']))]
-        data_llr_only = data[(data['LLR_Only'].isin(['Yes']))]
-        data_e_tr_only = data[(data['E_TR_Only'].isin(['Yes']))]
-        data_llr_e_tr_only = data[(data['LLR/E_TR'].isin(['Yes']))]
-        # print('data_llr_only_sum', data_llr_only["SQM"].sum())
-        # print('data_e_tr_only', data_e_tr_only["SQM"].sum())
-        # print('data_llr_e_tr_only', data_llr_e_tr_only["SQM"].sum())
-        d = {'Type': ['LLR only', '(E)TR only', 'LLR/(E)TR'],
-             'SQM': [data_llr_only["SQM"].sum(), data_e_tr_only["SQM"].sum(), data_llr_e_tr_only["SQM"].sum()]}
-        df_graph = pd.DataFrame(data=d)
-
-        width = 600
-        height = 450
-
-        pv = pd.pivot_table(
-            df_graph,
-            index=["Type"],
-            values=["SQM"],
-            aggfunc=sum,
-            fill_value=0)
-        colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_light_blue]
-        pie1 = go.Pie(values=pv["SQM"],
-                      labels=['LLR', '(E)TR', 'LLR/(E)TR'],
-                      hoverinfo='label+value+percent',
-                      textinfo='label+percent',
-                      textposition='outside',
-                      textfont=dict(
-                          color=colors_pie,
-                          size=12),
-                      marker=dict(colors=colors_pie,
-                                  line=dict(
-                                      color=color.white,
-                                      width=1
-                                  )
-                                  )
-                      )
-        return {
-            'data': [pie1],
-            'layout': go.Layout(
-                title='1q 2018',
-                width=width,
-                height=height,
-                legend=dict(orientation="h",
-                            traceorder="normal"),
-            )
-        }
-
-    @app.callback(
-        dash.dependencies.Output('LLR,(E)TR, LLR/(E)TR-pie-five-years-RU', 'figure'),
-        [dash.dependencies.Input('Year', 'value'),
-         dash.dependencies.Input('Country', 'value'),
-         dash.dependencies.Input('Agency', 'value'),
-         dash.dependencies.Input('City', 'value'),
-         dash.dependencies.Input('Property_name', 'value'),
-         dash.dependencies.Input('Class', 'value'),
-         dash.dependencies.Input('SQM', 'value'),
-         dash.dependencies.Input('Business_Sector', 'value'),
-         dash.dependencies.Input('Type_of_Deal', 'value'),
-         dash.dependencies.Input('Type_of_Consultancy', 'value'),
-         dash.dependencies.Input('LLR/TR', 'value'),
-         dash.dependencies.Input('Quarter', 'value'),
-         dash.dependencies.Input('Company', 'value'),
-         dash.dependencies.Input('Include_in_Market_Share', 'value'),
-         dash.dependencies.Input('Address', 'value'),
-         dash.dependencies.Input('Submarket_Large', 'value'),
-         dash.dependencies.Input('Owner', 'value'),
-         dash.dependencies.Input('Date_of_acquiring', 'value'),
-         dash.dependencies.Input('Class_Colliers', 'value'),
-         dash.dependencies.Input('Floor', 'value'),
-         dash.dependencies.Input('Deal_Size', 'value'),
-         dash.dependencies.Input('Sublease_Agent', 'value'),
-         dash.dependencies.Input('LLR_Only', 'value'),
-         dash.dependencies.Input('E_TR_Only', 'value'),
-         dash.dependencies.Input('LLR/E_TR', 'value'),
-         dash.dependencies.Input('Month', 'value'),
-         dash.dependencies.Input('interface-columns', 'values')  # значение чеклиста из дерева с выбором столбцов
-         ])
-    def update_pie_graph_6(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                           Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                           Submarket_Large,
-                           Owner,
-                           Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                           LLR_E_TR,
-                           Month, col):
-        cond = dict(Year=[Year], Country=[Country], Agency=[Agency],
-                    # создание словаря с ключом - названием столбца, значением - выбранным параметрам
-                    City=[City], Property_Name=[Property_Name], Class=[Class],
-                    SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
-                    Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
-                    Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
-                    Submarket_Large=[Submarket_Large],
-                    Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers],
-                    Floor=[Floor],
-                    Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
-                    LLR_E_TR=[LLR_E_TR], Month=[Month])
-
-        list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                          Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                          Submarket_Large,
-                          Owner,
-                          Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                          LLR_E_TR,
-                          Month)
-        cond_1 = cond.copy()
-        list_of_values_copy = list(filter(None, list_of_values))
-
-        df_plot = static.all_deals_query_df.copy()
-        data = df_plot[(df_plot['Country'].isin(['RU']))]
-        data_llr_only = data[(data['LLR_Only'].isin(['Yes'])) & (df_plot['Country'].isin(['RU']))]
-        data_e_tr_only = data[(data['E_TR_Only'].isin(['Yes']))]
-        data_llr_e_tr_only = data[(data['LLR/E_TR'].isin(['Yes']))]
-        # print('data_llr_only_sum', data_llr_only["SQM"].sum())
-        # print('data_e_tr_only', data_e_tr_only["SQM"].sum())
-        # print('data_llr_e_tr_only', data_llr_e_tr_only["SQM"].sum())
-        d = {'Type': ['LLR only', '(E)TR only', 'LLR/(E)TR'],
-             'SQM': [data_llr_only["SQM"].sum(), data_e_tr_only["SQM"].sum(), data_llr_e_tr_only["SQM"].sum()]}
-        df_graph = pd.DataFrame(data=d)
-
-        width = 600
-        height = 450
-
-        pv = pd.pivot_table(
-            df_graph,
-            index=["Type"],
-            values=["SQM"],
-            aggfunc=sum,
-            fill_value=0)
-        colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_light_blue]
-        pie1 = go.Pie(values=pv["SQM"],
-                      labels=['LLR', '(E)TR', 'LLR/(E)TR'],
-                      hoverinfo='label+value+percent',
-                      textinfo='label+percent',
-                      textposition='outside',
-                      textfont=dict(
-                          color=colors_pie,
-                          size=12),
-                      marker=dict(colors=colors_pie,
-                                  line=dict(
-                                      color=color.white,
-                                      width=1
-                                  )
-                                  )
-                      )
-        return {
-            'data': [pie1],
-            'layout': go.Layout(
-                title='2013-2018',
-                width=width,
-                height=height,
-                legend=dict(orientation="h",
-                            traceorder="normal"),
-            )
-        }
-
-    @app.callback(
-        dash.dependencies.Output('LLR,(E)TR, LLR/(E)TR-pie-2017-MOS', 'figure'),
-        [dash.dependencies.Input('Year', 'value'),
-         dash.dependencies.Input('Country', 'value'),
-         dash.dependencies.Input('Agency', 'value'),
-         dash.dependencies.Input('City', 'value'),
-         dash.dependencies.Input('Property_name', 'value'),
-         dash.dependencies.Input('Class', 'value'),
-         dash.dependencies.Input('SQM', 'value'),
-         dash.dependencies.Input('Business_Sector', 'value'),
-         dash.dependencies.Input('Type_of_Deal', 'value'),
-         dash.dependencies.Input('Type_of_Consultancy', 'value'),
-         dash.dependencies.Input('LLR/TR', 'value'),
-         dash.dependencies.Input('Quarter', 'value'),
-         dash.dependencies.Input('Company', 'value'),
-         dash.dependencies.Input('Include_in_Market_Share', 'value'),
-         dash.dependencies.Input('Address', 'value'),
-         dash.dependencies.Input('Submarket_Large', 'value'),
-         dash.dependencies.Input('Owner', 'value'),
-         dash.dependencies.Input('Date_of_acquiring', 'value'),
-         dash.dependencies.Input('Class_Colliers', 'value'),
-         dash.dependencies.Input('Floor', 'value'),
-         dash.dependencies.Input('Deal_Size', 'value'),
-         dash.dependencies.Input('Sublease_Agent', 'value'),
-         dash.dependencies.Input('LLR_Only', 'value'),
-         dash.dependencies.Input('E_TR_Only', 'value'),
-         dash.dependencies.Input('LLR/E_TR', 'value'),
-         dash.dependencies.Input('Month', 'value'),
-         dash.dependencies.Input('interface-columns', 'values')  # значение чеклиста из дерева с выбором столбцов
-         ])
-    def update_pie_graph_7(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                           Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                           Submarket_Large,
-                           Owner,
-                           Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                           LLR_E_TR,
-                           Month, col):
-        cond = dict(Year=[Year], Country=[Country], Agency=[Agency],
-                    # создание словаря с ключом - названием столбца, значением - выбранным параметрам
-                    City=[City], Property_Name=[Property_Name], Class=[Class],
-                    SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
-                    Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
-                    Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
-                    Submarket_Large=[Submarket_Large],
-                    Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers],
-                    Floor=[Floor],
-                    Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
-                    LLR_E_TR=[LLR_E_TR], Month=[Month])
-
-        list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                          Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                          Submarket_Large,
-                          Owner,
-                          Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                          LLR_E_TR,
-                          Month)
-        cond_1 = cond.copy()
-        list_of_values_copy = list(filter(None, list_of_values))
-
-        df_plot = static.all_deals_query_df.copy()
-        data = df_plot[(df_plot['Year'].isin(['2017'])) & (df_plot['City'].isin(['Moscow']))]
-        data_llr_only = data[(data['LLR_Only'].isin(['Yes']))]
-        data_e_tr_only = data[(data['E_TR_Only'].isin(['Yes']))]
-        data_llr_e_tr_only = data[(data['LLR/E_TR'].isin(['Yes']))]
-        # print('data_llr_only_sum', data_llr_only["SQM"].sum())
-        # print('data_e_tr_only', data_e_tr_only["SQM"].sum())
-        # print('data_llr_e_tr_only', data_llr_e_tr_only["SQM"].sum())
-        d = {'Type': ['LLR only', '(E)TR only', 'LLR/(E)TR'],
-             'SQM': [data_llr_only["SQM"].sum(), data_e_tr_only["SQM"].sum(), data_llr_e_tr_only["SQM"].sum()]}
-        df_graph = pd.DataFrame(data=d)
-
-        width = 600
-        height = 450
-
-        pv = pd.pivot_table(
-            df_graph,
-            index=["Type"],
-            values=["SQM"],
-            aggfunc=sum,
-            fill_value=0)
-        colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_light_blue]
-        pie1 = go.Pie(values=pv["SQM"],
-                      labels=['LLR', '(E)TR', 'LLR/(E)TR'],
-                      hoverinfo='label+value+percent',
-                      textinfo='label+percent',
-                      textposition='outside',
-                      textfont=dict(
-                          color=colors_pie,
-                          size=12),
-                      marker=dict(colors=colors_pie,
-                                  line=dict(
-                                      color=color.white,
-                                      width=1
-                                  )
-                                  )
-                      )
-        return {
-            'data': [pie1],
-            'layout': go.Layout(
-                title='2017',
-                width=width,
-                height=height,
-                legend=dict(orientation="h",
-                            traceorder="normal"),
-            )
-        }
-
-    @app.callback(
-        dash.dependencies.Output('LLR,(E)TR, LLR/(E)TR-pie-1Q2018-MOS', 'figure'),
-        [dash.dependencies.Input('Year', 'value'),
-         dash.dependencies.Input('Country', 'value'),
-         dash.dependencies.Input('Agency', 'value'),
-         dash.dependencies.Input('City', 'value'),
-         dash.dependencies.Input('Property_name', 'value'),
-         dash.dependencies.Input('Class', 'value'),
-         dash.dependencies.Input('SQM', 'value'),
-         dash.dependencies.Input('Business_Sector', 'value'),
-         dash.dependencies.Input('Type_of_Deal', 'value'),
-         dash.dependencies.Input('Type_of_Consultancy', 'value'),
-         dash.dependencies.Input('LLR/TR', 'value'),
-         dash.dependencies.Input('Quarter', 'value'),
-         dash.dependencies.Input('Company', 'value'),
-         dash.dependencies.Input('Include_in_Market_Share', 'value'),
-         dash.dependencies.Input('Address', 'value'),
-         dash.dependencies.Input('Submarket_Large', 'value'),
-         dash.dependencies.Input('Owner', 'value'),
-         dash.dependencies.Input('Date_of_acquiring', 'value'),
-         dash.dependencies.Input('Class_Colliers', 'value'),
-         dash.dependencies.Input('Floor', 'value'),
-         dash.dependencies.Input('Deal_Size', 'value'),
-         dash.dependencies.Input('Sublease_Agent', 'value'),
-         dash.dependencies.Input('LLR_Only', 'value'),
-         dash.dependencies.Input('E_TR_Only', 'value'),
-         dash.dependencies.Input('LLR/E_TR', 'value'),
-         dash.dependencies.Input('Month', 'value'),
-         dash.dependencies.Input('interface-columns', 'values')  # значение чеклиста из дерева с выбором столбцов
-         ])
-    def update_pie_graph_8(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                           Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                           Submarket_Large,
-                           Owner,
-                           Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                           LLR_E_TR,
-                           Month, col):
-        cond = dict(Year=[Year], Country=[Country], Agency=[Agency],
-                    # создание словаря с ключом - названием столбца, значением - выбранным параметрам
-                    City=[City], Property_Name=[Property_Name], Class=[Class],
-                    SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
-                    Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
-                    Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
-                    Submarket_Large=[Submarket_Large],
-                    Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers],
-                    Floor=[Floor],
-                    Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
-                    LLR_E_TR=[LLR_E_TR], Month=[Month])
-
-        list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                          Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                          Submarket_Large,
-                          Owner,
-                          Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                          LLR_E_TR,
-                          Month)
-        cond_1 = cond.copy()
-        list_of_values_copy = list(filter(None, list_of_values))
-
-        df_plot = static.all_deals_query_df.copy()
-        data = df_plot[
-            (df_plot['Year'].isin(['2018'])) & (df_plot['City'].isin(['Moscow'])) & (df_plot['Quarter'].isin(['1']))]
-        data_llr_only = data[(data['LLR_Only'].isin(['Yes']))]
-        data_e_tr_only = data[(data['E_TR_Only'].isin(['Yes']))]
-        data_llr_e_tr_only = data[(data['LLR/E_TR'].isin(['Yes']))]
-        # print('data_llr_only_sum', data_llr_only["SQM"].sum())
-        # print('data_e_tr_only', data_e_tr_only["SQM"].sum())
-        # print('data_llr_e_tr_only', data_llr_e_tr_only["SQM"].sum())
-        d = {'Type': ['LLR only', '(E)TR only', 'LLR/(E)TR'],
-             'SQM': [data_llr_only["SQM"].sum(), data_e_tr_only["SQM"].sum(), data_llr_e_tr_only["SQM"].sum()]}
-        df_graph = pd.DataFrame(data=d)
-
-        width = 600
-        height = 450
-
-        pv = pd.pivot_table(
-            df_graph,
-            index=["Type"],
-            values=["SQM"],
-            aggfunc=sum,
-            fill_value=0)
-        colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_light_blue]
-        pie1 = go.Pie(values=pv["SQM"],
-                      labels=['LLR', '(E)TR', 'LLR/(E)TR'],
-                      hoverinfo='label+value+percent',
-                      textinfo='label+percent',
-                      textposition='outside',
-                      textfont=dict(
-                          color=colors_pie,
-                          size=12),
-                      marker=dict(colors=colors_pie,
-                                  line=dict(
-                                      color=color.white,
-                                      width=1
-                                  )
-                                  )
-                      )
-        return {
-            'data': [pie1],
-            'layout': go.Layout(
-                title='1q 2018',
-                width=width,
-                height=height,
-                legend=dict(orientation="h",
-                            traceorder="normal"),
-            )
-        }
-
-    @app.callback(
-        dash.dependencies.Output('LLR,(E)TR, LLR/(E)TR-pie-five-years-MOS', 'figure'),
-        [dash.dependencies.Input('Year', 'value'),
-         dash.dependencies.Input('Country', 'value'),
-         dash.dependencies.Input('Agency', 'value'),
-         dash.dependencies.Input('City', 'value'),
-         dash.dependencies.Input('Property_name', 'value'),
-         dash.dependencies.Input('Class', 'value'),
-         dash.dependencies.Input('SQM', 'value'),
-         dash.dependencies.Input('Business_Sector', 'value'),
-         dash.dependencies.Input('Type_of_Deal', 'value'),
-         dash.dependencies.Input('Type_of_Consultancy', 'value'),
-         dash.dependencies.Input('LLR/TR', 'value'),
-         dash.dependencies.Input('Quarter', 'value'),
-         dash.dependencies.Input('Company', 'value'),
-         dash.dependencies.Input('Include_in_Market_Share', 'value'),
-         dash.dependencies.Input('Address', 'value'),
-         dash.dependencies.Input('Submarket_Large', 'value'),
-         dash.dependencies.Input('Owner', 'value'),
-         dash.dependencies.Input('Date_of_acquiring', 'value'),
-         dash.dependencies.Input('Class_Colliers', 'value'),
-         dash.dependencies.Input('Floor', 'value'),
-         dash.dependencies.Input('Deal_Size', 'value'),
-         dash.dependencies.Input('Sublease_Agent', 'value'),
-         dash.dependencies.Input('LLR_Only', 'value'),
-         dash.dependencies.Input('E_TR_Only', 'value'),
-         dash.dependencies.Input('LLR/E_TR', 'value'),
-         dash.dependencies.Input('Month', 'value'),
-         dash.dependencies.Input('interface-columns', 'values')  # значение чеклиста из дерева с выбором столбцов
-         ])
-    def update_pie_graph_9(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                           Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                           Submarket_Large,
-                           Owner,
-                           Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                           LLR_E_TR,
-                           Month, col):
-        cond = dict(Year=[Year], Country=[Country], Agency=[Agency],
-                    # создание словаря с ключом - названием столбца, значением - выбранным параметрам
-                    City=[City], Property_Name=[Property_Name], Class=[Class],
-                    SQM=[SQM], Company=[Company], Business_Sector=[Business_Sector],
-                    Type_of_Deal=[Type_of_Deal], Type_of_Consultancy=[Type_of_Consultancy], LLR_TR=[LLR_TR],
-                    Quarter=[Quarter], Include_in_Market_Share=[Include_in_Market_Share], Address=[Address],
-                    Submarket_Large=[Submarket_Large],
-                    Owner=[Owner], Date_of_acquiring=[Date_of_acquiring], Class_Colliers=[Class_Colliers],
-                    Floor=[Floor],
-                    Deal_Size=[Deal_Size], Sublease_Agent=[Sublease_Agent], LLR_Only=[LLR_Only], E_TR_Only=[E_TR_Only],
-                    LLR_E_TR=[LLR_E_TR], Month=[Month])
-
-        list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                          Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                          Submarket_Large,
-                          Owner,
-                          Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                          LLR_E_TR,
-                          Month)
-        cond_1 = cond.copy()
-        list_of_values_copy = list(filter(None, list_of_values))
-
-        df_plot = static.all_deals_query_df.copy()
-        data = df_plot[(df_plot['City'].isin(['Moscow']))]
-        data_llr_only = data[(data['LLR_Only'].isin(['Yes']))]
-        data_e_tr_only = data[(data['E_TR_Only'].isin(['Yes']))]
-        data_llr_e_tr_only = data[(data['LLR/E_TR'].isin(['Yes']))]
-        # print('data_llr_only_sum', data_llr_only["SQM"].sum())
-        # print('data_e_tr_only', data_e_tr_only["SQM"].sum())
-        # print('data_llr_e_tr_only', data_llr_e_tr_only["SQM"].sum())
-        d = {'Type': ['LLR only', '(E)TR only', 'LLR/(E)TR'],
-             'SQM': [data_llr_only["SQM"].sum(), data_e_tr_only["SQM"].sum(), data_llr_e_tr_only["SQM"].sum()]}
-        df_graph = pd.DataFrame(data=d)
-
-        width = 600
-        height = 450
-
-        pv = pd.pivot_table(
-            df_graph,
-            index=["Type"],
-            values=["SQM"],
-            aggfunc=sum,
-            fill_value=0)
-        colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_light_blue]
-        pie1 = go.Pie(values=pv["SQM"],
-                      labels=['LLR', '(E)TR', 'LLR/(E)TR'],
-                      hoverinfo='label+value+percent',
-                      textinfo='label+percent',
-                      textposition='outside',
-                      textfont=dict(
-                          color=colors_pie,
-                          size=12),
-                      marker=dict(colors=colors_pie,
-                                  line=dict(
-                                      color=color.white,
-                                      width=1
-                                  )
-                                  )
-                      )
-        return {
-            'data': [pie1],
-            'layout': go.Layout(
-                title='2013-2018',
-                width=width,
-                height=height,
-                legend=dict(orientation="h",
-                            traceorder="normal"),
-            )
-        }
-
-
-default_graphics()  # вызов функции с отображением базовых pie графиков
-
-
-def default_tables():
-    @app.callback(
-        dash.dependencies.Output('biggest-deal-tab-2017', 'figure'),
-        [dash.dependencies.Input('Year', 'value'),
-         dash.dependencies.Input('Country', 'value'),
-         dash.dependencies.Input('Agency', 'value'),
-         dash.dependencies.Input('City', 'value'),
-         dash.dependencies.Input('Property_name', 'value'),
-         dash.dependencies.Input('Class', 'value'),
-         dash.dependencies.Input('SQM', 'value'),
-         dash.dependencies.Input('Business_Sector', 'value'),
-         dash.dependencies.Input('Type_of_Deal', 'value'),
-         dash.dependencies.Input('Type_of_Consultancy', 'value'),
-         dash.dependencies.Input('LLR/TR', 'value'),
-         dash.dependencies.Input('Quarter', 'value'),
-         dash.dependencies.Input('Company', 'value'),
-         dash.dependencies.Input('Include_in_Market_Share', 'value'),
-         dash.dependencies.Input('Address', 'value'),
-         dash.dependencies.Input('Submarket_Large', 'value'),
-         dash.dependencies.Input('Owner', 'value'),
-         dash.dependencies.Input('Date_of_acquiring', 'value'),
-         dash.dependencies.Input('Class_Colliers', 'value'),
-         dash.dependencies.Input('Floor', 'value'),
-         dash.dependencies.Input('Deal_Size', 'value'),
-         dash.dependencies.Input('Sublease_Agent', 'value'),
-         dash.dependencies.Input('LLR_Only', 'value'),
-         dash.dependencies.Input('E_TR_Only', 'value'),
-         dash.dependencies.Input('LLR/E_TR', 'value'),
-         dash.dependencies.Input('Month', 'value'),
-         dash.dependencies.Input('interface-columns', 'values')  # значение чеклиста из дерева с выбором столбцов
-         ])
-    def update_biggest_deals_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                                 Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                                 Submarket_Large,
-                                 Owner,
-                                 Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only,
-                                 E_TR_Only,
-                                 LLR_E_TR,
-                                 Month, col):
-        all_deals_2017 = static.all_deals_query_df[static.all_deals_query_df['Year'].isin(['2017'])]
-        all_deals_2017 = all_deals_2017.sort_values('SQM', ascending=False)
-
-        all_deals_2017_selected = all_deals_2017[['Agency', 'Property_Name', 'SQM',
-                                                  'Company', 'Business_Sector', 'Type_of_Deal']].head(10)
-        # print(all_deals_2017_selected.Property_Name.tolist())
-
-        trace = go.Table(
-            columnwidth=[80, 200, 100, 150, 200, 100],
-
-            header=dict(values=["Agency", "Property Name", "Office area", "Company", "Business Sector", "Type of Deal"],
-                        line=dict(color=color.white),
-                        fill=dict(color=color.sar_color),
-                        align=['left'] * 6,
-                        font=dict(color='white', size=12), ),
-
-            cells=dict(values=[all_deals_2017_selected.Agency.tolist(),
-                               all_deals_2017_selected.Property_Name.tolist(),
-                               all_deals_2017_selected.SQM,
-                               all_deals_2017_selected.Company,
-                               all_deals_2017_selected.Business_Sector,
-                               all_deals_2017_selected.Type_of_Deal
-
-                               ],
-                       line=dict(color=color.white),
-                       fill=dict(color='#EDFAFF'),
-                       align=['left'] * 6))
-
-        layout = dict(width=830, height=330)
-        data = [trace]
-        fig = dict(data=data, layout=layout)
-        return fig
-
-    @app.callback(
-        dash.dependencies.Output('html-tab-RU-2017', 'children'),
-        [dash.dependencies.Input('Year', 'value'),
-         dash.dependencies.Input('Country', 'value'),
-         dash.dependencies.Input('Agency', 'value'),
-         dash.dependencies.Input('City', 'value'),
-         dash.dependencies.Input('Property_name', 'value'),
-         dash.dependencies.Input('Class', 'value'),
-         dash.dependencies.Input('SQM', 'value'),
-         dash.dependencies.Input('Business_Sector', 'value'),
-         dash.dependencies.Input('Type_of_Deal', 'value'),
-         dash.dependencies.Input('Type_of_Consultancy', 'value'),
-         dash.dependencies.Input('LLR/TR', 'value'),
-         dash.dependencies.Input('Quarter', 'value'),
-         dash.dependencies.Input('Company', 'value'),
-         dash.dependencies.Input('Include_in_Market_Share', 'value'),
-         dash.dependencies.Input('Address', 'value'),
-         dash.dependencies.Input('Submarket_Large', 'value'),
-         dash.dependencies.Input('Owner', 'value'),
-         dash.dependencies.Input('Date_of_acquiring', 'value'),
-         dash.dependencies.Input('Class_Colliers', 'value'),
-         dash.dependencies.Input('Floor', 'value'),
-         dash.dependencies.Input('Deal_Size', 'value'),
-         dash.dependencies.Input('Sublease_Agent', 'value'),
-         dash.dependencies.Input('LLR_Only', 'value'),
-         dash.dependencies.Input('E_TR_Only', 'value'),
-         dash.dependencies.Input('LLR/E_TR', 'value'),
-         dash.dependencies.Input('Month', 'value'),
-         dash.dependencies.Input('interface-columns', 'values')  # значение чеклиста из дерева с выбором столбцов
-         ])
-    def update_html_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                        Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                        Submarket_Large,
-                        Owner,
-                        Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                        LLR_E_TR,
-                        Month, col):
-        all_deals_2017 = static.all_deals_query_df[static.all_deals_query_df['Year'].isin(['2017'])]
-        all_deals_2017 = all_deals_2017.sort_values('SQM', ascending=False)
-        all_deals_2017['SQM'] = all_deals_2017['SQM'].round()
-        all_deals_2017_selected = all_deals_2017[['Agency', 'Property_Name', 'SQM',
-                                                  'Company', 'Business_Sector', 'Type_of_Deal']].head(10)
-        return my_method.generate_table_top_deals(all_deals_2017_selected)
-
-    @app.callback(
-        dash.dependencies.Output('html-tab-RU-1q2018', 'children'),
-        [dash.dependencies.Input('Year', 'value'),
-         dash.dependencies.Input('Country', 'value'),
-         dash.dependencies.Input('Agency', 'value'),
-         dash.dependencies.Input('City', 'value'),
-         dash.dependencies.Input('Property_name', 'value'),
-         dash.dependencies.Input('Class', 'value'),
-         dash.dependencies.Input('SQM', 'value'),
-         dash.dependencies.Input('Business_Sector', 'value'),
-         dash.dependencies.Input('Type_of_Deal', 'value'),
-         dash.dependencies.Input('Type_of_Consultancy', 'value'),
-         dash.dependencies.Input('LLR/TR', 'value'),
-         dash.dependencies.Input('Quarter', 'value'),
-         dash.dependencies.Input('Company', 'value'),
-         dash.dependencies.Input('Include_in_Market_Share', 'value'),
-         dash.dependencies.Input('Address', 'value'),
-         dash.dependencies.Input('Submarket_Large', 'value'),
-         dash.dependencies.Input('Owner', 'value'),
-         dash.dependencies.Input('Date_of_acquiring', 'value'),
-         dash.dependencies.Input('Class_Colliers', 'value'),
-         dash.dependencies.Input('Floor', 'value'),
-         dash.dependencies.Input('Deal_Size', 'value'),
-         dash.dependencies.Input('Sublease_Agent', 'value'),
-         dash.dependencies.Input('LLR_Only', 'value'),
-         dash.dependencies.Input('E_TR_Only', 'value'),
-         dash.dependencies.Input('LLR/E_TR', 'value'),
-         dash.dependencies.Input('Month', 'value'),
-         dash.dependencies.Input('interface-columns', 'values')  # значение чеклиста из дерева с выбором столбцов
-         ])
-    def update_html_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                        Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                        Submarket_Large,
-                        Owner,
-                        Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                        LLR_E_TR,
-                        Month, col):
-        all_deals_2018 = static.all_deals_query_df[
-            static.all_deals_query_df['Year'].isin(['2018']) & static.all_deals_query_df['Quarter'].isin(['1'])]
-        all_deals_2018 = all_deals_2018.sort_values('SQM', ascending=False)
-        all_deals_2018['SQM'] = all_deals_2018['SQM'].round()
-        all_deals_2018_selected = all_deals_2018[['Agency', 'Property_Name', 'SQM',
-                                                  'Company', 'Business_Sector', 'Type_of_Deal']].head(10)
-        return my_method.generate_table_top_deals(all_deals_2018_selected)
-
-    @app.callback(
-        dash.dependencies.Output('html-tab-RU-five-years', 'children'),
-        [dash.dependencies.Input('Year', 'value'),
-         dash.dependencies.Input('Country', 'value'),
-         dash.dependencies.Input('Agency', 'value'),
-         dash.dependencies.Input('City', 'value'),
-         dash.dependencies.Input('Property_name', 'value'),
-         dash.dependencies.Input('Class', 'value'),
-         dash.dependencies.Input('SQM', 'value'),
-         dash.dependencies.Input('Business_Sector', 'value'),
-         dash.dependencies.Input('Type_of_Deal', 'value'),
-         dash.dependencies.Input('Type_of_Consultancy', 'value'),
-         dash.dependencies.Input('LLR/TR', 'value'),
-         dash.dependencies.Input('Quarter', 'value'),
-         dash.dependencies.Input('Company', 'value'),
-         dash.dependencies.Input('Include_in_Market_Share', 'value'),
-         dash.dependencies.Input('Address', 'value'),
-         dash.dependencies.Input('Submarket_Large', 'value'),
-         dash.dependencies.Input('Owner', 'value'),
-         dash.dependencies.Input('Date_of_acquiring', 'value'),
-         dash.dependencies.Input('Class_Colliers', 'value'),
-         dash.dependencies.Input('Floor', 'value'),
-         dash.dependencies.Input('Deal_Size', 'value'),
-         dash.dependencies.Input('Sublease_Agent', 'value'),
-         dash.dependencies.Input('LLR_Only', 'value'),
-         dash.dependencies.Input('E_TR_Only', 'value'),
-         dash.dependencies.Input('LLR/E_TR', 'value'),
-         dash.dependencies.Input('Month', 'value'),
-         dash.dependencies.Input('interface-columns', 'values')  # значение чеклиста из дерева с выбором столбцов
-         ])
-    def update_html_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
-                        Type_of_Consultancy, LLR_TR, Quarter, Company, Include_in_Market_Share, Address,
-                        Submarket_Large,
-                        Owner,
-                        Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, LLR_Only, E_TR_Only,
-                        LLR_E_TR,
-                        Month, col):
-        all_deals_2018 = static.all_deals_query_df[
-            static.all_deals_query_df['Year'].isin(['2018']) & static.all_deals_query_df['Quarter'].isin(['1'])]
-        all_deals_2018 = all_deals_2018.sort_values('SQM', ascending=False)
-        all_deals_2018['SQM'] = all_deals_2018['SQM'].round()
-        all_deals_2018_selected = all_deals_2018[['Agency', 'Property_Name', 'SQM',
-                                                  'Company', 'Business_Sector', 'Type_of_Deal']].head(10)
-        return my_method.generate_table_top_deals(all_deals_2018_selected)
-
-
-default_tables()
-
-''' Начало блока по отрисовке статических изображений. Код закомментирован до обсуждения  '''
 
 
 # @app.callback(
@@ -3521,11 +2996,11 @@ default_tables()
 #     }
 #
 #     img = py.image.get(image_data, format='png')
-#     #print('Data loaded from Plotly')
+#     ###print('Data loaded from Plotly')
 #     #plot_url = py.plot(image_data, filename='my plot', auto_open=False)
-#     #print(plot_url)
+#     ###print(plot_url)
 #     #plot_url_png = plot_url + '.png'
-#     #print(plot_url_png)
+#     ###print(plot_url_png)
 #
 #     plot_bytes_encode = str(base64.b64encode(img))
 #     plot_bytes_encode = plot_bytes_encode[0:-1]
@@ -3590,165 +3065,8 @@ def update_graph_tab_none_stack(Year, Country, Agency, City, Property_Name, Clas
     cond_1 = cond.copy()
     list_of_values_copy = list(filter(None, list_of_values))
 
-    if 'All deals' in data_in:
-        # print('Yes, "All deals" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            df_plot = static.all_deals_query_df
-        # ____________________________________________________________#
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-
-                    data_to_table = static.all_deals_query_df[
-                        (static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = data_to_table[(static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-                    df_plot = data_to_table
-
-    if 'LLR only' in data_in:
-        # print('Yes, "LLR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if '(E)TR only' in data_in:
-        # print('Yes, "(E)TR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'LLR_(E)TR only' in data_in:
-        # print('Yes, "LLR/E_TR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'All LLR' in data_in:
-        # print('Yes, "All LLR in data_in')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-            data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'All (E)TR' in data_in:
-        # print('Yes, "All (E)TR in data_in')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-            data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
+    df_plot = my_method.data_to_table_preparation(data_in, list_of_values_copy, cond_1)
+    df_plot = df_plot.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
 
     pv = pd.pivot_table(
         df_plot,
@@ -3892,12 +3210,12 @@ def update_graph_tab_none_stack(Year, Country, Agency, City, Property_Name, Clas
 
     if len(list_of_values_copy) == 0:
         format_data = 'All deals'
-        format_year = 'All years'
+        format_year = '2013-2018'
 
     if len(list_of_values_copy) > 0 and 'Year' not in list_of_ind:  # перепчать этот код!
         list_of_values_copy_chain = list(chain(*list_of_values_copy))
         format_data = ', '.join(str(e) for e in list_of_values_copy_chain)
-        format_year = 'all years'
+        format_year = '2013-2018'
 
     if len(list_of_values_copy) > 0 and 'Year' in list_of_ind:
         list_of_values_copy_chain = list(chain(*list_of_values_copy))
@@ -3996,165 +3314,9 @@ def update_graph_horizontal(Year, Country, Agency, City, Property_Name, Class, S
                       Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, Month)
     cond_1 = cond.copy()
     list_of_values_copy = list(filter(None, list_of_values))
-    if 'All deals' in data_in:
-        # print('Yes, "All deals" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            df_plot = static.all_deals_query_df
-        # ____________________________________________________________#
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
 
-                    data_to_table = static.all_deals_query_df[
-                        (static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = data_to_table[(static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-                    df_plot = data_to_table
-
-    if 'LLR only' in data_in:
-        # print('Yes, "LLR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if '(E)TR only' in data_in:
-        # print('Yes, "(E)TR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'LLR_(E)TR only' in data_in:
-        # print('Yes, "LLR/E_TR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'All LLR' in data_in:
-        # print('Yes, "All LLR in data_in')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-            data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'All (E)TR' in data_in:
-        # print('Yes, "All (E)TR in data_in')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-            data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
+    df_plot = my_method.data_to_table_preparation(data_in, list_of_values_copy, cond_1)
+    df_plot = df_plot.sort_values('Year', ascending=False)  # отсортированный по годам датафрейм
 
     width = 700
     height = 500
@@ -4195,12 +3357,12 @@ def update_graph_horizontal(Year, Country, Agency, City, Property_Name, Class, S
 
     if len(list_of_values_copy) == 0:
         format_data = 'All deals'
-        format_year = 'All years'
+        format_year = '2013-2018'
 
     if len(list_of_values_copy) > 0 and 'Year' not in list_of_ind:  # перепчать этот код!
         list_of_values_copy_chain = list(chain(*list_of_values_copy))
         format_data = ', '.join(str(e) for e in list_of_values_copy_chain)
-        format_year = 'all years'
+        format_year = '2013-2018'
 
     if len(list_of_values_copy) > 0 and 'Year' in list_of_ind:
         list_of_values_copy_chain = list(chain(*list_of_values_copy))
@@ -4264,7 +3426,6 @@ def update_graph_horizontal(Year, Country, Agency, City, Property_Name, Class, S
         )
     }
 
-
 @app.callback(
     dash.dependencies.Output('market-pie-graph-tab', 'figure'),
     [dash.dependencies.Input('Year', 'value'),
@@ -4315,165 +3476,8 @@ def update_pie_graph(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
     cond_1 = cond.copy()
     list_of_values_copy = list(filter(None, list_of_values))
 
-    if 'All deals' in data_in:
-        # print('Yes, "All deals" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            df_plot = static.all_deals_query_df
-        # ____________________________________________________________#
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-
-                    data_to_table = static.all_deals_query_df[
-                        (static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = data_to_table[(static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-                    df_plot = data_to_table
-
-    if 'LLR only' in data_in:
-        # print('Yes, "LLR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if '(E)TR only' in data_in:
-        # print('Yes, "(E)TR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'LLR_(E)TR only' in data_in:
-        # print('Yes, "LLR/E_TR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'All LLR' in data_in:
-        # print('Yes, "All LLR in data_in')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-            data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'All (E)TR' in data_in:
-        # print('Yes, "All (E)TR in data_in')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-            data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
+    df_plot = my_method.data_to_table_preparation(data_in, list_of_values_copy, cond_1)
+    df_plot = df_plot.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
 
     width = 700
     height = 500
@@ -4484,9 +3488,12 @@ def update_pie_graph(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
         values=["SQM"],
         aggfunc=sum,
         fill_value=0)
+    all_sqm = df_plot.SQM.sum()
+    mylist = list(round(i) for i in pv["SQM"]/all_sqm*100)
+    print(mylist)
     colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_grey_40,
                   color.colliers_yellow, color.colliers_red, color.colliers_light_blue]
-    pie1 = go.Pie(values=pv["SQM"],
+    pie1 = go.Pie(values= pv["SQM"],
                   labels=['Colliers', 'CW', 'CBRE', 'JLL', 'KF', 'SAR'],
                   hoverinfo='label+value+percent',
                   textinfo='label+percent',
@@ -4509,12 +3516,12 @@ def update_pie_graph(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
 
     if len(list_of_values_copy) == 0:
         format_data = 'All deals'
-        format_year = 'All years'
+        format_year = '2013-2018'
 
     if len(list_of_values_copy) > 0 and 'Year' not in list_of_ind:  # перепчать этот код!
         list_of_values_copy_chain = list(chain(*list_of_values_copy))
         format_data = ', '.join(str(e) for e in list_of_values_copy_chain)
-        format_year = 'all years'
+        format_year = '2013-2018'
 
     if len(list_of_values_copy) > 0 and 'Year' in list_of_ind:
         list_of_values_copy_chain = list(chain(*list_of_values_copy))
@@ -4534,7 +3541,6 @@ def update_pie_graph(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
                         traceorder="normal"),
         )
     }
-
 
 @app.callback(
     dash.dependencies.Output('market-graph-percent-tab', 'figure'),
@@ -4589,165 +3595,8 @@ def update_graph_percent(Year, Country, Agency, City, Property_Name, Class, SQM,
     cond_1 = cond.copy()
     list_of_values_copy = list(filter(None, list_of_values))
 
-    if 'All deals' in data_in:
-        # print('Yes, "All deals" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            df_plot = static.all_deals_query_df
-        # ____________________________________________________________#
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-
-                    data_to_table = static.all_deals_query_df[
-                        (static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = data_to_table[(static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-                    df_plot = data_to_table
-
-    if 'LLR only' in data_in:
-        # print('Yes, "LLR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if '(E)TR only' in data_in:
-        # print('Yes, "(E)TR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'LLR_(E)TR only' in data_in:
-        # print('Yes, "LLR/E_TR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'All LLR' in data_in:
-        # print('Yes, "All LLR in data_in')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-            data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'All (E)TR' in data_in:
-        # print('Yes, "All (E)TR in data_in')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-            data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
+    df_plot = my_method.data_to_table_preparation(data_in, list_of_values_copy, cond_1)
+    df_plot = df_plot.sort_values('Year', ascending=False)  # отсортированный по годам датафрейм
 
     width = 700
     height = 500
@@ -4892,68 +3741,67 @@ def update_graph_percent(Year, Country, Agency, City, Property_Name, Class, SQM,
 
         if 'CBRE' in list_of_unique:
             trace3 = go.Bar(x=pv1.index, y=pv1[("SQM", 'CBRE')] * 100 / pv2["SQM"].sum(),
-                        name='CBRE',
-                        marker=dict(
-                            color=color.colliers_grey_40),
-                        width=0.4,
-                        text=(
-                            list(map(lambda x: str(x) + "%",
-                                     list(((pv1[("SQM", 'CBRE')] * 100 / pv2["SQM"].sum()).apply(np.round)).apply(
-                                         np.int64))))),
-                        textposition='auto',
-                        textfont=dict(
-                            color=color.white,
-                            size=12))
+                            name='CBRE',
+                            marker=dict(
+                                color=color.colliers_grey_40),
+                            width=0.4,
+                            text=(
+                                list(map(lambda x: str(x) + "%",
+                                         list(((pv1[("SQM", 'CBRE')] * 100 / pv2["SQM"].sum()).apply(np.round)).apply(
+                                             np.int64))))),
+                            textposition='auto',
+                            textfont=dict(
+                                color=color.white,
+                                size=12))
             data.append(trace3)
 
         if 'JLL' in list_of_unique:
             trace4 = go.Bar(x=pv1.index, y=pv1[("SQM", 'JLL')] * 100 / pv2["SQM"].sum(),
-                        name='JLL',
-                        marker=dict(
-                            color=color.colliers_yellow),
-                        width=0.4,
-                        text=(
-                            list(map(lambda x: str(x) + "%",
-                                     list(((pv1[("SQM", 'JLL')] * 100 / pv2["SQM"].sum()).apply(np.round)).apply(
-                                         np.int64))))),
-                        textposition='auto',
-                        textfont=dict(
-                            color=color.colliers_grey_80,
-                            size=12))
+                            name='JLL',
+                            marker=dict(
+                                color=color.colliers_yellow),
+                            width=0.4,
+                            text=(
+                                list(map(lambda x: str(x) + "%",
+                                         list(((pv1[("SQM", 'JLL')] * 100 / pv2["SQM"].sum()).apply(np.round)).apply(
+                                             np.int64))))),
+                            textposition='auto',
+                            textfont=dict(
+                                color=color.colliers_grey_80,
+                                size=12))
             data.append(trace4)
 
         if 'KF' in list_of_unique:
             trace5 = go.Bar(x=pv1.index, y=pv1[("SQM", 'KF')] * 100 / pv2["SQM"].sum(),
-                        name='KF',
-                        marker=dict(
-                            color=color.colliers_red),
-                        width=0.4,
-                        text=(
-                            list(map(lambda x: str(x) + "%",
-                                     list(((pv1[("SQM", 'KF')] * 100 / pv2["SQM"].sum()).apply(np.round)).apply(
-                                         np.int64))))),
-                        textposition='auto',
-                        textfont=dict(
-                            color=color.white,
-                            size=12))
+                            name='KF',
+                            marker=dict(
+                                color=color.colliers_red),
+                            width=0.4,
+                            text=(
+                                list(map(lambda x: str(x) + "%",
+                                         list(((pv1[("SQM", 'KF')] * 100 / pv2["SQM"].sum()).apply(np.round)).apply(
+                                             np.int64))))),
+                            textposition='auto',
+                            textfont=dict(
+                                color=color.white,
+                                size=12))
             data.append(trace5)
 
         if 'SAR' in list_of_unique:
             trace6 = go.Bar(x=pv1.index, y=pv1[("SQM", 'SAR')] * 100 / pv2["SQM"].sum(),
-                   name='SAR',
-                   marker=dict(
-                       color=color.colliers_light_blue),
-                   width=0.4,
-                   text=(
-                       list(map(lambda x: str(x) + "%",
-                                list(((pv1[("SQM", 'SAR')] * 100 / pv2["SQM"].sum()).apply(np.round)).apply(
-                                    np.int64))))),
-                   textposition='auto',
-                   textfont=dict(
-                       color=color.white,
-                       size=12))
+                            name='SAR',
+                            marker=dict(
+                                color=color.colliers_light_blue),
+                            width=0.4,
+                            text=(
+                                list(map(lambda x: str(x) + "%",
+                                         list(((pv1[("SQM", 'SAR')] * 100 / pv2["SQM"].sum()).apply(np.round)).apply(
+                                             np.int64))))),
+                            textposition='auto',
+                            textfont=dict(
+                                color=color.white,
+                                size=12))
             data.append(trace6)
-
 
     list_of_ind = []
     for i in range(len(list_of_values_copy)):
@@ -4962,12 +3810,12 @@ def update_graph_percent(Year, Country, Agency, City, Property_Name, Class, SQM,
 
     if len(list_of_values_copy) == 0:
         format_data = 'All deals'
-        format_year = 'All years'
+        format_year = '2013-2018'
 
     if len(list_of_values_copy) > 0 and 'Year' not in list_of_ind:  # перепчать этот код!
         list_of_values_copy_chain = list(chain(*list_of_values_copy))
         format_data = ', '.join(str(e) for e in list_of_values_copy_chain)
-        format_year = 'all years'
+        format_year = '2013-2018'
 
     if len(list_of_values_copy) > 0 and 'Year' in list_of_ind:
         list_of_values_copy_chain = list(chain(*list_of_values_copy))
@@ -5014,6 +3862,7 @@ def update_graph_percent(Year, Country, Agency, City, Property_Name, Class, SQM,
                             traceorder='normal')
             )
     }
+
 
 
 @app.callback(
@@ -5070,175 +3919,8 @@ def update_graph_horizontal_total(Year, Country, Agency, City, Property_Name, Cl
     cond_1 = cond.copy()
     list_of_values_copy = list(filter(None, list_of_values))
 
-    if 'All deals' in data_in:
-        # print('Yes, "All deals" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            df_plot = static.all_deals_query_df
-        # ____________________________________________________________#
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-
-                    data_to_table = static.all_deals_query_df[
-                        (static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = data_to_table[(static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-                    df_plot = data_to_table
-
-    if 'LLR only' in data_in:
-        # print('Yes, "LLR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if '(E)TR only' in data_in:
-        # print('Yes, "(E)TR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'LLR_(E)TR only' in data_in:
-        # print('Yes, "LLR/E_TR only" in data_in ')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'All LLR' in data_in:
-        # print('Yes, "All LLR in data_in')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-            data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_llr = static.all_deals_query_df[static.all_deals_query_df['LLR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_llr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-    if 'All (E)TR' in data_in:
-        # print('Yes, "All (E)TR in data_in')
-        if len(list_of_values_copy) == 0 or (Year is not None and Year[0] == 'All years'):
-            data_to_table_double = static.all_deals_query_df[static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-            data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-            data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-            data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
-            df_plot = data_to_table
-        # ____________________________________________________________#
-
-        if len(list_of_values_copy) != 0:
-            for i in range(len(list_of_values_copy)):
-                ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-                if i == 0:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-
-                else:
-                    data_to_table_double = static.all_deals_query_df[
-                        static.all_deals_query_df['LLR/E_TR'].isin(['Yes'])]
-                    data_to_table_etr = static.all_deals_query_df[static.all_deals_query_df['E_TR_Only'].isin(['Yes'])]
-                    data_to_table = pd.concat([data_to_table_double, data_to_table_etr], join='outer')
-                    data_to_table = data_to_table[(data_to_table[ind].isin(list_of_values_copy[i]))]
-                    data_to_table = data_to_table.sort_values('Year',
-                                                              ascending=False)  # отсортировнный по годам датафрейм
-                    df_plot = data_to_table
-    # __________________________________________________________________________________________________ #
-
-    if len(list_of_values_copy) != 0:
-        for i in range(len(list_of_values_copy)):
-            ind = my_method.get_key(cond_1, [list_of_values_copy[i]])
-            if i == 0:
-                data = static.all_deals_query_df[(static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-            else:
-                data = data[(static.all_deals_query_df[ind].isin(list_of_values_copy[i]))]
-            df_plot = data
+    df_plot = my_method.data_to_table_preparation(data_in, list_of_values_copy, cond_1)
+    df_plot = df_plot.sort_values('Year', ascending=False)  # отсортированный по годам датафрейм
 
     width = 700
     height = 500
@@ -5250,9 +3932,9 @@ def update_graph_horizontal_total(Year, Country, Agency, City, Property_Name, Cl
         aggfunc=sum,
         fill_value=0)
 
-    # print(pv['SQM'].sum())
+    # ##print(pv['SQM'].sum())
     pv_sorted = pv.sort_values(by='SQM', ascending=True)
-    # print((list(map(lambda x: x, list((pv_sorted[("SQM")] / 1000).apply(np.int64))))))
+    # ##print((list(map(lambda x: x, list((pv_sorted[("SQM")] / 1000).apply(np.int64))))))
     trace2 = go.Bar(x=pv_sorted["SQM"] / 100000,
                     y=pv_sorted.index,
                     marker=dict(
@@ -5286,12 +3968,12 @@ def update_graph_horizontal_total(Year, Country, Agency, City, Property_Name, Cl
 
     if len(list_of_values_copy) == 0:
         format_data = 'All deals'
-        format_year = 'All years'
+        format_year = '2013-2018'
 
     if len(list_of_values_copy) > 0 and 'Year' not in list_of_ind:  # перепчать этот код!
         list_of_values_copy_chain = list(chain(*list_of_values_copy))
         format_data = ', '.join(str(e) for e in list_of_values_copy_chain)
-        format_year = 'all years'
+        format_year = '2013-2018'
 
     if len(list_of_values_copy) > 0 and 'Year' in list_of_ind:
         list_of_values_copy_chain = list(chain(*list_of_values_copy))
@@ -5303,9 +3985,9 @@ def update_graph_horizontal_total(Year, Country, Agency, City, Property_Name, Cl
     annotations = []
 
     for agency, value in zip(pv_sorted.index, pv_sorted["SQM"] / 1000):
-        # print('value=', value)
-        # print('PV SQM SUM', pv['SQM'].sum() / 1000)
-        # print(str(((value / pv['SQM'].sum())) * 100) + '%'),
+        # ##print('value=', value)
+        # ##print('PV SQM SUM', pv['SQM'].sum() / 1000)
+        # ##print(str(((value / pv['SQM'].sum())) * 100) + '%'),
         annotations.append(dict(
             x=value + 100,
             y=agency,
@@ -5433,12 +4115,12 @@ def select_drop_from_check_susp():
         try:
             if 'Include_in_Market_Share' in val:
                 style_include = {'display': 'inline-block',
-                                 'width': '7.69%'
+                                 'width': '80px',
                                  }
 
             if 'Include_in_Market_Share' not in val:
                 style_include = {'display': 'none',
-                                 'width': '7.69%'
+                                 'width': '80px',
                                  }
         except Exception as e:
             return html.Div([
@@ -5453,12 +4135,12 @@ def select_drop_from_check_susp():
         try:
             if 'Agency' in val:
                 style_agency = {'display': 'inline-block',
-                                'width': '7.69%'
+                                'width': '80px',
                                 }
 
             if 'Agency' not in val:
                 style_agency = {'display': 'none',
-                                'width': '7.69%'
+                                'width': '80px',
                                 }
         except Exception as e:
             return html.Div([
@@ -5473,12 +4155,12 @@ def select_drop_from_check_susp():
         try:
             if 'Country' in val:
                 style_country = {'display': 'inline-block',
-                                 'width': '7.69%'
+                                 'width': '80px',
                                  }
 
             if 'Country' not in val:
                 style_country = {'display': 'none',
-                                 'width': '7.69%'
+                                 'width': '80px',
                                  }
         except Exception as e:
             return html.Div([
@@ -5493,12 +4175,12 @@ def select_drop_from_check_susp():
         try:
             if 'City' in val:
                 style_city = {'display': 'inline-block',
-                              'width': '7.69%'
+                              'width': '80px',
                               }
 
             if 'City' not in val:
                 style_city = {'display': 'none',
-                              'width': '7.69%'
+                              'width': '80px',
                               }
         except Exception as e:
             return html.Div([
@@ -5513,12 +4195,12 @@ def select_drop_from_check_susp():
         try:
             if 'Property_Name' in val:
                 style_property_name = {'display': 'inline-block',
-                                       'width': '7.69%'
+                                       'width': '80px',
                                        }
 
             if 'Property_Name' not in val:
                 style_property_name = {'display': 'none',
-                                       'width': '7.69%'
+                                       'width': '80px',
                                        }
         except Exception as e:
             return html.Div([
@@ -5533,12 +4215,12 @@ def select_drop_from_check_susp():
         try:
             if 'Class' in val:
                 style_class = {'display': 'inline-block',
-                               'width': '7.69%'
+                               'width': '80px',
                                }
 
             if 'Class' not in val:
                 style_class = {'display': 'none',
-                               'width': '7.69%'
+                               'width': '80px',
                                }
         except Exception as e:
             return html.Div([
@@ -5553,12 +4235,12 @@ def select_drop_from_check_susp():
         try:
             if 'SQM' in val:
                 style_SQM = {'display': 'inline-block',
-                             'width': '7.69%'
+                             'width': '80px',
                              }
 
             if 'SQM' not in val:
                 style_SQM = {'display': 'none',
-                             'width': '7.69%'
+                             'width': '80px',
                              }
         except Exception as e:
             return html.Div([
@@ -5573,12 +4255,12 @@ def select_drop_from_check_susp():
         try:
             if 'SQM' in val:
                 style_Company = {'display': 'inline-block',
-                                 'width': '7.69%'
+                                 'width': '80px',
                                  }
 
             if 'SQM' not in val:
                 style_Company = {'display': 'none',
-                                 'width': '7.69%'
+                                 'width': '80px',
                                  }
         except Exception as e:
             return html.Div([
@@ -5593,12 +4275,12 @@ def select_drop_from_check_susp():
         try:
             if 'Business_Sector' in val:
                 style_Business_Sector = {'display': 'inline-block',
-                                         'width': '7.69%'
+                                         'width': '80px',
                                          }
 
             if 'Business_Sector' not in val:
                 style_Business_Sector = {'display': 'none',
-                                         'width': '7.69%'
+                                         'width': '80px',
                                          }
         except Exception as e:
             return html.Div([
@@ -5613,12 +4295,12 @@ def select_drop_from_check_susp():
         try:
             if 'Type_of_Deal' in val:
                 style_Type_of_Deal = {'display': 'inline-block',
-                                      'width': '7.69%'
+                                      'width': '80px',
                                       }
 
             if 'Type_of_Deal' not in val:
                 style_Type_of_Deal = {'display': 'none',
-                                      'width': '7.69%'
+                                      'width': '80px',
                                       }
         except Exception as e:
             return html.Div([
@@ -5633,12 +4315,12 @@ def select_drop_from_check_susp():
         try:
             if 'Type_of_Consultancy' in val:
                 style_Type_of_Consultancy = {'display': 'inline-block',
-                                             'width': '7.69%'
+                                             'width': '80px',
                                              }
 
             if 'Type_of_Consultancy' not in val:
                 style_Type_of_Consultancy = {'display': 'none',
-                                             'width': '7.69%'
+                                             'width': '80px',
                                              }
         except Exception as e:
             return html.Div([
@@ -5653,12 +4335,12 @@ def select_drop_from_check_susp():
         try:
             if 'LLR_TR' in val:
                 style_LLR_TR = {'display': 'inline-block',
-                                'width': '7.69%'
+                                'width': '80px',
                                 }
 
             if 'LLR_TR' not in val:
                 style_LLR_TR = {'display': 'none',
-                                'width': '7.69%'
+                                'width': '80px',
                                 }
         except Exception as e:
             return html.Div([
@@ -5673,12 +4355,12 @@ def select_drop_from_check_susp():
         try:
             if 'Year' in val:
                 style_Year = {'display': 'inline-block',
-                              'width': '7.69%'
+                              'width': '80px',
                               }
 
             if 'Year' not in val:
                 style_Year = {'display': 'none',
-                              'width': '7.69%'
+                              'width': '80px',
                               }
         except Exception as e:
             return html.Div([
@@ -5693,11 +4375,11 @@ def select_drop_from_check_susp():
         try:
             if 'Quarter' in val:
                 style_Quarter = {'display': 'inline-block',
-                                 'width': '7.69%'
+                                 'width': '80px',
                                  }
             if 'Quarter' not in val:
                 style_Quarter = {'display': 'none',
-                                 'width': '7.69%'
+                                 'width': '80px',
                                  }
         except Exception as e:
             return html.Div([
@@ -5712,12 +4394,12 @@ def select_drop_from_check_susp():
         try:
             if 'Address' in val:
                 style_Addres = {'display': 'inline-block',
-                                'width': '7.69%'
+                                'width': '80px',
                                 }
 
             if 'Address' not in val:
                 style_Addres = {'display': 'none',
-                                'width': '7.69%'
+                                'width': '80px',
                                 }
         except Exception as e:
             return html.Div([
@@ -5732,12 +4414,12 @@ def select_drop_from_check_susp():
         try:
             if 'Submarket_Large' in val:
                 style_Submarket_Large = {'display': 'inline-block',
-                                         'width': '7.69%'
+                                         'width': '80px',
                                          }
 
             if 'Submarket_Large' not in val:
                 style_Submarket_Large = {'display': 'none',
-                                         'width': '7.69%'
+                                         'width': '80px',
                                          }
         except Exception as e:
             return html.Div([
@@ -5752,12 +4434,12 @@ def select_drop_from_check_susp():
         try:
             if 'Owner' in val:
                 style_Owner = {'display': 'inline-block',
-                               'width': '7.69%'
+                               'width': '80px',
                                }
 
             if 'Owner' not in val:
                 style_Owner = {'display': 'none',
-                               'width': '7.69%'
+                               'width': '80px',
                                }
         except Exception as e:
             return html.Div([
@@ -5772,12 +4454,12 @@ def select_drop_from_check_susp():
         try:
             if 'Date_of_acquiring' in val:
                 style_Date_of_acquiring = {'display': 'inline-block',
-                                           'width': '7.69%'
+                                           'width': '80px',
                                            }
 
             if 'Date_of_acquiring' not in val:
                 style_Date_of_acquiring = {'display': 'none',
-                                           'width': '7.69%'
+                                           'width': '80px',
                                            }
         except Exception as e:
             return html.Div([
@@ -5792,12 +4474,12 @@ def select_drop_from_check_susp():
         try:
             if 'Class_Colliers' in val:
                 style_Class_Colliers = {'display': 'inline-block',
-                                        'width': '7.69%'
+                                        'width': '80px',
                                         }
 
             if 'Class_Colliers' not in val:
                 style_Class_Colliers = {'display': 'none',
-                                        'width': '7.69%'
+                                        'width': '80px',
                                         }
         except Exception as e:
             return html.Div([
@@ -5812,12 +4494,12 @@ def select_drop_from_check_susp():
         try:
             if 'Floor' in val:
                 style_Floor = {'display': 'inline-block',
-                               'width': '7.69%'
+                               'width': '80px',
                                }
 
             if 'Floor' not in val:
                 style_Floor = {'display': 'none',
-                               'width': '7.69%'
+                               'width': '80px',
                                }
         except Exception as e:
             return html.Div([
@@ -5832,12 +4514,12 @@ def select_drop_from_check_susp():
         try:
             if 'Deal_Size' in val:
                 style_Deal_Size = {'display': 'inline-block',
-                                   'width': '7.69%'
+                                   'width': '80px',
                                    }
 
             if 'Deal_Size' not in val:
                 style_Deal_Size = {'display': 'none',
-                                   'width': '7.69%'
+                                   'width': '80px',
                                    }
         except Exception as e:
             return html.Div([
@@ -5852,12 +4534,12 @@ def select_drop_from_check_susp():
         try:
             if 'Sublease_Agent' in val:
                 style_Sublease_Agent = {'display': 'inline-block',
-                                        'width': '7.69%'
+                                        'width': '80px',
                                         }
 
             if 'Sublease_Agent' not in val:
                 style_Sublease_Agent = {'display': 'none',
-                                        'width': '7.69%'
+                                        'width': '80px',
                                         }
         except Exception as e:
             return html.Div([
@@ -5872,12 +4554,12 @@ def select_drop_from_check_susp():
         try:
             if 'LLR_Only' in val:
                 style_LLR_Only = {'display': 'inline-block',
-                                  'width': '7.69%'
+                                  'width': '80px',
                                   }
 
             if 'LLR_Only' not in val:
                 style_LLR_Only = {'display': 'none',
-                                  'width': '7.69%'
+                                  'width': '80px',
                                   }
         except Exception as e:
             return html.Div([
@@ -5892,12 +4574,12 @@ def select_drop_from_check_susp():
         try:
             if 'E_TR_Only' in val:
                 style_E_TR_Only = {'display': 'inline-block',
-                                   'width': '7.69%'
+                                   'width': '80px',
                                    }
 
             if 'E_TR_Only' not in val:
                 style_E_TR_Only = {'display': 'none',
-                                   'width': '7.69%'
+                                   'width': '80px',
                                    }
         except Exception as e:
             return html.Div([
@@ -5912,12 +4594,12 @@ def select_drop_from_check_susp():
         try:
             if 'LLR/E_TR' in val:
                 style_LLR_E_TR = {'display': 'inline-block',
-                                  'width': '7.69%'
+                                  'width': '80px',
                                   }
 
             if 'LLR/E_TR' not in val:
                 style_LLR_E_TR = {'display': 'none',
-                                  'width': '7.69%'
+                                  'width': '80px',
                                   }
         except Exception as e:
             return html.Div([
@@ -5932,12 +4614,12 @@ def select_drop_from_check_susp():
         try:
             if 'Month' in val:
                 style_Month = {'display': 'inline-block',
-                               'width': '7.69%'
+                               'width': '80px',
                                }
 
             if 'Month' not in val:
                 style_Month = {'display': 'none',
-                               'width': '7.69%'
+                               'width': '80px',
                                }
         except Exception as e:
             return html.Div([
@@ -6005,23 +4687,23 @@ def update_datatable_susp(Year, Country, Agency, City, Property_Name, Class, SQM
     suspecious_deals_df_equal_sqm = static.all_deals_query_df[
         static.all_deals_query_df.duplicated(['SQM'], keep=False)].sort_values(
         'SQM', ascending=False)
-    print('equal SQM')
-    print(suspecious_deals_df_equal_sqm['SQM'])
+    # #print('equal SQM')
+    # #print(suspecious_deals_df_equal_sqm['SQM'])
 
     sort_for_dif = static.all_deals_query_df.sort_values('SQM', ascending=False)
     suspecious_deals_df_sqm_diff_less_five = sort_for_dif[sort_for_dif['SQM'].diff() < 5]
-    print('difference between SQM')
-    print(suspecious_deals_df_sqm_diff_less_five)
+    # #print('difference between SQM')
+    # #print(suspecious_deals_df_sqm_diff_less_five)
 
     suspecious_deals_df_merged_by_equal_and_diff = pd.merge(suspecious_deals_df_equal_sqm,
                                                             suspecious_deals_df_sqm_diff_less_five, how='inner')
-    print('merged')
-    print(suspecious_deals_df_merged_by_equal_and_diff)
+    # #print('merged')
+    # #print(suspecious_deals_df_merged_by_equal_and_diff)
 
     # suspecious_deals_df_sqm_diff_year = sort_for_dif[sort_for_dif['Year'].diff() <= 1]
     # suspecious_deals_df_sqm_diff_year_sorted = suspecious_deals_df_sqm_diff_year.sort_values('Year', ascending=False)
-    # print('suspecious_deals_df_sqm_diff_year_sorted')
-    # print(suspecious_deals_df_sqm_diff_year_sorted)
+    # ##print('suspecious_deals_df_sqm_diff_year_sorted')
+    # ##print(suspecious_deals_df_sqm_diff_year_sorted)
 
     sort_for_dif = static.all_deals_query_df.sort_values('Quarter', ascending=False)
     suspecious_deals_df_quar_diff = sort_for_dif[sort_for_dif['Quarter'].diff() <= 2]
@@ -6072,7 +4754,7 @@ def parse_contents(contents, filename):  # чтение загруженного
             df = pd.read_excel((io.BytesIO(decoded)), header=None)
             df.columns = static.list_of_columns
     except Exception as e:
-        print(e)
+        # #print(e)
         return html.Div([
             'There was an error processing this file.'
         ])
@@ -6109,7 +4791,7 @@ def save_contents(contents_save, filename_save):  # данные, загруже
             df = pd.read_excel((io.BytesIO(decoded)), header=None)
             json = df.to_json(date_format='iso', orient='split')
     except Exception as e:
-        print(e)
+        # #print(e)
         return html.Div([
             'There was an error processing this file.'
         ])
@@ -6138,7 +4820,7 @@ def update_table(jsonified_cleaned_data):
         dff = pd.read_json(jsonified_cleaned_data[0], orient='split')
         dff.columns = static.list_of_columns
         dff.to_sql('Market_Share', static.con, if_exists='append', index=None, index_label=static.list_of_columns)
-        return print('База обновлена')
+        return  # #print('База обновлена')
     else:
         print('empty json')
 
@@ -6149,12 +4831,14 @@ def update_table(jsonified_cleaned_data):
 @app.callback(dash.dependencies.Output('page-content', 'children'),
               [dash.dependencies.Input('url', 'pathname')])
 def display_page(pathname):
-    if pathname == '/page-4':
-        return page_4_layout
-    elif pathname == '/page-5':
-        return page_5_layout
+    if pathname == '/page-deals':
+        return page_deals_layout
+    elif pathname == '/page-update-database':
+        return page_update_database_layout
     elif pathname == '/suspicious_deals':
         return suspicious_deals_layout
+    elif pathname == '/page-default-graphs':
+        return page_default_graphs_and_tabs
     elif pathname == '/page-help':
         return page_help_layout
     elif pathname == '/page-about':

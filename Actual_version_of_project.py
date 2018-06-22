@@ -12,7 +12,7 @@ import pandas as pd
 import psycopg2 as pg
 import numpy as np
 import colors_and_fonts as color
-import App_sql_queries as sql
+import project_sql as sql
 import Passwords_and_Usernames as users
 import plotly as pt
 
