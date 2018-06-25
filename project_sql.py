@@ -1,3 +1,6 @@
+delete_query = """DELETE FROM "Market_Share" WHERE "Property_Name" LIKE 'TEST1' """
+
+
 deals_query = """SELECT "Agency"::text, "SQM"::real, "Year"::text
             FROM "Market_Share"
             WHERE "SQM" NOT LIKE '%w/s' AND "SQM" NOT LIKE '%offices' AND "Country"='RU' AND "Include_in_Market_Share"='Y'"""

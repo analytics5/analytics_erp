@@ -35,7 +35,9 @@ list_of_columns = [
     # "LLR_Only",
     # "E_TR_Only",
     # "LLR/E_TR",
-    "Month", "Year", "Quarter"]
+    "Month",
+    "Year",
+    "Quarter"]
 
 list_of_columns_dataframe = [  # список заголовков таблицы по всем сделкам
     "Include_in_Market_Share",
@@ -43,15 +45,27 @@ list_of_columns_dataframe = [  # список заголовков таблиц�
     "Country",
     "City",
     "Property_Name",
-    "Address", "Submarket_Large", "Owner",
-    "Date_of_acquiring", "Class", "Class_Colliers", "Floor",
-    "SQM", "Deal_Size", "Company", "Business_Sector", "Sublease_Agent",
-    "Type_of_Deal", "Type_of_Consultancy",
+    "Address",
+    "Submarket_Large",
+    "Owner",
+    "Date_of_acquiring",
+    "Class",
+    "Class_Colliers",
+    "Floor",
+    "SQM",
+    "Deal_Size",
+    "Company",
+    "Business_Sector",
+    "Sublease_Agent",
+    "Type_of_Deal",
+    "Type_of_Consultancy",
     "LLR_TR",
     "LLR_Only",
     "E_TR_Only",
     "LLR/E_TR",
-    "Month", "Year", "Quarter"]
+    "Month",
+    "Year",
+    "Quarter"]
 
 list_of_columns_suspicious = [  # список заголовков таблицы по сомнительным сделкам
     'Agency',
@@ -89,7 +103,9 @@ list_of_columns_for_gui = [  # список чеклиста для выбора
     # "LLR",
     # "(E)TR",
     # "LLR/(E)TR",
-    "Month", "Year", "Quarter"]
+    "Month",
+    "Year",
+    "Quarter"]
 
 list_of_graphics_for_gui = [  # список чеклиста для выбора графика из дерева
     "Bar-stacked",
@@ -107,7 +123,8 @@ list_of_graphics_for_gui = [  # список чеклиста для выбор�
     # 'biggest-deal-tab-2017',
     # 'biggest-deal-tab-1q2018',
     # 'biggest-deal-tab-2013-2018',
-    'biggest-deal-tab-test']
+    # 'biggest-deal-tab-test'
+]
 
 list_of_deals_type = [             # список чеклиста для сортировки сделок из дерева
     "All deals",
@@ -179,3 +196,5 @@ with conn:
     suspicious_deals_data = cur.fetchall()  # данные по сделкам
     suspicious_deals_df = pd.DataFrame(suspicious_deals_data)  # Запись в датафрейм
     suspicious_deals_df.columns = list_of_columns_suspicious  # имена столбцов датафрейма по сомнительным сделкам
+
+    cur.execute(sql.delete_query)

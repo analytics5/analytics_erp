@@ -25,7 +25,7 @@ import project_pages_layout as pages
 import project_methods as my_method
 import project_deals_graphics
 
-#print(help(dt.DataTable))
+# print(help(dt.DataTable))
 
 ''' НАЧАЛО ОСНОВНОГО БЛОКА ПРИЛОЖЕНИЯ '''
 
@@ -203,7 +203,6 @@ def interface_button():
 
 interface_button()
 
-
 # БЛОК КОДА ПО ДЕФОЛТНЫМ ГРАФИКАМ
 
 '''
@@ -213,7 +212,7 @@ interface_button()
 
 @app.callback(dash.dependencies.Output('interface-default-graphics', 'labelStyle'),
               # на вход принимается значение чеклиста 'colums'
-              [dash.dependencies.Input('tree-checklist-default-graphics', 'values')   # 'tree-checklist-default-graphics'
+              [dash.dependencies.Input('tree-checklist-default-graphics', 'values')  # 'tree-checklist-default-graphics'
                # если значение выбрано, то отрисовывается новый блок со списком, как в дереве
                ])
 def show_default_graphics_tree(val):
@@ -242,7 +241,8 @@ def select_default_graph_from_check_graphics():
         try:
             if 'LLR, (E)TR, LLR/(E)TR-pie-2017-RU' in val:
                 show_graph = {'display': 'inline-block',
-                              'padding': '100px 0px 0px 50px'
+                              # 'padding': '100px 0px 0px 50px'
+                              'vertical-align': 'middle'
                               }
 
             if 'LLR, (E)TR, LLR/(E)TR-pie-2017-RU' not in val:
@@ -261,7 +261,7 @@ def select_default_graph_from_check_graphics():
         try:
             if 'LLR, (E)TR, LLR/(E)TR-pie-2017-RU' in val:
                 show_text = {'display': 'inline-block',
-                             'padding-left': '150px'
+                             'horizontal-align': 'middle'
                              }
 
             if 'LLR, (E)TR, LLR/(E)TR-pie-2017-RU' not in val:
@@ -280,7 +280,9 @@ def select_default_graph_from_check_graphics():
         try:
             if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU' in val:
                 show_graph = {'display': 'inline-block',
-                              'padding': '100px 0px 0px 50px'
+                              # 'padding': '100px 0px 0px 50px'
+                              'vertical-align': 'middle'
+
                               }
 
             if 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU' not in val:
@@ -318,7 +320,9 @@ def select_default_graph_from_check_graphics():
         try:
             if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-RU' in val:
                 show_graph = {'display': 'inline-block',
-                              'padding': '100px 0px 0px 50px'
+                              # 'padding': '100px 0px 0px 50px'
+                              'vertical-align': 'middle'
+
                               }
 
             if 'LLR, (E)TR, LLR/(E)TR-pie-five-years-RU' not in val:
@@ -517,18 +521,18 @@ def select_default_graph_from_check_graphics():
 
 select_default_graph_from_check_graphics()  # вызов функции с отображением дефолтных графиков и подписей к ним
 
-
 '''Функция по отрисовке дефолтных графиков'''
 
 
 def default_graphics():
+    """СНАЧАЛА ИДЁТ БЛОК С ИНТЕРАКТИВНЫМИ ГРАФИКАМИ PLOTLY, ДАЛЕЕ ПО КОДУ ИДЕТ ВЫЗОВ
+    ФУНКЦИИ ПОЛУЧЕНИЯ БАЙТКОДА КАРТИНКИ С СЕРВЕРОВ PLOTLY И ЗАГРУЗКИ ЭТОГО КОДА В ЭЛЕМЕНТ СТРАНИЦЫ"""
     @app.callback(
         dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-2017-RU', 'figure'),
         [dash.dependencies.Input('interface-default-graphics', 'values')
          ]
     )
     def update_pie_graph_4(values):
-
         df_plot = static.all_deals_query_df.copy()
         data = df_plot[(df_plot['Year'].isin(['2017'])) & (df_plot['Country'].isin(['RU']))]
         data_llr_only = data[(data['LLR_Only'].isin(['Yes']))]
@@ -582,7 +586,6 @@ def default_graphics():
         [dash.dependencies.Input('interface-default-graphics', 'values')
          ])
     def update_pie_graph_5(values):
-
         df_plot = static.all_deals_query_df.copy()
         data = df_plot[
             (df_plot['Year'].isin(['2018'])) & (df_plot['Country'].isin(['RU'])) & (df_plot['Quarter'].isin(['1']))]
@@ -624,7 +627,8 @@ def default_graphics():
         return {
             'data': [pie1],
             'layout': go.Layout(
-                title='1q 2018',
+                title='LLR, (E)TR and LLR/(E)TR deals in Russia<br>'
+                      '1Q 2018',
                 width=width,
                 height=height,
                 legend=dict(orientation="h",
@@ -637,7 +641,6 @@ def default_graphics():
         [dash.dependencies.Input('interface-default-graphics', 'values')
          ])
     def update_pie_graph_6(values):
-
         df_plot = static.all_deals_query_df.copy()
         data = df_plot[(df_plot['Country'].isin(['RU']))]
         data_llr_only = data[(data['LLR_Only'].isin(['Yes'])) & (df_plot['Country'].isin(['RU']))]
@@ -691,7 +694,6 @@ def default_graphics():
         [dash.dependencies.Input('interface-default-graphics', 'values')
          ])
     def update_pie_graph_7(values):
-
         df_plot = static.all_deals_query_df.copy()
         data = df_plot[(df_plot['Year'].isin(['2017'])) & (df_plot['City'].isin(['Moscow']))]
         data_llr_only = data[(data['LLR_Only'].isin(['Yes']))]
@@ -732,7 +734,8 @@ def default_graphics():
         return {
             'data': [pie1],
             'layout': go.Layout(
-                title='2017',
+                title='LLR, (E)TR and LLR/(E)TR deals in Russia<br>'
+                      '2017',
                 width=width,
                 height=height,
                 legend=dict(orientation="h",
@@ -745,7 +748,6 @@ def default_graphics():
         [dash.dependencies.Input('interface-default-graphics', 'values')
          ])
     def update_pie_graph_8(values):
-
         df_plot = static.all_deals_query_df.copy()
         data = df_plot[
             (df_plot['Year'].isin(['2018'])) & (df_plot['City'].isin(['Moscow'])) & (df_plot['Quarter'].isin(['1']))]
@@ -787,7 +789,8 @@ def default_graphics():
         return {
             'data': [pie1],
             'layout': go.Layout(
-                title='1q 2018',
+                title='LLR, (E)TR and LLR/(E)TR deals in Moscow<br>'
+                      '1Q 2018',
                 width=width,
                 height=height,
                 legend=dict(orientation="h",
@@ -800,7 +803,6 @@ def default_graphics():
         [dash.dependencies.Input('interface-default-graphics', 'values')
          ])
     def update_pie_graph_9(values):
-
         df_plot = static.all_deals_query_df.copy()
         data = df_plot[(df_plot['City'].isin(['Moscow']))]
         data_llr_only = data[(data['LLR_Only'].isin(['Yes']))]
@@ -841,7 +843,8 @@ def default_graphics():
         return {
             'data': [pie1],
             'layout': go.Layout(
-                title='2013-2018',
+                title='LLR, (E)TR and LLR/(E)TR deals in Moscow<br>'
+                      '2013-2018',
                 width=width,
                 height=height,
                 legend=dict(orientation="h",
@@ -849,9 +852,196 @@ def default_graphics():
             )
         }
 
+    """ТУТ НАЧИНАЮТСЯ ФУНКЦИИ ЗАГРУЗКИ СТАТИЧЕСКИХ КАРТИНОК"""
+
+    @app.callback(
+        dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-2017-RU-img', 'src'),
+        [dash.dependencies.Input('interface-default-graphics', 'values')
+         ])
+    def update_pie_graph_4_img(values):
+        df_plot = static.all_deals_query_df.copy()
+        data = df_plot[(df_plot['Year'].isin(['2017'])) & (df_plot['Country'].isin(['RU']))]
+        data_llr_only = data[(data['LLR_Only'].isin(['Yes']))]
+        data_e_tr_only = data[(data['E_TR_Only'].isin(['Yes']))]
+        data_llr_e_tr_only = data[(data['LLR/E_TR'].isin(['Yes']))]
+
+        d = {'Type': ['LLR', '(E)TR', 'LLR/(E)TR'],
+             'SQM': [data_llr_only["SQM"].sum(), data_e_tr_only["SQM"].sum(), data_llr_e_tr_only["SQM"].sum()]}
+        df_graph = pd.DataFrame(data=d)
+
+        width = 600
+        height = 450
+
+        pv = pd.pivot_table(
+            df_graph,
+            index=["Type"],
+            values=["SQM"],
+            aggfunc=sum,
+            fill_value=0)
+        colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_light_blue]
+        pie1 = go.Pie(values=pv["SQM"],
+                      labels=['LLR', '(E)TR', 'LLR/(E)TR'],
+                      hoverinfo='label+value+percent',
+                      textinfo='label+percent',
+                      textposition='outside',
+                      textfont=dict(
+                          color=colors_pie,
+                          size=12),
+                      marker=dict(colors=colors_pie,
+                                  line=dict(
+                                      color=color.white,
+                                      width=1
+                                  )
+                                  )
+                      )
+        image_data = {
+            'data': [pie1],
+            'layout': go.Layout(
+                title='LLR, (E)TR and LLR/(E)TR deals in Russia<br>'
+                      '2017',
+                width=width,
+                height=height,
+                legend=dict(orientation="h",
+                            traceorder="normal"),
+            )
+        }
+
+        img = py.image.get(image_data, format='png')
+        plot_bytes_encode = str(base64.b64encode(img))
+        plot_bytes_encode = plot_bytes_encode[0:-1]
+        plot_bytes_encode_fin = plot_bytes_encode[2:]
+        stringpic = "data:image/png;base64," + plot_bytes_encode_fin  # строчка с байткодом картинки
+        # stringpic = plot_url_png                # строчка с сылкой на файл картинки на сайте плотли
+
+        return stringpic
+
+    @app.callback(
+        dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU-img', 'src'),
+        [dash.dependencies.Input('interface-default-graphics', 'values')
+         ])
+    def update_pie_graph_5_img(values):
+        df_plot = static.all_deals_query_df.copy()
+        data = df_plot[
+            (df_plot['Year'].isin(['2018'])) & (df_plot['Country'].isin(['RU'])) & (df_plot['Quarter'].isin(['1']))]
+        data_llr_only = data[(data['LLR_Only'].isin(['Yes']))]
+        data_e_tr_only = data[(data['E_TR_Only'].isin(['Yes']))]
+        data_llr_e_tr_only = data[(data['LLR/E_TR'].isin(['Yes']))]
+        # ##print('data_llr_only_sum', data_llr_only["SQM"].sum())
+        # ##print('data_e_tr_only', data_e_tr_only["SQM"].sum())
+        # ##print('data_llr_e_tr_only', data_llr_e_tr_only["SQM"].sum())
+        d = {'Type': ['LLR', '(E)TR', 'LLR/(E)TR'],
+             'SQM': [data_llr_only["SQM"].sum(), data_e_tr_only["SQM"].sum(), data_llr_e_tr_only["SQM"].sum()]}
+        df_graph = pd.DataFrame(data=d)
+
+        width = 600
+        height = 450
+
+        pv = pd.pivot_table(
+            df_graph,
+            index=["Type"],
+            values=["SQM"],
+            aggfunc=sum,
+            fill_value=0)
+        colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_light_blue]
+        pie1 = go.Pie(values=pv["SQM"],
+                      labels=['LLR', '(E)TR', 'LLR/(E)TR'],
+                      hoverinfo='label+value+percent',
+                      textinfo='label+percent',
+                      textposition='outside',
+                      textfont=dict(
+                          color=colors_pie,
+                          size=12),
+                      marker=dict(colors=colors_pie,
+                                  line=dict(
+                                      color=color.white,
+                                      width=1
+                                  )
+                                  )
+                      )
+        image_data = {
+            'data': [pie1],
+            'layout': go.Layout(
+                title='LLR, (E)TR and LLR/(E)TR deals in Russia<br>'
+                      '1Q 2018',
+                width=width,
+                height=height,
+                legend=dict(orientation="h",
+                            traceorder="normal"),
+            )
+        }
+
+        img = py.image.get(image_data, format='png')
+        plot_bytes_encode = str(base64.b64encode(img))
+        plot_bytes_encode = plot_bytes_encode[0:-1]
+        plot_bytes_encode_fin = plot_bytes_encode[2:]
+        stringpic = "data:image/png;base64," + plot_bytes_encode_fin  # строчка с байткодом картинки
+        # stringpic = plot_url_png                # строчка с сылкой на файл картинки на сайте плотли
+        return stringpic
+
+    @app.callback(
+        dash.dependencies.Output('LLR, (E)TR, LLR/(E)TR-pie-five-years-RU-img', 'src'),
+        [dash.dependencies.Input('interface-default-graphics', 'values')
+         ])
+    def update_pie_graph_6_img(values):
+        df_plot = static.all_deals_query_df.copy()
+        data = df_plot[(df_plot['Country'].isin(['RU']))]
+        data_llr_only = data[(data['LLR_Only'].isin(['Yes'])) & (df_plot['Country'].isin(['RU']))]
+        data_e_tr_only = data[(data['E_TR_Only'].isin(['Yes']))]
+        data_llr_e_tr_only = data[(data['LLR/E_TR'].isin(['Yes']))]
+        # ##print('data_llr_only_sum', data_llr_only["SQM"].sum())
+        # ##print('data_e_tr_only', data_e_tr_only["SQM"].sum())
+        # ##print('data_llr_e_tr_only', data_llr_e_tr_only["SQM"].sum())
+        d = {'Type': ['LLR', '(E)TR', 'LLR/(E)TR'],
+             'SQM': [data_llr_only["SQM"].sum(), data_e_tr_only["SQM"].sum(), data_llr_e_tr_only["SQM"].sum()]}
+        df_graph = pd.DataFrame(data=d)
+
+        width = 600
+        height = 450
+
+        pv = pd.pivot_table(
+            df_graph,
+            index=["Type"],
+            values=["SQM"],
+            aggfunc=sum,
+            fill_value=0)
+        colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_light_blue]
+        pie1 = go.Pie(values=pv["SQM"],
+                      labels=['LLR', '(E)TR', 'LLR/(E)TR'],
+                      hoverinfo='label+value+percent',
+                      textinfo='label+percent',
+                      textposition='outside',
+                      textfont=dict(
+                          color=colors_pie,
+                          size=12),
+                      marker=dict(colors=colors_pie,
+                                  line=dict(
+                                      color=color.white,
+                                      width=1
+                                  )
+                                  )
+                      )
+        image_data = {
+            'data': [pie1],
+            'layout': go.Layout(
+                title='LLR, (E)TR and LLR/(E)TR deals in Russia<br>'
+                      '2013-2018',
+                width=width,
+                height=height,
+                legend=dict(orientation="h",
+                            traceorder="normal"),
+            )
+        }
+
+        img = py.image.get(image_data, format='png')
+        plot_bytes_encode = str(base64.b64encode(img))
+        plot_bytes_encode = plot_bytes_encode[0:-1]
+        plot_bytes_encode_fin = plot_bytes_encode[2:]
+        stringpic = "data:image/png;base64," + plot_bytes_encode_fin  # строчка с байткодом картинки
+        # stringpic = plot_url_png                # строчка с сылкой на файл картинки на сайте плотли
+        return stringpic
+
 
 default_graphics()  # вызов функции с отображением базовых pie графиков
-
 
 '''Функция по отрисовке дефолтных таблиц по крупнейшим этим сделкам за этот период'''
 
@@ -936,7 +1126,6 @@ def default_tables():
 default_tables()  # вызов функции с отображением базовых таблиц
 
 ''' Начало блока по отрисовке статических изображений. Код закомментирован до обсуждения  '''
-
 
 # БЛОК КОДА ПО СТРАНИЦЕ СО СДЕЛКАМИ И ГРАФИКАМ К НИМ
 
@@ -1118,12 +1307,12 @@ def select_drop_from_check_columns():
                    ])
     def update_drop_Company(val):
         try:
-            if 'SQM' in val:
+            if 'Company' in val:
                 style_Company = {'display': 'inline-block',
                                  'width': '184px',
                                  }
 
-            if 'SQM' not in val:
+            if 'Company' not in val:
                 style_Company = {'display': 'none',
                                  'width': '80px',
                                  }
@@ -1524,7 +1713,7 @@ def show_graphics_tree(val):
 '''
 
 
-@app.callback(dash.dependencies.Output('interface-data', 'labelStyle'),
+@app.callback(dash.dependencies.Output('interface-llr-data', 'labelStyle'),
               # на вход принимается значение чеклиста 'colums'
               [dash.dependencies.Input('tree-checklist-data', 'values')
                # если значение выбрано, то отрисовывается новый блок со списком, как в дереве
@@ -1540,16 +1729,15 @@ def show_data_tree(val):
                     }
     return children
 
+
 '''
 Отображение tree-like блока со списком статических картинок графиков
 На вход принимается значение чеклиста 'select data'
 '''
 
 
-@app.callback(dash.dependencies.Output('interface-graphics-image', 'labelStyle'),
-              # на вход принимается значение чеклиста 'colums'
-              [dash.dependencies.Input('tree-checklist-graphics-image', 'values')
-               # если значение выбрано, то отрисовывается новый блок со списком, как в дереве
+@app.callback(dash.dependencies.Output('interface-graphics-image', 'labelStyle'), # на вход принимается значение чеклиста 'colums'
+              [dash.dependencies.Input('tree-checklist-graphics-image', 'values') # если значение выбрано, то отрисовывается новый блок со списком, как в дереве
                ])
 def show_image_tree(val):
     if 'Show' in val:
@@ -1561,7 +1749,6 @@ def show_image_tree(val):
         children = {'display': 'none'
                     }
     return children
-
 
 
 '''
@@ -1981,7 +2168,6 @@ def select_graph_from_check_graphics():
 
 select_graph_from_check_graphics()  # вызов функции с отображением графиков и подписей к ним
 
-
 '''
 Вывод строк таблицы
 На вход принимается значение выпадающих списков и выбранных элементов в списке слева
@@ -2018,8 +2204,8 @@ select_graph_from_check_graphics()  # вызов функции с отобра�
                # dash.dependencies.Input('LLR/E_TR', 'value'),
                dash.dependencies.Input('Month', 'value'),
                dash.dependencies.Input('interface-columns', 'values'),
-               dash.dependencies.Input('interface-data', 'value')
-               # значение чеклиста из дерева с выбором столбцов interface-data
+               dash.dependencies.Input('interface-llr-data', 'value')
+               # значение чеклиста из дерева с выбором столбцов interface-llr-data
                ])
 def update_datatable(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
                      Type_of_Consultancy, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
@@ -2046,7 +2232,6 @@ def update_datatable(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
     data_to_table = data_to_table.sort_values('Year', ascending=False)  # отсортировнный по годам датафрейм
 
     return data_to_table[col].to_dict('records')
-
 
 
 '''  Подсчёт суммы по отфильтрованным данным  '''
@@ -2080,7 +2265,7 @@ def update_datatable(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
                # dash.dependencies.Input('LLR/E_TR', 'value'),
                dash.dependencies.Input('Month', 'value'),
                dash.dependencies.Input('interface-columns', 'values'),
-               dash.dependencies.Input('interface-data', 'value')  # значение чеклиста из дерева с выбором столбцов
+               dash.dependencies.Input('interface-llr-data', 'value')  # значение чеклиста из дерева с выбором столбцов
                ])
 def update_sum(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
                Type_of_Consultancy, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
@@ -2107,17 +2292,19 @@ def update_sum(Year, Country, Agency, City, Property_Name, Class, SQM, Business_
     data_sum = int(round(data_to_table["SQM"].sum()))
     sqm_sum = '{0:,}'.format(data_sum).replace(',', ' ')
 
-    sum_parameters = 'Type of deal = {0}, sorting options = '.format(str(data_in).strip("[]'"))
-    if list_of_values_copy != []:
-        params = str(list_of_values_copy).split()
-        for i in range(len(params)):
-            if i == 0:
-                sum_parameters += '{0}'.format(params[i].strip("[],'"))
-            else:
-                sum_parameters += ', {0}'.format(params[i].strip("[],'"))
+    sum_parameters = 'Selected: type of deal - {0}; '.format(str(data_in))
+    if len(list_of_values_copy) != 0:
+        for i in range(len(list_of_values_copy)):
+            for j in range(len(list_of_values_copy[i])):
+                if j == 0:
+                    sum_parameters += '{0} - '.format(my_method.get_key(cond_1, [list_of_values_copy[i]]).lower().replace('_', ' '))
+                sum_parameters += '{0}, '.format(list_of_values_copy[i][j].strip("[]'"))
+            sum_parameters = sum_parameters.strip(", ")
+            sum_parameters += '; '
+        sum_parameters = sum_parameters.strip("; ")
     else:
-        sum_parameters += 'default'
-    return 'Суммарная площадь по сделкам составляет ', sqm_sum, ' кв.м ( ', sum_parameters, ' )'
+        sum_parameters = sum_parameters.strip("; ")
+    return 'Суммарная площадь по сделкам составляет ', sqm_sum, ' кв.м (', sum_parameters, ')'
 
 
 '''  Скачивание csv файла с дампом всей базы данных по сделкам  '''
@@ -2177,7 +2364,7 @@ def update_download_all_link(Year, Country, Agency, City, Property_name, Class, 
      # dash.dependencies.Input('LLR/E_TR', 'value'),
      dash.dependencies.Input('Month', 'value'),
      dash.dependencies.Input('interface-columns', 'values'),
-     dash.dependencies.Input('interface-data', 'value')  # значение чеклиста из дерева с выбором столбцов
+     dash.dependencies.Input('interface-llr-data', 'value')  # значение чеклиста из дерева с выбором столбцов
      ])
 def update_download_link(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
                          Type_of_Consultancy, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large,
@@ -2246,7 +2433,7 @@ Callback`и, отрисовывающие графики, принимают н�
      # dash.dependencies.Input('LLR/E_TR', 'value'),
      dash.dependencies.Input('Month', 'value'),
      dash.dependencies.Input('interface-columns', 'values'),
-     dash.dependencies.Input('interface-data', 'value'),
+     dash.dependencies.Input('interface-llr-data', 'value'),
      # значение чеклиста из дерева с выбором столбцов market-graph-tab-slider-width
      # dash.dependencies.Input('market-graph-tab-slider-width', 'value'),
      # dash.dependencies.Input('market-graph-tab-slider-height', 'value')
@@ -2619,7 +2806,7 @@ def update_graph_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
      dash.dependencies.Input('Business_Sector', 'value'),
      dash.dependencies.Input('Type_of_Deal', 'value'),
      dash.dependencies.Input('Type_of_Consultancy', 'value'),
-     #dash.dependencies.Input('LLR/TR', 'value'),
+     # dash.dependencies.Input('LLR/TR', 'value'),
      dash.dependencies.Input('Quarter', 'value'),
      dash.dependencies.Input('Company', 'value'),
      dash.dependencies.Input('Include_in_Market_Share', 'value'),
@@ -2631,9 +2818,9 @@ def update_graph_tab(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
      dash.dependencies.Input('Floor', 'value'),
      dash.dependencies.Input('Deal_Size', 'value'),
      dash.dependencies.Input('Sublease_Agent', 'value'),
-     #dash.dependencies.Input('LLR_Only', 'value'),
-     #dash.dependencies.Input('E_TR_Only', 'value'),
-     #dash.dependencies.Input('LLR/E_TR', 'value'),
+     # dash.dependencies.Input('LLR_Only', 'value'),
+     # dash.dependencies.Input('E_TR_Only', 'value'),
+     # dash.dependencies.Input('LLR/E_TR', 'value'),
      dash.dependencies.Input('Month', 'value'),
      dash.dependencies.Input('interface-columns', 'values'),
      # значение чеклиста из дерева с выбором столбцов market-graph-tab-slider-width
@@ -2656,7 +2843,7 @@ def update_graph_tab_string(Year, Country, Agency, City, Property_Name, Class, S
 
     list_of_values = (Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
                       Type_of_Consultancy, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large,
-                      Owner, Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent,Month)
+                      Owner, Date_of_acquiring, Class_Colliers, Floor, Deal_Size, Sublease_Agent, Month)
     cond_1 = cond.copy()
     list_of_values_copy = list(filter(None, list_of_values))
     list_of_ind = []
@@ -2692,7 +2879,6 @@ def update_graph_tab_string(Year, Country, Agency, City, Property_Name, Class, S
         format_year = ', '.join(Year)
 
     return format_index + format_data
-
 
 
 # @app.callback(
@@ -3040,7 +3226,7 @@ def update_graph_tab_string(Year, Country, Agency, City, Property_Name, Class, S
      # dash.dependencies.Input('LLR/E_TR', 'value'),
      dash.dependencies.Input('Month', 'value'),
      dash.dependencies.Input('interface-columns', 'values'),
-     dash.dependencies.Input('interface-data', 'value')  # значение чеклиста из дерева с выбором столбцов
+     dash.dependencies.Input('interface-llr-data', 'value')  # значение чеклиста из дерева с выбором столбцов
      ])
 def update_graph_tab_none_stack(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
                                 Type_of_Consultancy, Quarter, Company, Include_in_Market_Share, Address,
@@ -3292,7 +3478,7 @@ def update_graph_tab_none_stack(Year, Country, Agency, City, Property_Name, Clas
      # dash.dependencies.Input('LLR/E_TR', 'value'),
      dash.dependencies.Input('Month', 'value'),
      dash.dependencies.Input('interface-columns', 'values'),  # значение чеклиста из дерева с выбором столбцов
-     dash.dependencies.Input('interface-data', 'value')
+     dash.dependencies.Input('interface-llr-data', 'value')
      ])
 def update_graph_horizontal(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
                             Type_of_Consultancy, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large,
@@ -3426,6 +3612,7 @@ def update_graph_horizontal(Year, Country, Agency, City, Property_Name, Class, S
         )
     }
 
+
 @app.callback(
     dash.dependencies.Output('market-pie-graph-tab', 'figure'),
     [dash.dependencies.Input('Year', 'value'),
@@ -3455,7 +3642,7 @@ def update_graph_horizontal(Year, Country, Agency, City, Property_Name, Class, S
      # dash.dependencies.Input('LLR/E_TR', 'value'),
      dash.dependencies.Input('Month', 'value'),
      dash.dependencies.Input('interface-columns', 'values'),  # значение чеклиста из дерева с выбором столбцов
-     dash.dependencies.Input('interface-data', 'value')
+     dash.dependencies.Input('interface-llr-data', 'value')
      ])
 def update_pie_graph(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
                      Type_of_Consultancy, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large, Owner,
@@ -3489,11 +3676,11 @@ def update_pie_graph(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
         aggfunc=sum,
         fill_value=0)
     all_sqm = df_plot.SQM.sum()
-    mylist = list(round(i) for i in pv["SQM"]/all_sqm*100)
+    mylist = list(round(i) for i in pv["SQM"] / all_sqm * 100)
     print(mylist)
     colors_pie = [color.colliers_dark_blue, color.colliers_extra_light_blue, color.colliers_grey_40,
                   color.colliers_yellow, color.colliers_red, color.colliers_light_blue]
-    pie1 = go.Pie(values= pv["SQM"],
+    pie1 = go.Pie(values=pv["SQM"],
                   labels=['Colliers', 'CW', 'CBRE', 'JLL', 'KF', 'SAR'],
                   hoverinfo='label+value+percent',
                   textinfo='label+percent',
@@ -3542,6 +3729,7 @@ def update_pie_graph(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
         )
     }
 
+
 @app.callback(
     dash.dependencies.Output('market-graph-percent-tab', 'figure'),
     [dash.dependencies.Input('Year', 'value'),
@@ -3571,7 +3759,7 @@ def update_pie_graph(Year, Country, Agency, City, Property_Name, Class, SQM, Bus
      # dash.dependencies.Input('LLR/E_TR', 'value'),
      dash.dependencies.Input('Month', 'value'),
      dash.dependencies.Input('interface-columns', 'values'),  # значение чеклиста из дерева с выбором столбцов
-     dash.dependencies.Input('interface-data', 'value')
+     dash.dependencies.Input('interface-llr-data', 'value')
      ])
 def update_graph_percent(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
                          Type_of_Consultancy, Quarter, Company, Include_in_Market_Share, Address, Submarket_Large,
@@ -3864,7 +4052,6 @@ def update_graph_percent(Year, Country, Agency, City, Property_Name, Class, SQM,
     }
 
 
-
 @app.callback(
     dash.dependencies.Output('market-graph-horizontal-total-tab', 'figure'),
     [dash.dependencies.Input('Year', 'value'),
@@ -3894,7 +4081,7 @@ def update_graph_percent(Year, Country, Agency, City, Property_Name, Class, SQM,
      # dash.dependencies.Input('LLR/E_TR', 'value'),
      dash.dependencies.Input('Month', 'value'),
      dash.dependencies.Input('interface-columns', 'values'),  # значение чеклиста из дерева с выбором столбцов
-     dash.dependencies.Input('interface-data', 'value')
+     dash.dependencies.Input('interface-llr-data', 'value')
 
      ])
 def update_graph_horizontal_total(Year, Country, Agency, City, Property_Name, Class, SQM, Business_Sector, Type_of_Deal,
@@ -4736,32 +4923,40 @@ def update_datatable_susp(Year, Country, Agency, City, Property_Name, Class, SQM
 def example_button(n_clicks):
     data = pd.DataFrame.from_records([static.list_of_columns])  # создание датафрейма из списка заголовков столбца
     csv_string = data.to_csv(header=False, index=False, encoding='utf-8',
-                             sep=',')  # формирование csv файла выбранной кодировкой и знаком разделения
+                             sep=';')  # формирование csv файла выбранной кодировкой и знаком разделения
     csv_string = "data:text/csv;charset=utf-8," + urllib.parse.quote(
-        csv_string)  # декодирование csv файла в байткод и запись в ссылку байткода для скачивания
+        csv_string)  # декодирование csv файла в байткод и запись в ссылку байткода для скачивани
     return csv_string  # возвращает сформированный байткод в строку-ссылку
 
 
 def parse_contents(contents, filename):  # чтение загруженного файла, определение расширения,
     content_type, content_string = contents.split(',')  # разделителя и декодирование из байткода
     decoded = base64.b64decode(content_string + "==")
-
     try:
         if 'csv' in filename:
+            print('file is csv')
             df = pd.read_csv((io.StringIO(decoded.decode('utf-8'))), header=None)
-            df.columns = static.list_of_columns
+            df.columns = df.iloc[0]
+            df.drop(df.index[0], inplace=True)
+            print('data frame after drop index')
+            print(df)
         elif 'xls' in filename:  # проверка, является ли загруженный файл xls, не всегда работает корректно, так что пока лучше остановиться на csv
+            print('file is xls')
             df = pd.read_excel((io.BytesIO(decoded)), header=None)
-            df.columns = static.list_of_columns
+            df.columns = df.iloc[0]
+            df.drop(df.index[0], inplace=True)
+            print('data frame after drop index')
+            print(df)
     except Exception as e:
-        # #print(e)
+        print(e)
         return html.Div([
             'There was an error processing this file.'
         ])
     return html.Div(
         [
             html.H5(filename),
-            dt.DataTable(rows=df.to_dict('records')),
+            dt.DataTable(rows=df.to_dict('records'),
+                         ),
         ]
     )
 
@@ -4778,20 +4973,31 @@ def update_output(list_of_contents, list_of_names):
         return children
 
 
-def save_contents(contents_save, filename_save):  # данные, загруженные в скрипт сохраняются в скрытом элементе страницы
-    content_type, content_string = contents_save.split(
-        ',')  # в json массиве, это необходимо для передачи данных между callback`ами
-    decoded = base64.b64decode(
-        content_string + "==")  # это решение - единственный способ передать данные без использования глобальных переменных
+def save_contents(contents_save, filename_save):
+    """данные, загруженные в скрипт сохраняются в скрытом элементе страницы в json массиве,
+       это необходимо для передачи данных между callback`ами
+       это решение - единственный способ передать данные без использования глобальных переменных"""
+    content_type, content_string = contents_save.split(',')
+    decoded = base64.b64decode(content_string + "==")
     try:
         if 'csv' in filename_save:  # проверка, является ли загруженный файл csv
+            print('csv in save content')
             df = pd.read_csv((io.StringIO(decoded.decode('utf-8'))), header=None)
+            df.columns = df.iloc[0]
+            df.drop(df.index[0], inplace=True)
             json = df.to_json(date_format='iso', orient='split')
+            print('json, save contents')
+            print(json)
         elif 'xls' in filename_save:  # проверка, является ли загруженный файл xls
+            print('xls in save content')
             df = pd.read_excel((io.BytesIO(decoded)), header=None)
+            df.columns = df.iloc[0]
+            df.drop(df.index[0], inplace=True)
             json = df.to_json(date_format='iso', orient='split')
+            print('json, save contents')
+            print(json)
     except Exception as e:
-        # #print(e)
+        print(e)
         return html.Div([
             'There was an error processing this file.'
         ])
@@ -4817,10 +5023,14 @@ def save_output(list_of_contents, list_of_names):
               )
 def update_table(jsonified_cleaned_data):
     if jsonified_cleaned_data is not None:
+        print('jsonified_cleaned_data', jsonified_cleaned_data)
+        print('jsonified_cleaned_data[0]', jsonified_cleaned_data[0])
         dff = pd.read_json(jsonified_cleaned_data[0], orient='split')
-        dff.columns = static.list_of_columns
+        print('dff from update_table')
+        print(dff)
+        #dff.columns = static.list_of_columns
         dff.to_sql('Market_Share', static.con, if_exists='append', index=None, index_label=static.list_of_columns)
-        return  # #print('База обновлена')
+        return print(dff)
     else:
         print('empty json')
 

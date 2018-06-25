@@ -548,7 +548,7 @@ def deals_page():
                     html.Div(
                         [
                             dcc.RadioItems(  # чеклист для выбора типов сделок
-                                id='interface-data',
+                                id='interface-llr-data',
                                 options=[{'label': i, 'value': i} for i in
                                          # все возможные значения из списка типов сделок
                                          static.list_of_deals_type],
@@ -734,7 +734,7 @@ def deals_page():
                                         ],
                                         id='Agency_Div',
                                         style={
-                                            'width': '80px',
+                                            'width': '110px',
                                             # 'padding-left': '10',
                                             # 'margin-left': '3%',
                                             'display': 'inline-block',
@@ -765,7 +765,7 @@ def deals_page():
                                         ],
                                         id='Country_Div',
                                         style={
-                                            'width': '80px',
+                                            'width': '86px',
                                             # 'padding-left': '10',
                                             # 'margin-left': '3%',
                                             'display': 'inline-block',
@@ -796,7 +796,7 @@ def deals_page():
                                             )],
                                         id='City_Div',
                                         style={
-                                            'width': '80px',
+                                            'width': '110px',
                                             #    'padding-left': '10',
                                             #     #'margin-left': '3%',
                                             'display': 'inline-block',
@@ -828,7 +828,7 @@ def deals_page():
                                         # className='one columns',
                                         id='Property_name_Div',
                                         style={
-                                            'width': '80px',
+                                            'width': '230px',
                                             #    'padding-left': '10',
                                             #     #'margin-left': '3%',
                                             'display': 'inline-block',
@@ -860,7 +860,7 @@ def deals_page():
                                         id='Class_Div',
 
                                         style={
-                                            'width': '80px',
+                                            'width': '76px',
                                             #    'padding-left': '10',
                                             #     #'margin-left': '3%',
                                             'display': 'inline-block',
@@ -923,7 +923,7 @@ def deals_page():
                                         id='Company_Div',
 
                                         style={
-                                            'width': '80px',
+                                            'width': '184px',
                                             #    'padding-left': '10',
                                             #     #'margin-left': '3%',
                                             'display': 'inline-block',
@@ -948,13 +948,13 @@ def deals_page():
                                                     'label': i,
                                                     'value': i
                                                 }
-                                                    for i in static.all_deals_query_df["Business_Sector"].unique()
+                                                    for i in sorted(static.all_deals_query_df["Business_Sector"].unique())
                                                 ],
 
                                             )],
                                         id='Business_Sector_Div',
                                         style={
-                                            'width': '80px',
+                                            'width': '250px',
                                             #    'padding-left': '10',
                                             #     #'margin-left': '3%',
                                             'display': 'inline-block',
@@ -986,7 +986,7 @@ def deals_page():
                                             )],
                                         id='Type_of_Deal_Div',
                                         style={
-                                            'width': '80px',
+                                            'width': '130px',
                                             #    'padding-left': '10',
                                             #     #'margin-left': '3%',
                                             'display': 'inline-block',
@@ -1018,7 +1018,7 @@ def deals_page():
                                             )],
                                         id='Type_of_Consultancy_Div',
                                         style={
-                                            'width': '80px',
+                                            'width': '170px',
                                             #    'padding-left': '10',
                                             #     #'margin-left': '3%',
                                             'display': 'inline-block',
@@ -1051,7 +1051,7 @@ def deals_page():
                                         ],
                                         id='Year_Div',
                                         style={
-                                            'width': '80px',
+                                            'width': '90px',
                                             # 'padding-left': '10',
                                             # 'margin-left': '3%',
                                             'display': 'inline-block',
@@ -1077,7 +1077,7 @@ def deals_page():
                                                     'label': i,
                                                     'value': i
                                                 }
-                                                    for i in static.all_deals_query_df["Quarter"].unique()
+                                                    for i in sorted(static.all_deals_query_df["Quarter"].unique())
                                                 ],
 
                                             )],
@@ -2730,12 +2730,12 @@ def default_graphics_and_tables_page():
                                 options=[{'label': i, 'value': i} for i in  # все возможные значения из списка грфиков
                                          static.list_of_default_graphics],
                                 values=[  # список чеклиста для выбора дефолтных графиков и таблиц из дерева
-                                    "LLR, (E)TR, LLR/(E)TR-pie-2017-RU",
-                                    'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU',
-                                    "LLR, (E)TR, LLR/(E)TR-pie-five-years-RU",
-                                    "LLR, (E)TR, LLR/(E)TR-pie-2017-MOS",
-                                    'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS',
-                                    "LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS",
+                                    # "LLR, (E)TR, LLR/(E)TR-pie-2017-RU",
+                                    # 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU',
+                                    # "LLR, (E)TR, LLR/(E)TR-pie-five-years-RU",
+                                    # "LLR, (E)TR, LLR/(E)TR-pie-2017-MOS",
+                                    # 'LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS',
+                                    # "LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS",
                                     'biggest-deal-tab-2017',
                                     'biggest-deal-tab-1q2018',
                                     'biggest-deal-tab-2013-2018',
@@ -2891,7 +2891,6 @@ def default_graphics_and_tables_page():
                                            }
                                     ),
 
-                            html.Br(),
 
     # _________________________________________________________________________________________#
 
@@ -2931,19 +2930,27 @@ def default_graphics_and_tables_page():
 
                                     html.Div(
                                         [
+                                            html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-2017-RU-img'),
+
                                             dcc.Graph(id='LLR, (E)TR, LLR/(E)TR-pie-2017-RU',
-                                                      style={'display': 'inline',
-                                                             'padding': '40px 0px 0px 0px'}),
+                                                      style={'display': 'none',
+                                                             #'padding-top': '20px'
+                                                             }
+                                                      ),
                                             html.Div(id='pie-4-text',
                                                      children='LLR, (E)TR and LLR/(E)TR deals in Russia in 2017',
-                                                     style={'padding-left': '50px',
-                                                            'display': 'inline'}
+                                                     style={
+                                                         'padding-left': '150px',
+                                                         'display': 'inline',
+                                                         'horizontal-align': 'middle',
+                                                         'font-weight': 'bold'
+
+                                                     }
                                                      ),
                                         ],
                                         className='four columns',
 
                                     ),
-
 
                                 ],
                                 className='twelve columns',
@@ -2987,12 +2994,17 @@ def default_graphics_and_tables_page():
                                     ),
                                     html.Div(
                                         [
+                                            html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU-img'),
+
                                             dcc.Graph(id='LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU',
-                                                      style={'display': 'inline'}),
+                                                      style={'display': 'none'}),
                                             html.Div(id='pie-5-text',
                                                      children='LLR, (E)TR and LLR/(E)TR deals in Russia in 1Q 2018',
-                                                     style={'padding-left': '50px',
-                                                            'display': 'inline'}
+                                                     style={
+                                                         'padding-left': '130px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
                                                      ),
                                         ],
                                         className='four columns',
@@ -3040,12 +3052,17 @@ def default_graphics_and_tables_page():
 
                                     html.Div(
                                         [
+                                            html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-five-years-RU-img'),
+
                                             dcc.Graph(id='LLR, (E)TR, LLR/(E)TR-pie-five-years-RU',
-                                                      style={'display': 'inline'}),
+                                                      style={'display': 'none'}),
                                             html.Div(id='pie-6-text',
                                                      children='LLR, (E)TR and LLR/(E)TR deals in Russia in 2013-2018 years',
-                                                     style={'padding-left': '50px',
-                                                            'display': 'inline'}
+                                                     style={
+                                                         'padding-left': '70px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
                                                      ),
                                         ],
                                         className='four columns',
@@ -3061,12 +3078,16 @@ def default_graphics_and_tables_page():
                                 [
                                     html.Div(
                                         [
+                                            html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-2017-MOS-img'),
+
                                             dcc.Graph(id='LLR, (E)TR, LLR/(E)TR-pie-2017-MOS',
                                                       style={'display': 'inline'}),
                                             html.Div(id='pie-7-text',
                                                      children='LLR,(E)TR and LLR/(E)TR deals in Moscow in 2017',
-                                                     style={'padding-left': '50px',
-                                                            'display': 'inline'}
+                                                     style={'padding-left': '70px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
                                                      )
                                         ],
                                         className='four columns',
@@ -3076,12 +3097,16 @@ def default_graphics_and_tables_page():
                                     ),
                                     html.Div(
                                         [
+                                            html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS-img'),
+
                                             dcc.Graph(id='LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS',
                                                       style={'display': 'inline'}),
                                             html.Div(id='pie-8-text',
                                                      children='LLR, (E)TR and LLR/(E)TR deals in Moscow in 1Q 2018',
-                                                     style={'padding-left': '50px',
-                                                            'display': 'inline'}
+                                                     style={'padding-left': '70px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
                                                      )
 
                                         ],
@@ -3092,12 +3117,16 @@ def default_graphics_and_tables_page():
                                     ),
                                     html.Div(
                                         [
+                                            html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS-img'),
+
                                             dcc.Graph(id='LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS',
                                                       style={'display': 'inline'}),
                                             html.Div(id='pie-9-text',
                                                      children='LLR, (E)TR and LLR/(E)TR deals in Moscow in 2013-2018 years',
-                                                     style={'padding-left': '50px',
-                                                            'display': 'inline'}
+                                                     style={'padding-left': '60px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
                                                      )
                                         ],
                                         className='four columns',
