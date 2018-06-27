@@ -1,4 +1,6 @@
-delete_query = """DELETE FROM "Market_Share" WHERE "Property_Name" LIKE 'TEST1' """
+delete_query_1 = """DELETE FROM "Market_Share" WHERE "SQM" LIKE 'TEST' """
+delete_query_2 = """DELETE FROM "Market_Share" WHERE "SQM" LIKE 'test1' """
+
 
 
 deals_query = """SELECT "Agency"::text, "SQM"::real, "Year"::text

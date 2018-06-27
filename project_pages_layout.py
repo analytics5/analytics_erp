@@ -3,6 +3,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_table_experiments as dt
 import project_static as static
+import project_deals_graphics as my_graphics
 
 
 # ОСНОВНАЯ СТРАНИЦА ПРИЛОЖЕНИЯ
@@ -156,6 +157,31 @@ def index_page():
                                            }
                                            ),
                                href='/page-default-graphs'),
+
+                        html.A(html.Button('Шаблоны для презентаций',
+                                           className='button-primary',
+                                           style={
+                                               # 'display': 'inline',
+                                               'height': '38px',
+                                               'width': '100%',
+                                               'padding': '0 0 0 12px',
+                                               'color': color.colliers_light_blue,
+                                               'text-align': 'left',
+                                               'font-size': '14px',
+                                               'font-weight': '300',
+                                               'line-height': '20px',
+                                               'letter-spacing': '.001rem',
+                                               'text-transform': 'none',
+                                               # 'text-decoration': 'none',
+                                               'white-space': 'nowrap',
+                                               # 'background-color': 'transparent',
+                                               'border-radius': '0px',
+                                               'border': '0px solid #bbb',
+                                               'cursor': 'pointer',
+                                               'box-sizing': 'border-box'
+                                           }
+                                           ),
+                               href='/page-presentations'),
 
                         html.A(html.Button('Обновить базу по сделкам',
                                            className='button-primary',
@@ -418,7 +444,9 @@ def deals_page():
                         ],
                         style={
                             'display': 'inline',
-                            'font-weight': 'bold'
+                            'font-weight': 'bold',
+
+
                         }
                     ),
 
@@ -553,6 +581,47 @@ def deals_page():
                                          # все возможные значения из списка типов сделок
                                          static.list_of_deals_type],
                                 value="All deals",
+                                labelStyle={
+                                    'display': 'none',
+                                    'padding-left:': '90px'
+                                }
+                            )
+                        ],
+                        style={
+                            'display': 'inline',
+
+                        }
+                    ),
+                    # ________________#
+                    html.Div(
+                        [
+                            dcc.Checklist(  # чеклист с одним значением для раскрытия дерева по типам сделок
+                                id='tree-checklist-data-sale-lease',
+                                # при выборе параметра, открывается список для выбора данных
+                                options=[
+                                    {'label': 'Select Sale/Lease', 'value': 'Show'}
+                                ],
+                                values=[],
+                                labelStyle={'display': 'block',
+                                            'width': '192px',
+                                            'font-weight': '300'
+                                            }
+                            )
+                        ],
+                        style={
+                            'display': 'inline',
+                            'font-weight': 'bold'
+                        }
+                    ),
+
+                    html.Div(
+                        [
+                            dcc.RadioItems(  # чеклист для выбора типов сделок
+                                id='interface-llr-data-sale-lease',
+                                options=[{'label': i, 'value': i} for i in
+                                         # все возможные значения из списка типов сделок
+                                         static.list_of_deals_type_sale_lease],
+                                value="Sale and Lease",
                                 labelStyle={
                                     'display': 'none',
                                     'padding-left:': '90px'
@@ -699,7 +768,7 @@ def deals_page():
                                 ],
                                 style={'float': 'right',
                                        'padding-right': '76px'
-                                           }
+                                       }
 
                             ),
                             html.H5(children="Все сделки",
@@ -948,7 +1017,8 @@ def deals_page():
                                                     'label': i,
                                                     'value': i
                                                 }
-                                                    for i in sorted(static.all_deals_query_df["Business_Sector"].unique())
+                                                    for i in
+                                                    sorted(static.all_deals_query_df["Business_Sector"].unique())
                                                 ],
 
                                             )],
@@ -1113,6 +1183,7 @@ def deals_page():
                                                     static.all_deals_query_df["Include_in_Market_Share"].unique()
 
                                                 ],
+                                                #value=['Y']
                                             )
                                         ],
                                         id='Include_in_Market_Share_Div',
@@ -1390,7 +1461,6 @@ def deals_page():
                                         }
                                     ),
 
-
                                     html.Div(
                                         [
                                             html.Div(
@@ -1485,7 +1555,6 @@ def deals_page():
                             ),
 
                             html.Br(),
-
 
                             html.Div(
                                 [
@@ -2891,9 +2960,7 @@ def default_graphics_and_tables_page():
                                            }
                                     ),
 
-
-    # _________________________________________________________________________________________#
-
+                            # _________________________________________________________________________________________#
 
                             html.Div(  # pie 2017 по России
                                 [
@@ -2934,7 +3001,7 @@ def default_graphics_and_tables_page():
 
                                             dcc.Graph(id='LLR, (E)TR, LLR/(E)TR-pie-2017-RU',
                                                       style={'display': 'none',
-                                                             #'padding-top': '20px'
+                                                             # 'padding-top': '20px'
                                                              }
                                                       ),
                                             html.Div(id='pie-4-text',
@@ -3002,15 +3069,14 @@ def default_graphics_and_tables_page():
                                                      children='LLR, (E)TR and LLR/(E)TR deals in Russia in 1Q 2018',
                                                      style={
                                                          'padding-left': '130px',
-                                                            'display': 'inline',
-                                                            'font-weight': 'bold'
-                                                            }
+                                                         'display': 'inline',
+                                                         'font-weight': 'bold'
+                                                     }
                                                      ),
                                         ],
                                         className='four columns',
 
                                     ),
-
 
                                 ],
                                 className='twelve columns'
@@ -3060,9 +3126,9 @@ def default_graphics_and_tables_page():
                                                      children='LLR, (E)TR and LLR/(E)TR deals in Russia in 2013-2018 years',
                                                      style={
                                                          'padding-left': '70px',
-                                                            'display': 'inline',
-                                                            'font-weight': 'bold'
-                                                            }
+                                                         'display': 'inline',
+                                                         'font-weight': 'bold'
+                                                     }
                                                      ),
                                         ],
                                         className='four columns',
@@ -3136,6 +3202,127 @@ def default_graphics_and_tables_page():
                                     ),
                                 ],
                                 className='twelve columns'
+                            ),
+
+                        ],
+                        className='row',
+                    )
+                ],
+                # className='ten columns',
+                id='main-div',
+                style={
+                    'padding-left': '15px',
+                    'float': 'left',
+                    'box - sizing': 'border - box',
+                    'width': '88.6666666667%'
+                },
+
+            )
+
+        ],
+        style={'backgroundColor': color.colliers_grey_10,
+               'margin-top': '0px'},
+
+    )
+
+
+# РАЗМЕТКА СТРАНИЦЫ 'ШАБЛОНЫ ДЛЯ ПРЕЗЕНТАЦИЙ'
+
+
+def presentation_list():
+    return html.Div(
+        [
+            html.Div(
+                [
+                    html.Div(
+                        [
+
+                            # _________________________________________________________________________________________#
+
+                            html.Div(  # ПЕРВАЯ СТРАНИЦА
+                                [
+                                    html.Div(  # div с таблицей по ключевым сделкам 2017 Россия
+                                        [
+                                            html.H4(
+                                                children='ДОЛЯ РЫНКА ПО РОССИИ В 1 КВ. 2018',
+                                                style={
+                                                    'padding-right': '686px',
+                                                    'float': 'left',
+                                                    'color': color.colliers_color
+                                                }
+                                            ),
+                                            html.H6(
+                                                children='ВСЕ СДЕЛКИ / СДЕЛКИ АРЕНДЫ',
+                                                style={
+                                                    'padding-right': '686px',
+                                                    'float': 'left',
+                                                    'color': color.colliers_light_blue
+                                                }
+                                            ),
+                                            html.Div(
+                                                [
+                                                    dcc.Graph(id='pie-1-pres-act',
+                                                              figure=my_graphics.update_pie_graph_for_pres(),
+                                                              #style={'width': '500'}
+                                                              ),
+                                                    #html.Img(id='pie-1-pres', src=my_graphics.update_pie_graph_for_pres()),
+                                                    html.Hr(style={
+                                                        'height': '1px',
+                                                        'margin': '0px',
+                                                        # 'align':'left',
+                                                        'size': '3',
+                                                        'width': '558',
+                                                        'background-color': color.colliers_light_blue}
+                                                    ),
+                                                    html.Div(children='Аренда и продажа (Россия)',
+                                                             style={
+                                                                 'font-weight': 'bold'
+                                                             }
+                                                             ),
+                                                    html.Div(id='table-1-pres',
+                                                             children=my_graphics.update_table_for_pres(),
+                                                             style={
+                                                                 'allign': 'left'
+                                                             }),
+                                                    html.Hr(style={
+                                                        'height': '2px',
+                                                        'margin': '0px',
+                                                        # 'align':'left',
+                                                        'size': '3',
+                                                        'width': '558px',
+                                                        'background-color': color.colliers_light_blue}
+                                                    ),
+                                                    html.Br(),
+
+                                                ],
+                                                id='pres-sale-lease-ru',
+                                                className='six columns',
+                                                # style={
+                                                #     # 'width': '30.3%',
+                                                #
+                                                #     'float': 'left'}
+                                            ),
+                                        ],
+                                        id='pres-sale-lease-ru-div',
+                                        # className='six columns',
+                                        style={
+                                            'display': 'inline'},
+                                    ),
+
+                                    html.Div(
+                                        [
+                                            html.Img(),
+
+                                            # dcc.Graph(),
+
+                                        ],
+                                        className='four columns',
+
+                                    ),
+
+                                ],
+                                className='twelve columns',
+
                             ),
 
                         ],
