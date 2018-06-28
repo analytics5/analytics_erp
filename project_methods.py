@@ -18,14 +18,15 @@ def generate_table_top_deals(dataframe, max_rows=10):
                 [
                     html.Th(col,
                             style={
-                                'text-align': 'center',
+                                'text-align': pos,
                                 'width': wid,
                                 'height': hei
                             })
-                    for col, wid, hei in zip(["Agency", "Property Name", "Office area", "Company",
+                    for col, wid, hei,pos in zip(["Agency", "Property Name","City", "Office area", "Company",
                                               "Business Sector", "Type of Deal"],
-                                             ['70px', '175px', '105px', '171px', '229px', '102px'],
-                                             ['15px', '15px', '15px', '15px', '15px', '15px'])
+                                             ['70px', '175px','70px','105px', '171px', '229px', '102px'],
+                                             ['20px', '20px', '20px', '20px', '20px', '20px', '20px'],
+                                             ['left', 'left', 'center', 'center', 'left', 'left', 'center'])
                 ],
                 style={  # CSS разметка
                     'background-color': color.colliers_light_blue,
@@ -40,14 +41,67 @@ def generate_table_top_deals(dataframe, max_rows=10):
                 [
                     html.Td(dataframe.iloc[i][col],
                             style={
-                                'text-align': 'center',
+                                'text-align': pos,
                                 'width': wid,
                                 'height': hei
 
                             })
-                    for col, wid, hei in zip(dataframe.columns,
-                                             ['70px', '175px', '105px', '171px', '229px', '102px'],
-                                             ['15px', '15px', '15px', '15px', '15px', '15px'])
+                    for col, wid, hei, pos in zip(dataframe.columns,
+                                             ['70px', '175px','70px', '105px', '171px', '229px', '102px'],
+                                             ['20px', '20px', '20px', '20px', '20px', '20px', '20px'],
+                                             ['left', 'left', 'center', 'center', 'left', 'left', 'center']
+                                             )
+                ],
+                style={  # CSS разметка
+                    'background-color': color.colliers_pale_blue,
+                }
+            ) for i in range(min(len(dataframe), max_rows))]
+    )
+
+
+def generate_table_top_deals_with_year(dataframe, max_rows=10):
+    """ФУНКЦИЯ ОТРИСОВКИ ТАБЛИЦЫ ЧЕРЕЗ  HTML, ДЛЯ НАСТРОЙКИ СТИЛЯ ИСПОЛЬЗУЕТСЯ CSS РАЗМЕТКА"""
+    return html.Table(
+        [
+            html.Tr(  # HEADER
+                [
+                    html.Th(col,
+                            style={
+                                'text-align': pos,
+                                'width': wid,
+                                'height': hei
+                            })
+                    for col, wid, hei, pos in zip(["Agency", "Property Name", "City", "Office area", "Company",
+                                              "Business Sector", "Type of Deal", 'Year', 'Quarter'],
+                                             ['70px', '175px', '70px', '105px', '171px', '229px',
+                                              '102px', '60px', '30px'],
+                                             ['20px', '20px', '20px', '20px', '20px', '20px', '20px','20px', '20px'],
+                                                  ['left', 'left', 'center', 'center', 'left', 'left', 'center',
+                                                   'center', 'center'])
+                ],
+                style={  # CSS разметка
+                    'background-color': color.colliers_light_blue,
+                    'color': color.white,
+
+                }
+            )
+        ]
+        +
+        [
+            html.Tr(  # BODY
+                [
+                    html.Td(dataframe.iloc[i][col],
+                            style={
+                                'text-align': pos,
+                                'width': wid,
+                                'height': hei
+
+                            })
+                    for col, wid, hei, pos in zip(dataframe.columns, ['70px', '175px', '70px', '105px', '171px', '229px',
+                                              '102px', '60px', '30px'],
+                                             ['20px', '20px', '20px', '20px', '20px', '20px', '20px', '20px', '20px'],
+                                                  ['left', 'left', 'center', 'center', 'left', 'left', 'center',
+                                                   'center', 'center'])
                 ],
                 style={  # CSS разметка
                     'background-color': color.colliers_pale_blue,
@@ -124,6 +178,7 @@ def replace_index(list_of_ind):
 
 
 def data_to_table_preparation(llr_type, list_of_values_copy, cond_1, sale_type):
+    """ФИЛЬТРУЕТ ДАННЫЕ ДЛЯ ТАБЛИЦЫ И ГРАФИКОВ ПО ЗНАЧЕНИЯМ, ВЫБРАННЫМ В ПОЛЕ СЛЕВА"""
 
     if 'All deals' in llr_type:
         data_to_table = static.all_deals_query_df

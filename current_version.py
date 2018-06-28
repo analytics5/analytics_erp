@@ -1060,35 +1060,36 @@ def default_tables():
         all_deals_2017 = static.all_deals_query_df[static.all_deals_query_df['Year'].isin(['2017'])]
         all_deals_2017 = all_deals_2017.sort_values('SQM', ascending=False)
 
-        all_deals_2017_selected = all_deals_2017[['Agency', 'Property_Name', 'SQM',
+        all_deals_2017_selected = all_deals_2017[['Agency', 'Property_Name', 'City', 'SQM',
                                                   'Company', 'Business_Sector', 'Type_of_Deal']].head(10)
         # ###print(all_deals_2017_selected.Property_Name.tolist())
 
         trace = go.Table(
-            columnwidth=[80, 200, 100, 150, 200, 100],
+            columnwidth=[80, 200, 80, 100, 150, 200, 100],
 
-            header=dict(values=["Agency", "Property Name", "Office area", "Company", "Business Sector", "Type of Deal"],
+            header=dict(values=["Agency", "Property Name", 'City', "Office area", "Company", "Business Sector", "Type of Deal"],
                         line=dict(color=color.white),
                         fill=dict(color=color.sar_color),
-                        align=['left'] * 6,
+                        align=['left','left','left','center','left','left','center'],
                         font=dict(color='white', size=12), ),
 
             cells=dict(values=[all_deals_2017_selected.Agency.tolist(),
                                all_deals_2017_selected.Property_Name.tolist(),
+                               all_deals_2017_selected.City,
                                all_deals_2017_selected.SQM,
                                all_deals_2017_selected.Company,
                                all_deals_2017_selected.Business_Sector,
                                all_deals_2017_selected.Type_of_Deal
-
                                ],
                        line=dict(color=color.white),
                        fill=dict(color='#EDFAFF'),
-                       align=['left'] * 6))
+                       align=['left','left','left','center','left','left','center']))
 
         layout = dict(width=830, height=330)
         data = [trace]
         fig = dict(data=data, layout=layout)
         return fig
+
 
     @app.callback(
         dash.dependencies.Output('html-tab-RU-2017', 'children'),
@@ -1098,7 +1099,7 @@ def default_tables():
         all_deals_2017 = static.all_deals_query_df[static.all_deals_query_df['Year'].isin(['2017'])]
         all_deals_2017 = all_deals_2017.sort_values('SQM', ascending=False)
         all_deals_2017['SQM'] = all_deals_2017['SQM'].round()
-        all_deals_2017_selected = all_deals_2017[['Agency', 'Property_Name', 'SQM',
+        all_deals_2017_selected = all_deals_2017[['Agency', 'Property_Name', 'City', 'SQM',
                                                   'Company', 'Business_Sector', 'Type_of_Deal']].head(10)
         return my_method.generate_table_top_deals(all_deals_2017_selected)
 
@@ -1111,7 +1112,7 @@ def default_tables():
             static.all_deals_query_df['Year'].isin(['2018']) & static.all_deals_query_df['Quarter'].isin(['1'])]
         all_deals_2018 = all_deals_2018.sort_values('SQM', ascending=False)
         all_deals_2018['SQM'] = all_deals_2018['SQM'].round()
-        all_deals_2018_selected = all_deals_2018[['Agency', 'Property_Name', 'SQM',
+        all_deals_2018_selected = all_deals_2018[['Agency', 'Property_Name','City', 'SQM',
                                                   'Company', 'Business_Sector', 'Type_of_Deal']].head(10)
         return my_method.generate_table_top_deals(all_deals_2018_selected)
 
@@ -1123,9 +1124,10 @@ def default_tables():
         all_deals_2018 = static.all_deals_query_df
         all_deals_2018 = all_deals_2018.sort_values('SQM', ascending=False)
         all_deals_2018['SQM'] = all_deals_2018['SQM'].round()
-        all_deals_2018_selected = all_deals_2018[['Agency', 'Property_Name', 'SQM',
-                                                  'Company', 'Business_Sector', 'Type_of_Deal']].head(10)
-        return my_method.generate_table_top_deals(all_deals_2018_selected)
+        all_deals_2018_selected = all_deals_2018[['Agency', 'Property_Name','City', 'SQM',
+                                                  'Company', 'Business_Sector', 'Type_of_Deal',
+                                                  'Year', 'Quarter']].head(10)
+        return my_method.generate_table_top_deals_with_year(all_deals_2018_selected)
 
 
 default_tables()  # вызов функции с отображением базовых таблиц
@@ -5033,27 +5035,19 @@ def save_contents(contents_save, filename_save):
     decoded = base64.b64decode(content_string + "==")
     try:
         if 'csv' in filename_save:  # проверка, является ли загруженный файл csv
-            #print('csv in save content')
             df = pd.read_csv((io.StringIO(decoded.decode('utf-8'))), header=None)
             df.columns = df.iloc[0]
             df.drop(df.index[0], inplace=True)
             json = df.to_json(date_format='iso', orient='split')
-            #print('json, save contents')
-            #print(json)
         elif 'xls' in filename_save:  # проверка, является ли загруженный файл xls
-            print('xls in save content')
             df = pd.read_excel((io.BytesIO(decoded)), header=None)
-            print(df)
             df.columns = df.iloc[0]
             df.drop(df.index[0], inplace=True)
             json = df.to_json(date_format='iso', orient='split')
-            print('json, save contents')
-            print(json)
     except Exception as e:
         print('Exception', e)
-        return html.Div([
-            'There was an error processing this file.', e
-        ])
+        return html.Div(
+            ['Произошла ошибка при загрузке данных.'])
 
     return json
 
@@ -5070,23 +5064,24 @@ def save_output(list_of_contents, list_of_names):
         return children
 
 
-@app.callback(dash.dependencies.Output('table', 'children'),  # сохранение данных из загруженного файла в БД
+@app.callback(dash.dependencies.Output('results', 'children'),  # сохранение данных из загруженного файла в БД
               [dash.dependencies.Input('intermediate-value', 'children')]
               )
 def update_table(jsonified_cleaned_data):
     if jsonified_cleaned_data is not None:
-        print('jsonified_cleaned_data', jsonified_cleaned_data)
-        print('jsonified_cleaned_data[0]', jsonified_cleaned_data[0])
-        print('jsonified_cleaned_data type', type(jsonified_cleaned_data))
-        print('jsonified_cleaned_data[0] type', type(jsonified_cleaned_data[0]))
         dff = pd.read_json(jsonified_cleaned_data[0], orient='split')
-        print('dff from update_table JSON')
-        print(type(dff))
         dff.columns = static.list_of_columns_for_example
         dff.to_sql('Market_Share', static.con, if_exists='replace', index=None)
-        return print(dff)
+        return html.Div([
+            'База успешно обновлена'
+        ])
     else:
-        print('empty json')
+        html.Div([
+            'Произошла ошибка при загрузке данных'
+        ])
+
+
+
 
 
 '''  обновление страницы: если параметра pathname совпадает с ссылкой страницы, то отрисовывается выбранная страница '''

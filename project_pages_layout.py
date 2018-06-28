@@ -309,18 +309,46 @@ def help_page():
 
         dcc.Markdown('''
 #### Справка по обновлению базы данных по сделкам
-* Для обновления базы необходимо переместить мастер-файл формата ".csv" в поле "Drag and drop" или
-  нажать на ссылку "Select Files" и выбрать мастер-файл из его текущей директории.
-* Правила оформления мастер-файла:
-  * Скачать шаблон файла, нажав на кнопку "Скачать шаблон"
+* Для обновления базы необходимо переместить базу по сделкам формата ".csv" или ".xlsx" в поле "Drag and drop" или
+  нажать на ссылку "Select Files" и выбрать базу по сделкам из его текущей директории.
+* При успешной загрузке данных появится сообщение "База успешно обновлена".
+* При ошибке загрузки данных появится сообщение "Произошла ошибка при загрузке данных".
+* Правила оформления файла с базой по сделкам:
+  * Файл должен состоять из одного листа excel (sheet) и не иметь скрых листов и привязок к другим файлам
+  * Файл должен содержать только следующие столбцы:
+    * Include_in_Market_Share
+    * Agency
+    * Country
+    * City
+    * Property_Name
+    * Address
+    * Submarket_Large
+    * Owner
+    * Date_of_acquiring
+    * Class
+    * Class_Colliers
+    * Floor
+    * SQM
+    * Deal_Size
+    * Company
+    * Business_Sector
+    * Sublease_Agent
+    * Type_of_deal
+    * Type_of_Consultancy
+    * LLR/TR
+    * LLR_Only
+    * (E)TR_Only
+    * LLR/(E)TR
+    * Month
+    * Year
+    * Quarter
   * При оформлении заполнения столбцов желательно избегать использования кириллицы
   * Ячейки со значением "SQM" желательно приводить к числовому формату
   * Для разделения дробной части использовать знак "." (точка), а не "," (запятая)
-  * Столбец "Floor" желательно приводить к числовому формату
                                 '''),
     ],
         style={'backgroundColor': color.colliers_pale_blue,
-               'height': '340px'
+               'height': '100%'
                }
     )
 
@@ -410,9 +438,7 @@ def about_page():
         ),
 
         dcc.Markdown('''
-###### Здесь будет информация о модуле
-  * С ссылками на источники данных
-  * И с текстом лицензии, так принято, почему-то
+###### Version 0.5 (unstable)
     ''')
     ],
         style={'backgroundColor': color.colliers_pale_blue,
@@ -2743,7 +2769,8 @@ def update_database():
                                 html.Div(id='intermediate-value', style={'display': 'none'}
                                          ),
                                 html.Table(id='table', style={'display': 'none'}),
-                                html.Div(dt.DataTable(rows=[{}]), style={'display': 'none'})
+                                html.Div(dt.DataTable(rows=[{}]), style={'display': 'none'}),
+                                html.Div(id='results')
 
                             ]
                             ),
@@ -3005,7 +3032,7 @@ def default_graphics_and_tables_page():
                                                              }
                                                       ),
                                             html.Div(id='pie-4-text',
-                                                     children='LLR, (E)TR and LLR/(E)TR deals in Russia in 2017',
+                                                     children='LLR+(E)TR+LLR/(E)TR deals in Russia in 2017',
                                                      style={
                                                          'padding-left': '150px',
                                                          'display': 'inline',
@@ -3036,7 +3063,8 @@ def default_graphics_and_tables_page():
                                                 style={
                                                     'padding-right': '686px',
                                                     'float': 'left',
-                                                    'color': color.colliers_color
+                                                    'color': color.colliers_color,
+                                                    'display': 'inline-block'
                                                 }
                                             ),
                                             html.H6(
@@ -3044,7 +3072,9 @@ def default_graphics_and_tables_page():
                                                 style={
                                                     'padding-right': '686px',
                                                     'float': 'left',
-                                                    'color': color.colliers_light_blue
+                                                    'color': color.colliers_light_blue,
+                                                    'display': 'inline-block'
+
                                                 }
                                             ),
                                             html.Div(id='html-tab-RU-1q2018',
@@ -3066,7 +3096,7 @@ def default_graphics_and_tables_page():
                                             dcc.Graph(id='LLR, (E)TR, LLR/(E)TR-pie-1Q2018-RU',
                                                       style={'display': 'none'}),
                                             html.Div(id='pie-5-text',
-                                                     children='LLR, (E)TR and LLR/(E)TR deals in Russia in 1Q 2018',
+                                                     children='LLR+(E)TR+LLR/(E)TR deals in Russia in 1Q 2018',
                                                      style={
                                                          'padding-left': '130px',
                                                          'display': 'inline',
@@ -3123,7 +3153,7 @@ def default_graphics_and_tables_page():
                                             dcc.Graph(id='LLR, (E)TR, LLR/(E)TR-pie-five-years-RU',
                                                       style={'display': 'none'}),
                                             html.Div(id='pie-6-text',
-                                                     children='LLR, (E)TR and LLR/(E)TR deals in Russia in 2013-2018 years',
+                                                     children='LLR+(E)TR+LLR/(E)TR deals in Russia in 2013-2018 years',
                                                      style={
                                                          'padding-left': '70px',
                                                          'display': 'inline',
@@ -3140,7 +3170,7 @@ def default_graphics_and_tables_page():
 
                             #  _______________________________________________________________________________________#
 
-                            html.Div(
+                            html.Div(     # pie по LLR/TR
                                 [
                                     html.Div(
                                         [
@@ -3149,7 +3179,7 @@ def default_graphics_and_tables_page():
                                             dcc.Graph(id='LLR, (E)TR, LLR/(E)TR-pie-2017-MOS',
                                                       style={'display': 'inline'}),
                                             html.Div(id='pie-7-text',
-                                                     children='LLR,(E)TR and LLR/(E)TR deals in Moscow in 2017',
+                                                     children='LLR+(E)TR+LLR/(E)TR deals in Moscow in 2017',
                                                      style={'padding-left': '70px',
                                                             'display': 'inline',
                                                             'font-weight': 'bold'
@@ -3168,7 +3198,7 @@ def default_graphics_and_tables_page():
                                             dcc.Graph(id='LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS',
                                                       style={'display': 'inline'}),
                                             html.Div(id='pie-8-text',
-                                                     children='LLR, (E)TR and LLR/(E)TR deals in Moscow in 1Q 2018',
+                                                     children='LLR+(E)TR+LLR/(E)TR deals in Moscow in 1Q 2018',
                                                      style={'padding-left': '70px',
                                                             'display': 'inline',
                                                             'font-weight': 'bold'
@@ -3188,7 +3218,7 @@ def default_graphics_and_tables_page():
                                             dcc.Graph(id='LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS',
                                                       style={'display': 'inline'}),
                                             html.Div(id='pie-9-text',
-                                                     children='LLR, (E)TR and LLR/(E)TR deals in Moscow in 2013-2018 years',
+                                                     children='LLR+(E)TR+LLR/(E)TR deals in Moscow in 2013-2018 years',
                                                      style={'padding-left': '60px',
                                                             'display': 'inline',
                                                             'font-weight': 'bold'
@@ -3200,9 +3230,483 @@ def default_graphics_and_tables_page():
                                         #        'display': 'row',
                                         #        'float': 'left'}
                                     ),
+
+
                                 ],
                                 className='twelve columns'
                             ),
+
+                            # _-__-_-_-_-_-_-_-_-_-_-_-_-_-_____-_-_-_-_-_-_____-
+
+                            html.Div(   # pie по sale/lease 2017 Россия
+                                [
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-2017-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_sale_lease_2017_ru',
+                                                      # pie по ДОЛЯ РЫНКА ПО РОССИИ В 1 КВ. 2018 ВСЕ СДЕЛКИ
+                                                      figure=my_graphics.update_pie_graph_def_sale_lease_2017_ru(),
+                                                      style={'display': 'inline'}
+                                                      ),
+                                            html.Div(children='Объем сделок аренды и продаж по России в 2017',
+                                                     style={'padding-left': '70px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+                                        ],
+                                        className='four columns',
+                                    ),
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_lease_2017_ru',
+                                                      # pie по ДОЛЯ РЫНКА ПО РОССИИ В 1 КВ. 2018 АРЕНДА
+                                                      figure=my_graphics.update_pie_graph_def_lease_2017_ru(),
+                                                      style={'display': 'inline'}
+                                                      ),
+
+                                            html.Div(children='Объем сделок аренды по России в 2017',
+                                                     style={'padding-left': '70px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+
+                                        ],
+                                        className='four columns',
+                                    ),
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_sale_2017',
+                                                      # pie по ДОЛЯ РЫНКА ПО РОССИИ В 1 КВ. 2018 ПРОДАЖА
+                                                      figure=my_graphics.update_pie_graph_def_sale_2017_ru(),
+                                                      style={
+                                                          'display': 'inline',
+                                                      }
+                                                      ),
+                                            html.Div(children='Объем сделок продаж по России 2017',
+                                                     style={'padding-left': '60px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+                                        ],
+                                        className='four columns',
+
+                                    ),
+
+                                ],
+                                className='twelve columns'
+                            ),
+                            # _-__-_-_-_-_-_-_-_-_-_-_-_-_-_____-_-_-_-_-_-_____-
+
+                            html.Div(  # pie по sale/lease 2017 Москва
+                                [
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-2017-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_sale_lease_2017_mos',
+                                                      # pie по ДОЛЯ РЫНКА ПО РОССИИ В 1 КВ. 2018 ВСЕ СДЕЛКИ
+                                                      figure=my_graphics.update_pie_graph_def_sale_lease_2017_mos(),
+                                                      style={'display': 'inline'}
+                                                      ),
+                                            html.Div(children='Объем сделок аренды и продаж в Москве в 2017',
+                                                     style={'padding-left': '70px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+                                        ],
+                                        className='four columns',
+                                    ),
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_lease_2017_mos',
+                                                      # pie по ДОЛЯ РЫНКА ПО РОССИИ В 1 КВ. 2018 АРЕНДА
+                                                      figure=my_graphics.update_pie_graph_def_lease_2017_mos(),
+                                                      style={'display': 'inline'}
+                                                      ),
+
+                                            html.Div(children='Объем сделок аренды в Москве 2017',
+                                                     style={'padding-left': '70px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+
+                                        ],
+                                        className='four columns',
+                                    ),
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_sale_2017_mos',
+                                                      # pie по ДОЛЯ РЫНКА ПО РОССИИ В 1 КВ. 2018 ПРОДАЖА
+                                                      figure=my_graphics.update_pie_graph_def_sale_2017_mos(),
+                                                      style={
+                                                          'display': 'inline',
+                                                      }
+                                                      ),
+                                            html.Div(children='Объем сделок продаж в Москве 2017',
+                                                     style={'padding-left': '60px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+                                        ],
+                                        className='four columns',
+
+                                    ),
+
+                                ],
+                                className='twelve columns'
+                            ),
+                            # _-__-_-_-_-_-_-_-_-_-_-_-_-_-_____-_-_-_-_-_-_____-
+
+                            html.Div(  # pie по sale/lease 2017 Петербург
+                                [
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-2017-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_sale_lease_2017_sp',
+                                                      # pie по ДОЛЯ РЫНКА ПО РОССИИ В 1 КВ. 2018 ВСЕ СДЕЛКИ
+                                                      figure=my_graphics.update_pie_graph_def_sale_lease_2017_sp(),
+                                                      style={'display': 'inline'}
+                                                      ),
+                                            html.Div(children='Объем сделок аренды и продаж в Санкт-Петербурге в 2017',
+                                                     style={'padding-left': '40px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+                                        ],
+                                        className='four columns',
+                                    ),
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_lease_2017_sp',
+                                                      # pie по ДОЛЯ РЫНКА ПО РОССИИ В 1 КВ. 2018 АРЕНДА
+                                                      figure=my_graphics.update_pie_graph_def_lease_2017_sp(),
+                                                      style={'display': 'inline'}
+                                                      ),
+
+                                            html.Div(children='Объем сделок аренды в Санкт-Петербурге 2017',
+                                                     style={'padding-left': '40px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+
+                                        ],
+                                        className='four columns',
+                                    ),
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_sale_2017_sp',
+                                                      # pie по ДОЛЯ РЫНКА ПО РОССИИ В 1 КВ. 2018 ПРОДАЖА
+                                                      figure=my_graphics.update_pie_graph_def_sale_2017_sp(),
+                                                      style={
+                                                          'display': 'inline',
+                                                      }
+                                                      ),
+                                            html.Div(children='Объем сделок продаж в Санкт-Петербурге 2017',
+                                                     style={'padding-left': '40px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+                                        ],
+                                        className='four columns',
+
+                                    ),
+
+                                ],
+                                className='twelve columns'
+                            ),
+
+
+                            # _-__-_-_-_-_-_-_-_-_-_-_-_-_-_____-_-_-_-_-_-_____-
+                            html.Div(  # pie по sale/lease 1 кв 2018 Россия
+                                [
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-2017-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_sale_lease_1q_2018',
+                                                      # pie по ДОЛЯ РЫНКА ПО РОССИИ В 1 КВ. 2018 ВСЕ СДЕЛКИ
+                                                      figure=my_graphics.update_pie_graph_def_sale_lease_1q_2018_ru(),
+                                                      style={'display': 'inline'}
+                                                      ),
+                                            html.Div(children='Объем сделок аренды и продаж по России в 1кв. 2018',
+                                                     style={'padding-left': '70px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+                                        ],
+                                        className='four columns',
+                                    ),
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_lease_1q_2018',
+                                                      # pie по ДОЛЯ РЫНКА ПО РОССИИ В 1 КВ. 2018 АРЕНДА
+                                                      figure=my_graphics.update_pie_graph_def_lease_1q_2018_ru(),
+                                                      style={'display': 'inline'}
+                                                      ),
+
+                                            html.Div(children='Объем сделок аренды по России в 1кв. 2018',
+                                                     style={'padding-left': '70px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+
+                                        ],
+                                        className='four columns',
+                                    ),
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_sale_1q_2018',
+                                                      # pie по ДОЛЯ РЫНКА ПО РОССИИ В 1 КВ. 2018 ПРОДАЖА
+                                                      figure=my_graphics.update_pie_graph_def_sale_1q_2018_ru(),
+                                                      style={
+                                                          'display': 'inline',
+                                                      }
+                                                      ),
+                                            html.Div(children='Объем сделок продаж по России в 1кв. 2018',
+                                                     style={'padding-left': '60px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+                                        ],
+                                        className='four columns',
+
+                                    ),
+
+                                ],
+                                className='twelve columns'
+                            ),
+
+                            # _-__-_-_-_-_-_-_-_-_-_-_-_-_-_____-_-_-_-_-_-_____-
+                            html.Div(  # pie по sale/lease 1 кв 2018 Москва
+                                [
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-2017-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_sale_lease_1q_2018_mos',
+                                                      # pie по ДОЛЯ РЫНКА ПО РОССИИ В 1 КВ. 2018 ВСЕ СДЕЛКИ
+                                                      figure=my_graphics.update_pie_graph_def_sale_lease_1q_2018_mos(),
+                                                      style={'display': 'inline'}
+                                                      ),
+                                            html.Div(children='Объем сделок аренды и продаж в Москве в 1кв. 2018',
+                                                     style={'padding-left': '70px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+                                        ],
+                                        className='four columns',
+                                    ),
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_lease_1q_2018_mos',
+                                                      # pie по ДОЛЯ РЫНКА ПО РОССИИ В 1 КВ. 2018 АРЕНДА
+                                                      figure=my_graphics.update_pie_graph_def_lease_1q_2018_mos(),
+                                                      style={'display': 'inline'}
+                                                      ),
+
+                                            html.Div(children='Объем сделок аренды в Москве в 1кв. 2018',
+                                                     style={'padding-left': '70px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+
+                                        ],
+                                        className='four columns',
+                                    ),
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_sale_1q_2018_mos',
+                                                      # pie по ДОЛЯ РЫНКА ПО РОССИИ В 1 КВ. 2018 ПРОДАЖА
+                                                      figure=my_graphics.update_pie_graph_def_sale_1q_2018_mos(),
+                                                      style={
+                                                          'display': 'inline',
+                                                      }
+                                                      ),
+                                            html.Div(children='Объем сделок продаж в Москве в 1кв. 2018',
+                                                     style={'padding-left': '60px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+                                        ],
+                                        className='four columns',
+
+                                    ),
+
+                                ],
+                                className='twelve columns'
+                            ),
+
+                            # _-__-_-_-_-_-_-_-_-_-_-_-_-_-_____-_-_-_-_-_-_____-
+
+
+                            html.Div(  # pie по sale/lease 2 кв 2018 Россия
+                                [
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-2017-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_sale_lease_2q_2018_ru',
+                                                      figure=my_graphics.update_pie_graph_def_sale_lease_2q_2018_ru(),
+                                                      style={'display': 'inline'}
+                                                      ),
+                                            html.Div(children='Объем сделок аренды и продаж по России в 2 кв. 2018',
+                                                     style={'padding-left': '70px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+                                        ],
+                                        className='four columns',
+                                    ),
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_lease_2q_2018_ru',
+                                                      figure=my_graphics.update_pie_graph_def_lease_2q_2018_ru(),
+                                                      style={'display': 'inline'}
+                                                      ),
+
+                                            html.Div(children='Объем сделок аренды по России в 2 кв. 2018',
+                                                     style={'padding-left': '70px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+
+                                        ],
+                                        className='four columns',
+                                    ),
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_sale_2q_2018_ru',
+                                                      figure=my_graphics.update_pie_graph_def_sale_2q_2018_ru(),
+                                                      style={
+                                                          'display': 'inline',
+                                                      }
+                                                      ),
+                                            html.Div(children='Объем сделок продаж по России в 2 кв. 2018',
+                                                     style={'padding-left': '60px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+                                        ],
+                                        className='four columns',
+
+                                    ),
+
+                                ],
+                                className='twelve columns'
+                            ),
+
+                            html.Div(  # pie по sale/lease 2 кв 2018 Россия
+                                [
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-2017-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_sale_lease_2q_2018_mos',
+                                                      figure=my_graphics.update_pie_graph_def_sale_lease_2q_2018_mos(),
+                                                      style={'display': 'inline'}
+                                                      ),
+                                            html.Div(children='Объем сделок аренды и продаж в Москве в 2 кв. 2018',
+                                                     style={'padding-left': '70px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+                                        ],
+                                        className='four columns',
+                                    ),
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-1Q2018-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_lease_2q_2018_mos',
+                                                      figure=my_graphics.update_pie_graph_def_lease_2q_2018_mos(),
+                                                      style={'display': 'inline'}
+                                                      ),
+
+                                            html.Div(children='Объем сделок аренды в Москве в 2 кв. 2018',
+                                                     style={'padding-left': '70px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+
+                                        ],
+                                        className='four columns',
+                                    ),
+                                    html.Div(
+                                        [
+                                            # html.Img(id='LLR, (E)TR, LLR/(E)TR-pie-five-years-MOS-img'),
+
+                                            dcc.Graph(id='pie_graph_def_sale_2q_2018',
+                                                      figure=my_graphics.update_pie_graph_def_sale_2q_2018_mos(),
+                                                      style={
+                                                          'display': 'inline',
+                                                      }
+                                                      ),
+                                            html.Div(children='Объем сделок продаж в Москве в 2 кв. 2018',
+                                                     style={'padding-left': '60px',
+                                                            'display': 'inline',
+                                                            'font-weight': 'bold'
+                                                            }
+                                                     )
+                                        ],
+                                        className='four columns',
+
+                                    ),
+
+                                ],
+                                className='twelve columns'
+                            ),
+# _________________________________________________________________________________________________________________
+
+
+
+
+
 
                         ],
                         className='row',
